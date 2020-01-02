@@ -1,0 +1,22 @@
+{
+  "name": "deployablelanradio",
+  "version": "1.0.0",
+  "description": "Deployable LAN Radio",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dustinjschultz/deployableLANradio.git"
+  },
+  "author": "Dustin Schultz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dustinjschultz/deployableLANradio/issues"
+  },
+  "homepage": "https://github.com/dustinjschultz/deployableLANradio#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
