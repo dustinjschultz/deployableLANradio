@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"landr.plays"}],"uuid":"7d3f4a4655ae40b4ac738170cb5ad248"}
