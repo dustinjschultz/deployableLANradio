@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "initdb": "mongorestore db-dump",
-	"template": "babel-node scripts/template.script"
+    "template": "babel-node scripts/template.script"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/dustinjschultz/deployableLANradio#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "passport": "^0.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
