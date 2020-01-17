@@ -1,6 +1,7 @@
 {
   "ExpandedNodes": [
     "",
+    "\\models",
     "\\views"
   ],
   "SelectedNode": "\\server.js",

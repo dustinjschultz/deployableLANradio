@@ -7,6 +7,8 @@ const bodyParser = require('body-parser')
 
 const MONGOURL = 'mongodb://localhost:27017/landr'  
 
+//https://blog.usejournal.com/easiest-backend-authentication-using-express-mongodb-and-postman-86997c945f18
+
 app.get('/', (req, res) => res.sendFile(__dirname + '/views/index.html'))
 
 mongoose.connect(MONGOURL, {useNewUrlParser: true, useUnifiedTopology: true})
