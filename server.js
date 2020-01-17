@@ -27,7 +27,6 @@ app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 app.get('/login', (req, res) => res.sendFile(__dirname + '/views/login.html'))
 app.get('/register', (req, res) => res.sendFile(__dirname + '/views/register.html'))
-app.post('/login', (req, res) => res.sendFile(__dirname + '/views/index.html')) //TODO: login
 
 app.post('/register', (req, res) => {
     const user = new User({
@@ -43,6 +42,20 @@ app.post('/register', (req, res) => {
         }
     })
 }) 
+
+app.post('/login', (req, res) => {
+    User.findOne({ 'username': req.body.username }, (err, user) => {
+        if (!user) {
+            //TODO: unsuccessful login
+            res.json({ message: 'Login failed, user not found' })
+        }
+        else {
+            //TODO: successful login stuff
+            res.sendFile(__dirname + '/views/index.html')
+        }
+    })
+}) 
+
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
