@@ -50,8 +50,19 @@ app.post('/login', (req, res) => {
             res.json({ message: 'Login failed, user not found' })
         }
         else {
+
+            user.comparePassword(req.body.password, (err, isMatch) => {
+                if (err) {
+                    throw err
+                }
+                if (!isMatch) {
+                    return res.status(400).json({message: 'Wrong password'})
+                }
+                res.status(200).send('Logged in successfully')
+            })
+
             //TODO: successful login stuff
-            res.sendFile(__dirname + '/views/index.html')
+            //res.sendFile(__dirname + '/views/index.html')
         }
     })
 }) 
