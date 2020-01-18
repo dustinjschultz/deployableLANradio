@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json())
 
-app.use(session({ secret: 'ppUTPhWGRr' }))
+app.use(session({ secret: 'ppUTPhWGRr' })) //must be before any usages
 
 app.engine('html', require('ejs').renderFile)
 app.set('view engine', 'html')
@@ -31,7 +31,6 @@ app.set('view engine', 'html')
 app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 app.get('/', (req, res) => {
-    console.log(req.session)
     res.render(__dirname + '/views/index', {
         username: req.session.username 
     })
@@ -47,7 +46,16 @@ app.get('/login', (req, res) => {
         res.render(__dirname + '/views/login.html')
     }
 })
+
 app.get('/register', (req, res) => res.render(__dirname + '/views/register.html'))
+
+app.get('/logout', (req, res) => {
+    req.session.username = null
+    req.session.save()
+    res.render(__dirname + '/views/index.html', {
+        username: req.session.username
+    })
+})
 
 app.post('/register', (req, res) => {
     const user = new User({
@@ -81,9 +89,12 @@ app.post('/login', (req, res) => {
                 if (!isMatch) {
                     return res.status(400).json({message: 'Wrong password'})
                 }
-                res.status(200).send('Logged in successfully')
+                
                 req.session.username = user.username
                 req.session.save() //need to manually save if nothing is sent back
+                res.render(__dirname + '/views/index.html', {
+                    username: req.session.username
+                })
             })
 
             //TODO: successful login stuff
