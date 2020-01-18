@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>LANDR</title>
+</head>
+
+<body>
+
+    <p>LANDR Index</p>
+    <%= username ? "Hello " + username : "" %>
+
+    <% if(!username) { %>
+    <form action="/login" method="GET">
+        <button type="submit">Go to login</button>
+    </form>
+    <form action="/register" method="GET">
+        <button type="submit">Go to register</button>
+    </form>
+    <form action="/guest" method="GET">
+        <button type="submit">Continue as guest</button>
+    </form>
+    <% } else { %>
+    <form action="/logout" method="GET">
+        <button type="submit">Logout</button>
+    </form>
+    <% } %>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</body>
+
+</html>
