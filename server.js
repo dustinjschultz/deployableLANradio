@@ -4,12 +4,20 @@ const path = require('path')
 const port = 3000
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const session = require('express-session')
 
 const MONGOURL = 'mongodb://localhost:27017/landr'  
 
 //https://blog.usejournal.com/easiest-backend-authentication-using-express-mongodb-and-postman-86997c945f18
 
-app.get('/', (req, res) => res.sendFile(__dirname + '/views/index.html'))
+app.get('/', (req, res) => {
+    console.log(req.session)
+    let user = req.session ? 'reqses' : 'no' //TODO: why no session?
+    res.render(__dirname + '/views/index', {
+        username: user
+        //username: 'hardcodedUser'
+    })
+})
 
 mongoose.connect(MONGOURL, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => console.log('DB connected'))
@@ -23,10 +31,24 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json())
 
+app.use(session({ secret: 'ppUTPhWGRr' }))
+
+app.engine('html', require('ejs').renderFile)
+app.set('view engine', 'html')
+
 app.listen(port, () => console.log(`App listening on port ${port}!`))
 
-app.get('/login', (req, res) => res.sendFile(__dirname + '/views/login.html'))
-app.get('/register', (req, res) => res.sendFile(__dirname + '/views/register.html'))
+app.get('/login', (req, res) => {
+    console.log('username is default: ' + req.session.username)
+    if (req.session.username) {
+        res.send('User ' + req.session.username + ' already logged in')
+    }
+    else {
+        console.log(req.session.username)
+        res.render(__dirname + '/views/login.html')
+    }
+})
+app.get('/register', (req, res) => res.render(__dirname + '/views/register.html'))
 
 app.post('/register', (req, res) => {
     const user = new User({
@@ -39,6 +61,8 @@ app.post('/register', (req, res) => {
         }
         else {
             res.status(200).send(response)
+            req.session.username = user.username
+            req.session.save() //need to manually save if nothing is sent back
         }
     })
 }) 
@@ -59,10 +83,12 @@ app.post('/login', (req, res) => {
                     return res.status(400).json({message: 'Wrong password'})
                 }
                 res.status(200).send('Logged in successfully')
+                req.session.username = user.username
+                req.session.save() //need to manually save if nothing is sent back
             })
 
             //TODO: successful login stuff
-            //res.sendFile(__dirname + '/views/index.html')
+            //res.render(__dirname + '/views/index.html')
         }
     })
 }) 
