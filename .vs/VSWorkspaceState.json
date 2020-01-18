@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\models",
+    "\\scripts",
     "\\views"
   ],
-  "SelectedNode": "\\models\\user.js",
+  "SelectedNode": "\\server.js",
   "PreviewInSolutionExplorer": false
 }

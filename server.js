@@ -96,6 +96,25 @@ app.post('/login', (req, res) => {
     })
 }) 
 
+app.get('/guest', (req, res) => {
+    const user = new User({
+        username: 'guest' + Math.floor(Math.random() * 1000000000),
+        password: 'password'
+    })
+    user.save((err, response) => {
+        if (err) {
+            res.status(400).send(err)
+        }
+        else {
+            req.session.username = user.username
+            req.session.save() //need to manually save if nothing is sent back
+            res.render(__dirname + '/views/index.html', {
+                username: req.session.username
+            })
+        }
+    })
+}) 
+
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
   console.log('addr: '+ add + ':' + port);
