@@ -8,41 +8,55 @@
 <nav class="main-menu">
     <ul>
         <li>
-            <a href="http://justinfarrow.com">
+            <a href="#" onclick="triggerLink(this)">
                 <i class="fa fa-home fa-2x"></i>
                 <span class="nav-text">Dashboard
                 </span>
+                <form action="/" method="GET" class="hidden">
+                    <input type="submit" />
+                </form>
             </a>
-
         </li>
         <% if(!username) { %>
         <li class="has-subnav">
-            <a href="#">
+            <a href="#" onclick="triggerLink(this)">
                 <i class="fa fa-sign-in fa-2x"></i>
                 <span class="nav-text">Login/Register
                 </span>
+                <form action="/login" method="GET" class="hidden">
+                    <input type="submit" />
+                </form>
             </a>
         </li>
         <% } %>
         <li>
-            <a href="#">
+            <a href="# triggerLink(this)"">
                 <i class="fa fa-headphones fa-2x"></i>
                 <span class="nav-text">Current Room
                 </span>
+                <form action="/" method="GET" class="hidden"> <!--TODO: update action-->
+                    <input type="submit" />
+                </form>
             </a>
         </li>
         <li>
-            <a href="#">
+            <a href="#" onclick="triggerLink(this)">
                 <i class="fa fa-music fa-2x"></i>
                 <span class="nav-text">Library
                 </span>
+                <form action="/" method="GET" class="hidden"> <!--TODO: update action-->
+                    <input type="submit" />
+                </form>
             </a>
         </li>
         <li>
-            <a href="#">
+            <a href="#" onclick="triggerLink(this)">
                 <i class="fa fa-cogs fa-2x"></i>
                 <span class="nav-text">Settings
                 </span>
+                <form action="/" method="GET" class="hidden"> <!--TODO: update action-->
+                    <input type="submit" />
+                </form>
             </a>
         </li>
         
@@ -51,10 +65,13 @@
     <% if(username) { %>
     <ul class="logout">
         <li>
-            <a href="#">
+            <a href="#" onclick="triggerLink(this)">
                 <i class="fa fa-sign-out fa-2x"></i>
                 <span class="nav-text">Logout
                 </span>
+                <form action="/logout" method="GET" class="hidden"> 
+                    <input type="submit" />
+                </form>
             </a>
         </li>
     </ul>
@@ -200,4 +217,16 @@
         left: 65px;
         position: absolute;
     }
+
+    .hidden{
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    }
 </style>
+
+<script>
+    function triggerLink(element){
+        element.querySelector('input').click();
+    }
+</script>
