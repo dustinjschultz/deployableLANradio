@@ -33,6 +33,13 @@ app.get('/', (req, res) => {
     })
 })
 
+app.get('/layouttest', (req, res) => {
+    res.render(__dirname + '/views/generallayout.ejs', {
+        username: req.session.username,
+        viewname: __dirname + '/views/login.html'
+    })
+})
+
 app.get('/login', (req, res) => {
     if (req.session.username) {
         res.send('User ' + req.session.username + ' already logged in')

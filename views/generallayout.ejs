@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>LANDR</title>
+</head>
+
+<body>
+    <div class="not-menu">
+
+        <%- include(viewname, {username: username}); -%>
+
+    </div>
+
+    <%- include('../views/sidebar', {username: username}); -%>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</body>
+
+</html>
