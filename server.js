@@ -22,14 +22,17 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 app.use(session({ secret: 'ppUTPhWGRr' })) //must be before any usages of 'session'
 
+app.use('/public', express.static('public')) //TODO: working here??
+
 app.engine('html', require('ejs').renderFile)
 app.set('view engine', 'html')
 
 app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 app.get('/', (req, res) => {
-    res.render(__dirname + '/views/index', {
-        username: req.session.username 
+    res.render(__dirname + '/public/views/generallayout.ejs', {
+        username: req.session.username,
+        viewname: __dirname + '/public/views/index.html'
     })
 })
 
@@ -38,19 +41,26 @@ app.get('/login', (req, res) => {
         res.send('User ' + req.session.username + ' already logged in')
     }
     else {
-        res.render(__dirname + '/views/login.html', {
-            username: req.session.username
+        res.render(__dirname + '/public/views/generallayout.ejs', {
+            username: req.session.username,
+            viewname: __dirname + '/public/views/login.html'
         })
     }
 })
 
-app.get('/register', (req, res) => res.render(__dirname + '/views/register.html'))
+app.get('/register', (req, res) => {
+    res.render(__dirname + '/public/views/generallayout.ejs', {
+        username: req.session.username, //unnecessary but standard
+        viewname: __dirname + '/public/views/register.html'
+    })
+})
 
 app.get('/logout', (req, res) => {
     req.session.username = null
     req.session.save()
-    res.render(__dirname + '/views/index.html', {
-        username: req.session.username
+    res.render(__dirname + '/public/views/generallayout.ejs', {
+        username: req.session.username,
+        viewname: __dirname + '/public/views/index.html'
     })
 })
 
@@ -66,8 +76,9 @@ app.post('/register', (req, res) => {
         else {
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
-            res.render(__dirname + '/views/index.html', {
-                username: req.session.username
+            res.render(__dirname + '/public/views/generallayout.ejs', {
+                username: req.session.username,
+                viewname: __dirname + '/public/views/index.html'
             })
         }
     })
@@ -90,8 +101,9 @@ app.post('/login', (req, res) => {
                 
                 req.session.username = user.username
                 req.session.save() //need to manually save if nothing is sent back
-                res.render(__dirname + '/views/index.html', {
-                    username: req.session.username
+                res.render(__dirname + '/public/views/generallayout.ejs', {
+                    username: req.session.username,
+                    viewname: __dirname + '/public/views/index.html'
                 })
             })
         }
@@ -110,8 +122,9 @@ app.get('/guest', (req, res) => {
         else {
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
-            res.render(__dirname + '/views/index.html', {
-                username: req.session.username
+            res.render(__dirname + '/public/views/generallayout.ejs', {
+                username: req.session.username,
+                viewname: __dirname + '/public/views/index.html'
             })
         }
     })

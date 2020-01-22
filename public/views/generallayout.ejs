@@ -1,15 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="utf-8">
     <title>LANDR</title>
+    <link type="text/css" rel="stylesheet" href="/public/styles/general.css"/>
 </head>
 
 <body>
     <div class="not-menu">
-        <p>LANDR Index</p>
-        <%= username ? "Hello " + username : "" %>
+
+        <%- include(viewname, {username: username}); -%>
+
     </div>
 
     <%- include('../views/sidebar', {username: username}); -%>
