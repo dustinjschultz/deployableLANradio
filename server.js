@@ -22,6 +22,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 app.use(session({ secret: 'ppUTPhWGRr' })) //must be before any usages of 'session'
 
+app.use('/public', express.static('public')) //TODO: working here??
+
 app.engine('html', require('ejs').renderFile)
 app.set('view engine', 'html')
 
