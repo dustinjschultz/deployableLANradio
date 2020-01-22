@@ -1,8 +1,4 @@
-<!--<div>
-  <h1>
-      <%- username ? "Hello " + username : "" -%>
-  </h1>
-</div>-->
+<!--Sidebar Source:-->
 <!--http://justinfarrow.com-->
 <!--https://codepen.io/JFarrow/pen/fFrpg-->
 <nav class="main-menu">
@@ -49,19 +45,20 @@
                 </form>
             </a>
         </li>
+        <% if(username) { %>
         <li>
             <a href="#" onclick="triggerLink(this)">
                 <i class="fa fa-cogs fa-2x"></i>
-                <span class="nav-text">Settings
+                <span class="nav-text"> <%- username  + "'s "-%> Settings
                 </span>
                 <form action="/" method="GET" class="hidden"> <!--TODO: update action-->
                     <input type="submit" />
                 </form>
             </a>
         </li>
-        
-        
+        <% } %>
     </ul>
+
     <% if(username) { %>
     <ul class="logout">
         <li>
