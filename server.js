@@ -48,7 +48,7 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
     res.render(__dirname + '/views/generallayout.ejs', {
-        username: req.session.username,
+        username: req.session.username, //unnecessary but standard
         viewname: __dirname + '/views/register.html'
     })
 })
