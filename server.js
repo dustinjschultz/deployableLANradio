@@ -38,7 +38,9 @@ app.get('/login', (req, res) => {
         res.send('User ' + req.session.username + ' already logged in')
     }
     else {
-        res.render(__dirname + '/views/login.html')
+        res.render(__dirname + '/views/login.html', {
+            username: req.session.username
+        })
     }
 })
 

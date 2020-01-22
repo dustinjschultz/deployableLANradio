@@ -7,15 +7,26 @@
 </head>
 
 <body>
+    <div class="not-menu">
 
-    <p>LANDR Login</p>
+        <p>LANDR Login</p>
 
-    <form action="/login" method="POST">
-        <input name="username" type="text" />
-        <input name="password" type="password" />
-        <input type="submit" />
-    </form>
+        <form action="/login" method="POST">
+            <input name="username" type="text" />
+            <input name="password" type="password" />
+            <input type="submit" />
+        </form>
 
+        <form action="/register" method="GET">
+            <button type="submit">Go to register</button>
+        </form>
+        <form action="/guest" method="GET">
+            <button type="submit">Continue as guest</button>
+        </form>
+
+    </div>
+
+    <%- include('../views/sidebar', {username: username}); -%>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 </body>
