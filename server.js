@@ -32,6 +32,7 @@ app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 app.get('/', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
+        uid: req.session.uid,
         username: req.session.username,
         viewname: __dirname + '/public/views/index.html'
     })
@@ -43,6 +44,7 @@ app.get('/login', (req, res) => {
     }
     else {
         res.render(__dirname + '/public/views/generallayout.ejs', {
+            uid: req.session.uid,
             username: req.session.username,
             viewname: __dirname + '/public/views/login.html'
         })
@@ -51,15 +53,18 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
+        uid: req.session.uid,
         username: req.session.username, //unnecessary but standard
         viewname: __dirname + '/public/views/register.html'
     })
 })
 
 app.get('/logout', (req, res) => {
+    req.session.uid = null
     req.session.username = null
     req.session.save()
     res.render(__dirname + '/public/views/generallayout.ejs', {
+        uid: req.session.uid,
         username: req.session.username,
         viewname: __dirname + '/public/views/index.html'
     })
@@ -105,6 +110,7 @@ app.post('/register', (req, res) => {
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
             res.render(__dirname + '/public/views/generallayout.ejs', {
+                uid: req.session.uid,
                 username: req.session.username,
                 viewname: __dirname + '/public/views/index.html'
             })
@@ -126,10 +132,11 @@ app.post('/login', (req, res) => {
                 if (!isMatch) {
                     return res.status(400).json({message: 'Wrong password'})
                 }
-                
+                req.session.uid = user._id
                 req.session.username = user.username
                 req.session.save() //need to manually save if nothing is sent back
                 res.render(__dirname + '/public/views/generallayout.ejs', {
+                    uid: req.session.uid,
                     username: req.session.username,
                     viewname: __dirname + '/public/views/index.html'
                 })
@@ -148,9 +155,11 @@ app.get('/guest', (req, res) => {
             res.status(400).send(err)
         }
         else {
+            req.session.uid = user._id
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
             res.render(__dirname + '/public/views/generallayout.ejs', {
+                uid: req.session.uid,
                 username: req.session.username,
                 viewname: __dirname + '/public/views/index.html'
             })
