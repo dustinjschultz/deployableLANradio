@@ -80,13 +80,22 @@ app.get('/newroom_dialog', (req, res) => {
 })
 
 app.post('/createroom', (req, res) => {
-    //TODO:
     const room = new Room({
         name: req.body.room_name,
         description: req.body.room_description,
-        //TODO: set room owner
         owner: ObjectID(req.session.uid)
     })
+
+    User.findOne({ _id: ObjectID(req.session.uid) }, (err, user) => {
+        if (!user) {
+            res.json({ message: 'You need to be logged in to make a room' })
+        }
+        else {
+            user.rooms.push(room)
+            user.save()
+        }
+    })
+
     room.save((err, response) => {
         if (err) {
             res.status(400).send(err)
