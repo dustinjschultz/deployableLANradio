@@ -6,6 +6,8 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 
+const ObjectID = require('mongodb').ObjectID
+
 const MONGOURL = 'mongodb://localhost:27017/landr'  
 
 //https://blog.usejournal.com/easiest-backend-authentication-using-express-mongodb-and-postman-86997c945f18
@@ -15,6 +17,7 @@ mongoose.connect(MONGOURL, {useNewUrlParser: true, useUnifiedTopology: true})
     .catch(error => console.log(error))
 
 const { User } = require('./models/user')
+const { Room } = require('./models/room')
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -66,6 +69,46 @@ app.get('/logout', (req, res) => {
         uid: req.session.uid,
         username: req.session.username,
         viewname: __dirname + '/public/views/index.html'
+    })
+})
+
+app.get('/newroom_dialog', (req, res) => {
+    res.render(__dirname + '/public/views/generallayout.ejs', {
+        uid: req.session.uid,
+        username: req.session.username,
+        viewname: __dirname + '/public/views/newroom.html'
+    })
+})
+
+app.post('/createroom', (req, res) => {
+    const room = new Room({
+        name: req.body.room_name,
+        description: req.body.room_description,
+        owner: ObjectID(req.session.uid)
+    })
+
+    User.findOne({ _id: ObjectID(req.session.uid) }, (err, user) => {
+        if (!user) {
+            res.json({ message: 'You need to be logged in to make a room' })
+        }
+        else {
+            user.rooms.push(room)
+            user.save()
+        }
+    })
+
+    room.save((err, response) => {
+        if (err) {
+            res.status(400).send(err)
+        }
+        else {
+            //TODO: update this to go to new room
+            res.render(__dirname + '/public/views/generallayout.ejs', {
+                uid: req.session.uid,
+                username: req.session.username,
+                viewname: __dirname + '/public/views/index.html'
+            })
+        }
     })
 })
 

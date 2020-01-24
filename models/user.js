@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt-nodejs')
+const ObjectID = require('mongodb').ObjectID
 
 const userSchema = mongoose.Schema({
     username:{
@@ -12,11 +13,11 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    //rooms: {
-    //    type: [roomSchema]
-    //}
+    rooms: [{
+        type: ObjectID,
+        ref: 'Room'
+    }]
 })
-
 
 userSchema.pre('save', function (next) {
     var user = this
@@ -50,7 +51,6 @@ userSchema.methods.comparePassword = function (candidatePassword, checkPassword)
         checkPassword(null, isMatch)
     })
 }
-
 
 const User = mongoose.model('User', userSchema)
 module.exports = { User }
