@@ -15,6 +15,7 @@ mongoose.connect(MONGOURL, {useNewUrlParser: true, useUnifiedTopology: true})
     .catch(error => console.log(error))
 
 const { User } = require('./models/user')
+const { Room } = require('./models/room')
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -61,6 +62,33 @@ app.get('/logout', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         username: req.session.username,
         viewname: __dirname + '/public/views/index.html'
+    })
+})
+
+app.get('/newroom_dialog', (req, res) => {
+    res.render(__dirname + '/public/views/generallayout.ejs', {
+        username: req.session.username,
+        viewname: __dirname + '/public/views/newroom.html'
+    })
+})
+
+app.post('/createroom', (req, res) => {
+    //TODO:
+    const room = new Room({
+        name: req.body.room_name,
+        description: req.body.room_description
+    })
+    room.save((err, response) => {
+        if (err) {
+            res.status(400).send(err)
+        }
+        else {
+            //TODO: update this to go to new room
+            res.render(__dirname + '/public/views/generallayout.ejs', {
+                username: req.session.username,
+                viewname: __dirname + '/public/views/index.html'
+            })
+        }
     })
 })
 
