@@ -127,6 +127,7 @@ app.get('/guest', (req, res) => {
             res.status(400).send(err)
         }
         else {
+            req.session.uid = user._id
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
             res.render(__dirname + '/public/views/generallayout.ejs', {
