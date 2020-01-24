@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const ObjectID = require('mongodb').ObjectID
+
 
 const roomSchema = mongoose.Schema({
     name:{
@@ -10,9 +12,10 @@ const roomSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    //owner: {
-    //    type: userSchema
-    //},
+    owner: { //TODO: set room owner
+        type: ObjectID,
+        ref: 'User'
+    },
     //firstPlay: {
     //    type: playSchema
     //},

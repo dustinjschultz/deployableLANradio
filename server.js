@@ -6,6 +6,8 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 
+const ObjectID = require('mongodb').ObjectID
+
 const MONGOURL = 'mongodb://localhost:27017/landr'  
 
 //https://blog.usejournal.com/easiest-backend-authentication-using-express-mongodb-and-postman-86997c945f18
@@ -81,7 +83,9 @@ app.post('/createroom', (req, res) => {
     //TODO:
     const room = new Room({
         name: req.body.room_name,
-        description: req.body.room_description
+        description: req.body.room_description,
+        //TODO: set room owner
+        owner: ObjectID(req.session.uid)
     })
     room.save((err, response) => {
         if (err) {
