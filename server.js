@@ -74,6 +74,7 @@ app.get('/logout', (req, res) => {
 
 app.get('/newroom_dialog', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
+        uid: req.session.uid,
         username: req.session.username,
         viewname: __dirname + '/public/views/newroom.html'
     })
@@ -103,6 +104,7 @@ app.post('/createroom', (req, res) => {
         else {
             //TODO: update this to go to new room
             res.render(__dirname + '/public/views/generallayout.ejs', {
+                uid: req.session.uid,
                 username: req.session.username,
                 viewname: __dirname + '/public/views/index.html'
             })

@@ -12,22 +12,25 @@ const roomSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    owner: { //TODO: set room owner
+    owner: {
         type: ObjectID,
         ref: 'User'
     },
     //firstPlay: {
-    //    type: playSchema
+    //    type: ObjectID,
+    //    ref: 'Play'
     //},
     //currentPlay: {
-    //    type: playSchema
+    //    type: ObjectID,
+    //    ref: 'Play'
     //},
     //everyoneDJ: {
     //    type: boolean
     //},
-    //allowedDjs: {
-    //    type: [userSchema]
-    //},
+    //allowedDjs: [{
+    //    type: ObjectID,
+    //    ref: 'User'
+    //}],
     //enableAutoskip: {
     //    type: boolean
     //},
@@ -35,11 +38,12 @@ const roomSchema = mongoose.Schema({
     //    type: number
     //},
     //usersForAutoplay: {
-    //    type: [userSchema]
+    //    type: ObjectID,
+    //    ref: 'User'
     //},
-    //tagsToQuery: {
-    //    type: [string]
-    //},
+    //tagsToQuery: [{
+    //    type: string
+    //}],
     //theme: {
     //    type: string
     //},
