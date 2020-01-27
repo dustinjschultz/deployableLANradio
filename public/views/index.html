@@ -7,6 +7,8 @@
 </form>
 <% } %>
 
-<% 
-    console.log(utils.testFunc())
+<%
+<!--console.log(utils.testFunc())-->
+    console.log('rooms:')
+    utils.getRooms().then(function (data) { console.log(data) })
 %>
