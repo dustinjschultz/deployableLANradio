@@ -35,12 +35,7 @@ app.set('view engine', 'html')
 app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 app.get('/', (req, res) => {
-    res.render(__dirname + '/public/views/generallayout.ejs', {
-        uid: req.session.uid,
-        username: req.session.username,
-        utils: generalScripts,
-        viewname: __dirname + '/public/views/index.html'
-    })
+    goToIndex(req, res)
 })
 
 app.get('/login', (req, res) => {
@@ -110,12 +105,7 @@ app.post('/createroom', (req, res) => {
         }
         else {
             //TODO: update this to go to new room
-            res.render(__dirname + '/public/views/generallayout.ejs', {
-                uid: req.session.uid,
-                username: req.session.username,
-                utils: generalScripts,
-                viewname: __dirname + '/public/views/index.html'
-            })
+            goToIndex(req, res)
         }
     })
 })
@@ -132,12 +122,7 @@ app.post('/register', (req, res) => {
         else {
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
-            res.render(__dirname + '/public/views/generallayout.ejs', {
-                uid: req.session.uid,
-                username: req.session.username,
-                utils: generalScripts,
-                viewname: __dirname + '/public/views/index.html'
-            })
+            goToIndex(req, res)
         }
     })
 }) 
@@ -159,12 +144,7 @@ app.post('/login', (req, res) => {
                 req.session.uid = user._id
                 req.session.username = user.username
                 req.session.save() //need to manually save if nothing is sent back
-                res.render(__dirname + '/public/views/generallayout.ejs', {
-                    uid: req.session.uid,
-                    username: req.session.username,
-                    utils: generalScripts,
-                    viewname: __dirname + '/public/views/index.html'
-                })
+                goToIndex(req, res)
             })
         }
     })
@@ -183,15 +163,19 @@ app.get('/guest', (req, res) => {
             req.session.uid = user._id
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
-            res.render(__dirname + '/public/views/generallayout.ejs', {
-                uid: req.session.uid,
-                username: req.session.username,
-                utils: generalScripts,
-                viewname: __dirname + '/public/views/index.html'
-            })
+            goToIndex(req, res)
         }
     })
 }) 
+
+function goToIndex(req, res) {
+    res.render(__dirname + '/public/views/generallayout.ejs', {
+        uid: req.session.uid,
+        username: req.session.username,
+        utils: generalScripts,
+        viewname: __dirname + '/public/views/index.html'
+    })
+}
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
