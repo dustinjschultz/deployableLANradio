@@ -7,8 +7,11 @@
 </form>
 <% } %>
 
+
 <%
 <!--console.log(utils.testFunc())-->
     console.log('rooms:')
-    utils.getRooms().then(function (data) { console.log(data) })
+    utils.getRooms().then(function (data) { console.log(data) }) <!--works-->
+    <!--var rooms = utils.getRooms().then(function (data) { return data })--> <!--doesnt work-->
+    <!--console.log(rooms)-->
 %>
