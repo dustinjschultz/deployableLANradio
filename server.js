@@ -51,6 +51,7 @@ app.get('/login', (req, res) => {
         res.render(__dirname + '/public/views/generallayout.ejs', {
             uid: req.session.uid,
             username: req.session.username,
+            utils: generalScripts,
             viewname: __dirname + '/public/views/login.html'
         })
     }
@@ -60,6 +61,7 @@ app.get('/register', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username, //unnecessary but standard
+        utils: generalScripts,
         viewname: __dirname + '/public/views/register.html'
     })
 })
@@ -71,6 +73,7 @@ app.get('/logout', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username,
+        utils: generalScripts,
         viewname: __dirname + '/public/views/index.html'
     })
 })
@@ -79,6 +82,7 @@ app.get('/newroom_dialog', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username,
+        utils: generalScripts,
         viewname: __dirname + '/public/views/newroom.html'
     })
 })
@@ -109,6 +113,7 @@ app.post('/createroom', (req, res) => {
             res.render(__dirname + '/public/views/generallayout.ejs', {
                 uid: req.session.uid,
                 username: req.session.username,
+                utils: generalScripts,
                 viewname: __dirname + '/public/views/index.html'
             })
         }
@@ -130,6 +135,7 @@ app.post('/register', (req, res) => {
             res.render(__dirname + '/public/views/generallayout.ejs', {
                 uid: req.session.uid,
                 username: req.session.username,
+                utils: generalScripts,
                 viewname: __dirname + '/public/views/index.html'
             })
         }
@@ -156,6 +162,7 @@ app.post('/login', (req, res) => {
                 res.render(__dirname + '/public/views/generallayout.ejs', {
                     uid: req.session.uid,
                     username: req.session.username,
+                    utils: generalScripts,
                     viewname: __dirname + '/public/views/index.html'
                 })
             })
@@ -179,6 +186,7 @@ app.get('/guest', (req, res) => {
             res.render(__dirname + '/public/views/generallayout.ejs', {
                 uid: req.session.uid,
                 username: req.session.username,
+                utils: generalScripts,
                 viewname: __dirname + '/public/views/index.html'
             })
         }
