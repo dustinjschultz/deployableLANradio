@@ -16,6 +16,8 @@ mongoose.connect(MONGOURL, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => console.log('DB connected'))
     .catch(error => console.log(error))
 
+const generalScripts = require('./public/scripts/general')
+
 const { User } = require('./models/user')
 const { Room } = require('./models/room')
 
@@ -25,7 +27,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 app.use(session({ secret: 'ppUTPhWGRr' })) //must be before any usages of 'session'
 
-app.use('/public', express.static('public')) //TODO: working here??
+app.use('/public', express.static('public'))
 
 app.engine('html', require('ejs').renderFile)
 app.set('view engine', 'html')
@@ -36,6 +38,7 @@ app.get('/', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username,
+        utils: generalScripts,
         viewname: __dirname + '/public/views/index.html'
     })
 })
