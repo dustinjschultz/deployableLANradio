@@ -7,15 +7,14 @@
 </form>
 <% } %>
 
-
-<% for(var i = 0; i < rooms.length; i++) { %>
-<%- include('../views/partials/infocard', {card_main_text: rooms[i].name, card_dropdown_text: rooms[i].description}) -%>
-<% } %>
+<div class="rooms_container">
+    <% for(var i = 0; i < rooms.length; i++) { %>
+    <%- include('../views/partials/infocard', {card_main_text: rooms[i].name, card_dropdown_text: rooms[i].description}) -%>
+    <% } %>
+</div>
 
 
 <%
-<!--console.log(utils.testFunc())-->
-<!--console.log('rooms:')-->
-<!--below works-->
+<!--Example of logging data after promise-->
 <!--utils.getRooms().then(function (data) { console.log(data) })-->
 %>

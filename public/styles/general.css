@@ -1,6 +1,27 @@
-﻿.hidden{
+﻿
+/*
+ *
+ *  General
+ *
+*/
+.hidden{
     display: none;
     opacity: 0;
     visibility: hidden;
 }
 
+
+/*
+ *
+ *  Specifics
+ *
+*/
+
+.not-menu {
+    left: 65px;
+    position: absolute;
+    /*width: 100%;*/
+}
+
+.rooms_container{
+}
