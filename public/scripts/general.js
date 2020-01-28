@@ -3,6 +3,8 @@
 const { User } = require('../../models/user')
 const { Room } = require('../../models/room')
 
+const infocard = require('./infocard')
+
 
 function getRooms() {
     return new Promise(function (resolve, reject) {
@@ -22,5 +24,6 @@ function testFunc() {
 
 module.exports = {
     testFunc,
-    getRooms
+    getRooms,
+    infocard
 }
