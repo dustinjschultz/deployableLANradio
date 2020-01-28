@@ -10,7 +10,8 @@
 <body>
     <div class="not-menu">
 
-        <%- include(viewname, {username: username, utils: utils, rooms: rooms}); -%>
+        <!--only pass `rooms` if it exists, check existence with `locals.rooms` -->
+        <%- include(viewname, {username: username, utils: utils, rooms: locals.rooms ? rooms : null}); -%>
 
     </div>
 
