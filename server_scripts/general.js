@@ -13,7 +13,6 @@ function getRooms() {
             return resolve(rooms)
         })
     })
-    
 }
 
 
