@@ -9,3 +9,7 @@
     border: 1px dashed black;
     margin-left: 10px;
 }
+
+.infocard-button{
+    float: right;
+}

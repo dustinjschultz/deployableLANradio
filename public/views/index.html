@@ -8,12 +8,9 @@
 <% } %>
 
 
-<!--working loop example-->
 <% for(var i = 0; i < rooms.length; i++) { %>
-<div> <%= rooms[i].name %> - <%= rooms[i].description %></div>
+<%- include('../views/partials/infocard', {card_main_text: rooms[i].name, card_dropdown_text: rooms[i].description}) -%>
 <% } %>
-
-    <%- include('../views/partials/infocard') -%>
 
 
 <%
