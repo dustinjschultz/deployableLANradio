@@ -12,7 +12,7 @@
     <div class="not-menu">
 
         <!--only pass `rooms` if it exists, check existence with `locals.rooms` -->
-        <%- include(viewname, {username: username, utils: utils, rooms: locals.rooms ? rooms : null}); -%>
+        <%- include(viewname, {username: username, server_utils: server_utils, rooms: locals.rooms ? rooms : null}); -%>
 
     </div>
 
@@ -23,6 +23,8 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src ="../public/scripts/general_client.js"></script>
+    <script src ="../public/scripts/infocard.js"></script>
+
     
 </body>
 

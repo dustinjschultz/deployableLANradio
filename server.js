@@ -46,7 +46,7 @@ app.get('/login', (req, res) => {
         res.render(__dirname + '/public/views/generallayout.ejs', {
             uid: req.session.uid,
             username: req.session.username,
-            utils: generalScripts,
+            server_utils: generalScripts,
             viewname: __dirname + '/public/views/login.html'
         })
     }
@@ -56,7 +56,7 @@ app.get('/register', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username, //unnecessary but standard
-        utils: generalScripts,
+        server_utils: generalScripts,
         viewname: __dirname + '/public/views/register.html'
     })
 })
@@ -68,7 +68,7 @@ app.get('/logout', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username,
-        utils: generalScripts,
+        server_utils: generalScripts,
         viewname: __dirname + '/public/views/index.html'
     })
 })
@@ -77,7 +77,7 @@ app.get('/newroom_dialog', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username,
-        utils: generalScripts,
+        server_utils: generalScripts,
         viewname: __dirname + '/public/views/newroom.html'
     })
 })
@@ -174,7 +174,7 @@ function goToIndex(req, res) {
             rooms: gotRooms,
             uid: req.session.uid,
             username: req.session.username,
-            utils: generalScripts,
+            server_utils: generalScripts,
             viewname: __dirname + '/public/views/index.html'
         })
     })
