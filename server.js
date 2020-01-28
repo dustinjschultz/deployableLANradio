@@ -16,6 +16,8 @@ mongoose.connect(MONGOURL, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => console.log('DB connected'))
     .catch(error => console.log(error))
 
+const generalScripts = require('./server_scripts/general')
+
 const { User } = require('./models/user')
 const { Room } = require('./models/room')
 
@@ -25,7 +27,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 app.use(session({ secret: 'ppUTPhWGRr' })) //must be before any usages of 'session'
 
-app.use('/public', express.static('public')) //TODO: working here??
+app.use('/public', express.static('public'))
 
 app.engine('html', require('ejs').renderFile)
 app.set('view engine', 'html')
@@ -33,11 +35,7 @@ app.set('view engine', 'html')
 app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 app.get('/', (req, res) => {
-    res.render(__dirname + '/public/views/generallayout.ejs', {
-        uid: req.session.uid,
-        username: req.session.username,
-        viewname: __dirname + '/public/views/index.html'
-    })
+    goToIndex(req, res)
 })
 
 app.get('/login', (req, res) => {
@@ -48,6 +46,7 @@ app.get('/login', (req, res) => {
         res.render(__dirname + '/public/views/generallayout.ejs', {
             uid: req.session.uid,
             username: req.session.username,
+            server_utils: generalScripts,
             viewname: __dirname + '/public/views/login.html'
         })
     }
@@ -57,6 +56,7 @@ app.get('/register', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username, //unnecessary but standard
+        server_utils: generalScripts,
         viewname: __dirname + '/public/views/register.html'
     })
 })
@@ -68,6 +68,7 @@ app.get('/logout', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username,
+        server_utils: generalScripts,
         viewname: __dirname + '/public/views/index.html'
     })
 })
@@ -76,6 +77,7 @@ app.get('/newroom_dialog', (req, res) => {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username,
+        server_utils: generalScripts,
         viewname: __dirname + '/public/views/newroom.html'
     })
 })
@@ -103,11 +105,7 @@ app.post('/createroom', (req, res) => {
         }
         else {
             //TODO: update this to go to new room
-            res.render(__dirname + '/public/views/generallayout.ejs', {
-                uid: req.session.uid,
-                username: req.session.username,
-                viewname: __dirname + '/public/views/index.html'
-            })
+            goToIndex(req, res)
         }
     })
 })
@@ -124,11 +122,7 @@ app.post('/register', (req, res) => {
         else {
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
-            res.render(__dirname + '/public/views/generallayout.ejs', {
-                uid: req.session.uid,
-                username: req.session.username,
-                viewname: __dirname + '/public/views/index.html'
-            })
+            goToIndex(req, res)
         }
     })
 }) 
@@ -150,11 +144,7 @@ app.post('/login', (req, res) => {
                 req.session.uid = user._id
                 req.session.username = user.username
                 req.session.save() //need to manually save if nothing is sent back
-                res.render(__dirname + '/public/views/generallayout.ejs', {
-                    uid: req.session.uid,
-                    username: req.session.username,
-                    viewname: __dirname + '/public/views/index.html'
-                })
+                goToIndex(req, res)
             })
         }
     })
@@ -173,14 +163,22 @@ app.get('/guest', (req, res) => {
             req.session.uid = user._id
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
-            res.render(__dirname + '/public/views/generallayout.ejs', {
-                uid: req.session.uid,
-                username: req.session.username,
-                viewname: __dirname + '/public/views/index.html'
-            })
+            goToIndex(req, res)
         }
     })
 }) 
+
+function goToIndex(req, res) {
+    generalScripts.getRooms().then(function (gotRooms) {
+        res.render(__dirname + '/public/views/generallayout.ejs', {
+            rooms: gotRooms,
+            uid: req.session.uid,
+            username: req.session.username,
+            server_utils: generalScripts,
+            viewname: __dirname + '/public/views/index.html'
+        })
+    })
+}
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
