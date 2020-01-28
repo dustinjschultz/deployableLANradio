@@ -10,7 +10,6 @@ const linkedJS = require('./linkedJS')
 function getRooms() {
     return new Promise(function (resolve, reject) {
         Room.find({}, (err, rooms) => {
-            //console.log(rooms)
             return resolve(rooms)
         })
     })

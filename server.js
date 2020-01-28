@@ -178,7 +178,6 @@ function goToIndex(req, res) {
             viewname: __dirname + '/public/views/index.html'
         })
     })
-    
 }
 
 
