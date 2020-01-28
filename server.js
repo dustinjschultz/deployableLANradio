@@ -16,7 +16,7 @@ mongoose.connect(MONGOURL, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => console.log('DB connected'))
     .catch(error => console.log(error))
 
-const generalScripts = require('./public/scripts/general')
+const generalScripts = require('./server_scripts/general')
 
 const { User } = require('./models/user')
 const { Room } = require('./models/room')

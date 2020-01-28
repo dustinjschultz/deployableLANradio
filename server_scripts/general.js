@@ -1,11 +1,10 @@
-﻿//TODO: this probably shouldn't be in /public...
-
+﻿
 const mongoose = require('mongoose')
 
-const { User } = require('../../models/user')
-const { Room } = require('../../models/room')
+const { User } = require('../models/user')
+const { Room } = require('../models/room')
 
-const infocard = require('./infocard')
+const linkedJS = require('./linkedJS')
 
 
 function getRooms() {
@@ -27,5 +26,5 @@ function generalTestFunc() {
 module.exports = {
     generalTestFunc,
     getRooms,
-    infocard
+    linkedJS
 }
