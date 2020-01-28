@@ -1,12 +1,14 @@
 
 <div class="infocard">
     <%= card_main_text %>
-    <button class="infocard-button">+</button>
+    <!--<button class="infocard-button" onclick='<%= utils.infocard.toggleCard(this) %>'>+</button>-->
+    <button class="infocard-button" onclick='generalClientTestFunc(this)'>+</button>
     <div class="infocard-dropdown">
         <%- card_dropdown_text %>
     </div>
 </div>
 
+
 <% 
-    console.log(utils.infocard.toggleCard())
+    <!--console.log(utils.infocard.toggleCard())-->
 %>

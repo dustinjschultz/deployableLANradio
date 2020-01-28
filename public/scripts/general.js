@@ -1,4 +1,6 @@
-﻿const mongoose = require('mongoose')
+﻿//TODO: this probably shouldn't be in /public...
+
+const mongoose = require('mongoose')
 
 const { User } = require('../../models/user')
 const { Room } = require('../../models/room')
@@ -17,13 +19,13 @@ function getRooms() {
 }
 
 
-function testFunc() {
-    return 'hi'
+function generalTestFunc() {
+    return 'general - testFunc()'
 }
 
 
 module.exports = {
-    testFunc,
+    generalTestFunc,
     getRooms,
     infocard
 }
