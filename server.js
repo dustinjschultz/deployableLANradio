@@ -169,12 +169,16 @@ app.get('/guest', (req, res) => {
 }) 
 
 function goToIndex(req, res) {
-    res.render(__dirname + '/public/views/generallayout.ejs', {
-        uid: req.session.uid,
-        username: req.session.username,
-        utils: generalScripts,
-        viewname: __dirname + '/public/views/index.html'
+    generalScripts.getRooms().then(function (gotRooms) {
+        res.render(__dirname + '/public/views/generallayout.ejs', {
+            rooms: gotRooms,
+            uid: req.session.uid,
+            username: req.session.username,
+            utils: generalScripts,
+            viewname: __dirname + '/public/views/index.html'
+        })
     })
+    
 }
 
 

@@ -7,15 +7,9 @@
 </form>
 <% } %>
 
-<% utils.getRooms().then(function (data) { %>
-<div>pls render</div>
-<% 
-console.log(data) })
-%>
-<!-- so it seems like you cant render in a "then" in ejs... -->
 
 <!--working loop example-->
-<% for(var j = 0; j < 5; j++) { %>
+<% for(var j = 0; j < rooms.length; j++) { %>
 <div>h</div>
 <% } %>
 
