@@ -43,43 +43,23 @@ app.get('/login', (req, res) => {
         res.send('User ' + req.session.username + ' already logged in')
     }
     else {
-        res.render(__dirname + '/public/views/generallayout.ejs', {
-            uid: req.session.uid,
-            username: req.session.username,
-            server_utils: generalScripts,
-            viewname: __dirname + '/public/views/login.html'
-        })
+        goTo(req, res, '/public/views/login.html')
     }
 })
 
 app.get('/register', (req, res) => {
-    res.render(__dirname + '/public/views/generallayout.ejs', {
-        uid: req.session.uid,
-        username: req.session.username, //unnecessary but standard
-        server_utils: generalScripts,
-        viewname: __dirname + '/public/views/register.html'
-    })
+    goTo(req, res, '/public/views/register.html')
 })
 
 app.get('/logout', (req, res) => {
     req.session.uid = null
     req.session.username = null
     req.session.save()
-    res.render(__dirname + '/public/views/generallayout.ejs', {
-        uid: req.session.uid,
-        username: req.session.username,
-        server_utils: generalScripts,
-        viewname: __dirname + '/public/views/index.html'
-    })
+    goToIndex(req, res)
 })
 
 app.get('/newroom_dialog', (req, res) => {
-    res.render(__dirname + '/public/views/generallayout.ejs', {
-        uid: req.session.uid,
-        username: req.session.username,
-        server_utils: generalScripts,
-        viewname: __dirname + '/public/views/newroom.html'
-    })
+    goTo(req, res, '/public/views/newroom.html')
 })
 
 app.post('/createroom', (req, res) => {
@@ -177,6 +157,15 @@ function goToIndex(req, res) {
             server_utils: generalScripts,
             viewname: __dirname + '/public/views/index.html'
         })
+    })
+}
+
+function goTo(req, res, destination) {
+    res.render(__dirname + '/public/views/generallayout.ejs', {
+        uid: req.session.uid,
+        username: req.session.username,
+        server_utils: generalScripts,
+        viewname: __dirname + destination
     })
 }
 
