@@ -35,17 +35,17 @@
                 </form>
             </a>
         </li>
+        <% if(username) { %>
         <li>
             <a href="#" onclick="triggerLink(this)">
                 <i class="fa fa-music fa-2x"></i>
-                <span class="nav-text">Library
+                <span class="nav-text"><%- username  + "'s "-%> Library
                 </span>
-                <form action="/" method="GET" class="hidden"> <!--TODO: update action-->
+                <form action="/library" method="GET" class="hidden"> <!--TODO: update action-->
                     <input type="submit" />
                 </form>
             </a>
         </li>
-        <% if(username) { %>
         <li>
             <a href="#" onclick="triggerLink(this)">
                 <i class="fa fa-cogs fa-2x"></i>

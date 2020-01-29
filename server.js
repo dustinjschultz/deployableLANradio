@@ -152,6 +152,10 @@ app.get('/join_room', (req, res) => {
     goTo(req, res, '/public/views/room.html', {room_id: req.query.room_id})
 })
 
+app.get('/library', (req, res) => {
+    goTo(req, res, '/public/views/library.html')
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
