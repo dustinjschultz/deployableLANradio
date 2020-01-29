@@ -13,7 +13,8 @@
         <%- include(viewname, {
             username: username, 
             server_utils: server_utils, 
-            rooms: locals.rooms ? rooms : null <!--only pass `rooms` if it exists, check existence with `locals.rooms` -->
+            rooms: locals.rooms ? rooms : null, <!--only pass `rooms` if it exists, check existence with `locals.rooms` -->
+            options: locals.options ? options : null <!--only pass `options` if it exists, check existence with `locals.options` -->
         }); -%>
     </div>
 
@@ -24,6 +25,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src ="../public/scripts/general_client.js"></script>
     <script src ="../public/scripts/infocard.js"></script>
+    <script src ="../public/scripts/room.js"></script>
+
 
 </body>
 
