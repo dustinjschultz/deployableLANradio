@@ -20,6 +20,9 @@ const generalScripts = require('./server_scripts/general')
 
 const { User } = require('./models/user')
 const { Room } = require('./models/room')
+const { Library } = require('./models/library')
+const { Song } = require('./models/song')
+
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -95,11 +98,15 @@ app.post('/register', (req, res) => {
         username: req.body.username,
         password: req.body.password
     })
+    const library = new Library({
+        owner: user._id
+    })
     user.save((err, response) => {
         if (err) {
             res.status(400).send(err)
         }
         else {
+            library.save()
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
             goToIndex(req, res)
