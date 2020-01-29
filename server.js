@@ -156,6 +156,20 @@ app.get('/library', (req, res) => {
     goTo(req, res, '/public/views/library.html')
 })
 
+app.get('/newitem', (req, res) => {
+    goTo(req, res, '/public/views/newitem.html')
+})
+
+app.post('/new-song', (req, res) => {
+    console.log('new-song')
+    goTo(req, res, '/public/views/library.html')
+})
+
+app.post('/new-playlist', (req, res) => {
+    console.log('new-playlist')
+    goTo(req, res, '/public/views/library.html')
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
