@@ -4,7 +4,7 @@
     <button class="infocard-button-plus" onclick="toggleDropdown(this)">+</button>
     <button class="infocard-button-minus hidden" onclick="toggleDropdown(this)">-</button>
     <form action="/join_room" method="GET" style="display: inline-block">
-        <input type="hidden" class="hidden" value="<%- card_data %>" name="room_id"/>
+        <input type="hidden" class="hidden" value="<%- room_id %>" name="room_id"/>
         <button type="submit">Join</button>
     </form>
     <div class="infocard-dropdown hidden">
