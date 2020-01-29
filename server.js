@@ -142,11 +142,15 @@ app.get('/guest', (req, res) => {
         username: 'guest' + Math.floor(Math.random() * 1000000000),
         password: 'password'
     })
+    const library = new Library({
+        owner: user._id
+    })
     user.save((err, response) => {
         if (err) {
             res.status(400).send(err)
         }
         else {
+            library.save()
             req.session.uid = user._id
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
