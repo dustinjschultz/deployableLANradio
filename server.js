@@ -148,6 +148,10 @@ app.get('/guest', (req, res) => {
     })
 }) 
 
+app.get('/join_room', (req, res) => {
+    goTo(req, res, '/public/views/room.html', {room_id: req.query.room_id})
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
@@ -160,12 +164,13 @@ function goToIndex(req, res) {
     })
 }
 
-function goTo(req, res, destination) {
+function goTo(req, res, destination, options) {
     res.render(__dirname + '/public/views/generallayout.ejs', {
         uid: req.session.uid,
         username: req.session.username,
         server_utils: generalScripts,
-        viewname: __dirname + destination
+        viewname: __dirname + destination,
+        options: options
     })
 }
 

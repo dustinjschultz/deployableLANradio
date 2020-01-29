@@ -9,11 +9,9 @@
 
 <div class="rooms-container">
     <% for(var i = 0; i < rooms.length; i++) { %>
-    <%- include('../views/partials/infocard', {card_main_text: rooms[i].name, card_dropdown_text: rooms[i].description}) -%>
+    <%- include('../views/partials/infocard', {card_main_text: rooms[i].name, card_dropdown_text: rooms[i].description, room_id: rooms[i]._id}) -%>
     <% } %>
 </div>
-
-<button class="testing-button" onclick="console.log('<%= server_utils.linkedJS.linkedJSfunc() %>')">+</button>
 
 <%
 <!--Example of logging data after promise-->
