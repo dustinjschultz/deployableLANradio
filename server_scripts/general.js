@@ -25,6 +25,15 @@ function getLibrary(userid) {
     })
 }
 
+function identifySongType(link) {
+    if (link.includes('youtube')) { //TODO: make this detect more yt links
+        return 'youtube'
+    }
+    else {
+        return 'unknown'
+    }
+}
+
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -35,5 +44,6 @@ module.exports = {
     generalTestFunc,
     getRooms,
     getLibrary,
+    identifySongType,
     linkedJS
 }

@@ -174,11 +174,30 @@ app.get('/newitem', (req, res) => {
 })
 
 app.post('/new-song', (req, res) => {
-    console.log('new-song')
-    goTo(req, res, '/public/views/library.html')
+    var link = req.body.link
+    var type = generalScripts.identifySongType(link)
+    const song = new Song({
+        format: type,
+        link: link
+    })
+    song.save((err, response) => {
+        if (err) {
+            res.status(400).send(err)
+        }
+        else {
+            Library.findOne({ 'owner': req.session.uid }, (err, library) => {
+                library.songs.push(song)
+                library.save()
+                generalScripts.getLibrary(req.session.uid).then(function (library) {
+                    goTo(req, res, '/public/views/library.html', { library: library })
+                })
+            })
+        }
+    })
 })
 
 app.post('/new-playlist', (req, res) => {
+    //TOOD:
     console.log('new-playlist')
     goTo(req, res, '/public/views/library.html')
 })
