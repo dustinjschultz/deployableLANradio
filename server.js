@@ -148,8 +148,8 @@ app.get('/guest', (req, res) => {
     })
 }) 
 
-app.post('/join_room', (req, res) => {
-    goTo(req, res, '/public/views/room.html', {room_id: req.body.room_id})
+app.get('/join_room', (req, res) => {
+    goTo(req, res, '/public/views/room.html', {room_id: req.query.room_id})
 })
 
 function goToIndex(req, res) {
