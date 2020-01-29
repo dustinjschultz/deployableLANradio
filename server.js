@@ -164,7 +164,9 @@ app.get('/join_room', (req, res) => {
 })
 
 app.get('/library', (req, res) => {
-    goTo(req, res, '/public/views/library.html')
+    generalScripts.getLibrary(req.session.uid).then(function (library) {
+        goTo(req, res, '/public/views/library.html', {library: library})
+    })
 })
 
 app.get('/newitem', (req, res) => {
