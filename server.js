@@ -87,8 +87,8 @@ app.post('/createroom', (req, res) => {
             res.status(400).send(err)
         }
         else {
-            //TODO: update this to go to new room
-            goToIndex(req, res)
+            //functionally slightly different from /join_room since this is not a GET request, URL will be different
+            goTo(req, res, '/public/views/room.html', { room_id: room._id }) 
         }
     })
 })
