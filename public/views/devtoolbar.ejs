@@ -1,6 +1,11 @@
 <div class="dev-toolbar">
     <div class="dev-toolbar-content">
         DEV
+        <% if(!username) { %>
+        <form action="/dev_login" method="GET">
+            <button type="submit">Dev Login</button>
+        </form>
+        <% } %>
     </div>
 </div>
 
