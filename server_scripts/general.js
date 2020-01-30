@@ -19,7 +19,7 @@ function getRooms() {
 
 function getLibrary(userid) {
     return new Promise(function (resolve, reject) {
-        Library.find({owner: userid}, (err, library) => {
+        Library.findOne({owner: userid}, (err, library) => {
             return resolve(library)
         })
     })

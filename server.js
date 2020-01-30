@@ -178,19 +178,19 @@ app.post('/new-song', (req, res) => {
     var type = generalScripts.identifySongType(link)
     const song = new Song({
         format: type,
-        link: link
+        link: link,
+        name: req.body.name,
+        notes: req.body.notes
     })
     song.save((err, response) => {
         if (err) {
             res.status(400).send(err)
         }
         else {
-            Library.findOne({ 'owner': req.session.uid }, (err, library) => {
+            generalScripts.getLibrary(req.session.uid).then(function (library) {
                 library.songs.push(song)
                 library.save()
-                generalScripts.getLibrary(req.session.uid).then(function (library) {
-                    goTo(req, res, '/public/views/library.html', { library: library })
-                })
+                goTo(req, res, '/public/views/library.html', {library: library })
             })
         }
     })
