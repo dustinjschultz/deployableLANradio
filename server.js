@@ -94,91 +94,19 @@ app.post('/createroom', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    const user = new User({
-        username: req.body.username,
-        password: req.body.password
-    })
-    const library = new Library({
-        owner: user._id
-    })
-    user.save((err, response) => {
-        if (err) {
-            res.status(400).send(err)
-        }
-        else {
-            library.save()
-            req.session.username = user.username
-            req.session.save() //need to manually save if nothing is sent back
-            goToIndex(req, res)
-        }
-    })
+    register(req, res, req.body.username, req.body.password)
 }) 
 
 app.post('/login', (req, res) => {
-    User.findOne({ 'username': req.body.username }, (err, user) => {
-        if (!user) {
-            //TODO: unsuccessful login
-            res.json({ message: 'Login failed, user not found' })
-        }
-        else {
-            user.comparePassword(req.body.password, (err, isMatch) => {
-                if (err) {
-                    throw err
-                }
-                if (!isMatch) {
-                    return res.status(400).json({message: 'Wrong password'})
-                }
-                req.session.uid = user._id
-                req.session.username = user.username
-                req.session.save() //need to manually save if nothing is sent back
-                goToIndex(req, res)
-            })
-        }
-    })
+    login(req, res, req.body.username, req.body.password)
 }) 
 
 app.get('/dev_login', (req, res) => {
-    User.findOne({ 'username': 'dev' }, (err, user) => {
-        if (!user) {
-            res.json({ message: 'Dev not found' })
-        }
-        else {
-            user.comparePassword('password', (err, isMatch) => {
-                if (err) {
-                    throw err
-                }
-                if (!isMatch) {
-                    return res.status(400).json({ message: 'Wrong password' })
-                }
-                req.session.uid = user._id
-                req.session.username = user.username
-                req.session.save() //need to manually save if nothing is sent back
-                goToIndex(req, res)
-            })
-        }
-    })
+    login(req, res, 'dev', 'password')
 }) 
 
 app.get('/guest', (req, res) => {
-    const user = new User({
-        username: 'guest' + Math.floor(Math.random() * 1000000000),
-        password: 'password'
-    })
-    const library = new Library({
-        owner: user._id
-    })
-    user.save((err, response) => {
-        if (err) {
-            res.status(400).send(err)
-        }
-        else {
-            library.save()
-            req.session.uid = user._id
-            req.session.username = user.username
-            req.session.save() //need to manually save if nothing is sent back
-            goToIndex(req, res)
-        }
-    })
+    register(req, res, 'guest' + Math.floor(Math.random() * 1000000000), 'password')
 }) 
 
 app.get('/join_room', (req, res) => {
@@ -246,6 +174,49 @@ function goTo(req, res, destination, options) {
     })
 }
 
+function register(req, res, username, password) {
+    const user = new User({
+        username: username,
+        password: password
+    })
+    const library = new Library({
+        owner: user._id
+    })
+    user.save((err, response) => {
+        if (err) {
+            res.status(400).send(err)
+        }
+        else {
+            library.save()
+            req.session.uid = user._id
+            req.session.username = user.username
+            req.session.save() //need to manually save if nothing is sent back
+            goToIndex(req, res)
+        }
+    })
+}
+
+function login(req, res, username, password) {
+    User.findOne({ 'username': username }, (err, user) => {
+        if (!user) {
+            res.json({ message: 'Dev not found' })
+        }
+        else {
+            user.comparePassword(password, (err, isMatch) => {
+                if (err) {
+                    throw err
+                }
+                if (!isMatch) {
+                    return res.status(400).json({ message: 'Wrong password' })
+                }
+                req.session.uid = user._id
+                req.session.username = user.username
+                req.session.save() //need to manually save if nothing is sent back
+                goToIndex(req, res)
+            })
+        }
+    })
+}
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
   console.log('addr: '+ add + ':' + port);
