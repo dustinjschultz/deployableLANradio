@@ -20,6 +20,9 @@ const generalScripts = require('./server_scripts/general')
 
 const { User } = require('./models/user')
 const { Room } = require('./models/room')
+const { Library } = require('./models/library')
+const { Song } = require('./models/song')
+
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -95,11 +98,15 @@ app.post('/register', (req, res) => {
         username: req.body.username,
         password: req.body.password
     })
+    const library = new Library({
+        owner: user._id
+    })
     user.save((err, response) => {
         if (err) {
             res.status(400).send(err)
         }
         else {
+            library.save()
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
             goToIndex(req, res)
@@ -135,11 +142,15 @@ app.get('/guest', (req, res) => {
         username: 'guest' + Math.floor(Math.random() * 1000000000),
         password: 'password'
     })
+    const library = new Library({
+        owner: user._id
+    })
     user.save((err, response) => {
         if (err) {
             res.status(400).send(err)
         }
         else {
+            library.save()
             req.session.uid = user._id
             req.session.username = user.username
             req.session.save() //need to manually save if nothing is sent back
@@ -153,7 +164,9 @@ app.get('/join_room', (req, res) => {
 })
 
 app.get('/library', (req, res) => {
-    goTo(req, res, '/public/views/library.html')
+    generalScripts.getLibrary(req.session.uid).then(function (library) {
+        goTo(req, res, '/public/views/library.html', {library: library})
+    })
 })
 
 app.get('/newitem', (req, res) => {
@@ -161,11 +174,30 @@ app.get('/newitem', (req, res) => {
 })
 
 app.post('/new-song', (req, res) => {
-    console.log('new-song')
-    goTo(req, res, '/public/views/library.html')
+    var link = req.body.link
+    var type = generalScripts.identifySongType(link)
+    const song = new Song({
+        format: type,
+        link: link,
+        name: req.body.name,
+        notes: req.body.notes
+    })
+    song.save((err, response) => {
+        if (err) {
+            res.status(400).send(err)
+        }
+        else {
+            generalScripts.getLibrary(req.session.uid).then(function (library) {
+                library.songs.push(song)
+                library.save()
+                goTo(req, res, '/public/views/library.html', {library: library })
+            })
+        }
+    })
 })
 
 app.post('/new-playlist', (req, res) => {
+    //TOOD:
     console.log('new-playlist')
     goTo(req, res, '/public/views/library.html')
 })
