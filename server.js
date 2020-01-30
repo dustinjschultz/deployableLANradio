@@ -137,6 +137,28 @@ app.post('/login', (req, res) => {
     })
 }) 
 
+app.get('/dev_login', (req, res) => {
+    User.findOne({ 'username': 'dev' }, (err, user) => {
+        if (!user) {
+            res.json({ message: 'Dev not found' })
+        }
+        else {
+            user.comparePassword('password', (err, isMatch) => {
+                if (err) {
+                    throw err
+                }
+                if (!isMatch) {
+                    return res.status(400).json({ message: 'Wrong password' })
+                }
+                req.session.uid = user._id
+                req.session.username = user.username
+                req.session.save() //need to manually save if nothing is sent back
+                goToIndex(req, res)
+            })
+        }
+    })
+}) 
+
 app.get('/guest', (req, res) => {
     const user = new User({
         username: 'guest' + Math.floor(Math.random() * 1000000000),
