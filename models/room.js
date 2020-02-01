@@ -20,10 +20,10 @@ const roomSchema = mongoose.Schema({
     //    type: ObjectID,
     //    ref: 'Play'
     //},
-    //currentPlay: {
-    //    type: ObjectID,
-    //    ref: 'Play'
-    //},
+    currentPlay: {
+        type: ObjectID,
+        ref: 'Play'
+    },
     //everyoneDJ: {
     //    type: boolean
     //},
