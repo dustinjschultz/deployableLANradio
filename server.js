@@ -157,6 +157,12 @@ app.post('/new-playlist', (req, res) => {
     goTo(req, res, '/public/views/library.html')
 })
 
+app.post('/submit-song', (req, res) => {
+    //TOOD:
+    console.log('/submit-song')
+    console.log(req.body.songid)
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
