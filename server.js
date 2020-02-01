@@ -110,7 +110,12 @@ app.get('/guest', (req, res) => {
 }) 
 
 app.get('/join_room', (req, res) => {
-    goTo(req, res, '/public/views/room.html', {room_id: req.query.room_id})
+    generalScripts.getLibrary(req.session.uid).then(function (library) {
+        generalScripts.getLibraryContents(library).then(function (songs) {
+            goTo(req, res, '/public/views/room.html', { room_id: req.query.room_id, songs: songs, library: library._id })
+
+        })
+    })
 })
 
 app.get('/library', (req, res) => {

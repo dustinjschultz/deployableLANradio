@@ -1,5 +1,6 @@
 ﻿
 const mongoose = require('mongoose')
+const ObjectID = require('mongodb').ObjectID
 
 const { User } = require('../models/user')
 const { Room } = require('../models/room')
@@ -25,6 +26,21 @@ function getLibrary(userid) {
     })
 }
 
+function getLibraryContents(library) {
+    return new Promise(function (resolve, reject) {
+
+        //TODO: add playlists
+        var songIdsStrings = library.songs
+        var songIds = []
+        for (var i = 0; i < songIdsStrings.length; i++) {
+            songIds.push(ObjectID(songIdsStrings[i]))
+        }
+        Song.find({ _id: songIds }, (err, songs) => {
+            return resolve(songs)
+        })
+    })
+}
+
 function identifySongType(link) {
     if (link.includes('youtube')) { //TODO: make this detect more yt links
         return 'youtube'
@@ -45,5 +61,6 @@ module.exports = {
     getRooms,
     getLibrary,
     identifySongType,
+    getLibraryContents,
     linkedJS
 }

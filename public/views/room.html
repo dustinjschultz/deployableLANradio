@@ -3,4 +3,11 @@
     <input type="hidden" class="room_id hidden" value="<%- options.room_id %>" name="room_id" />
 
     I AM A ROOM
+
+    <select>
+        <% for(var i = 0; i < options.songs.length; i++) { %>
+        <option value="<%- options.songs[i]._id -%>"><%- options.songs[i].name -%></option> 
+        <% } %>
+    </select>
+    
 </div>
