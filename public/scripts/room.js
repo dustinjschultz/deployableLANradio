@@ -2,12 +2,12 @@
 $(document).ready(function () {
     $("form#submit-song").on('submit', function (e) {
         e.preventDefault();
-        var songid = $('select[name=songid]').val();
-        console.log('songid: ' + songid);
+        var songid = $('select[name=song_id]').val();
+        var roomid = $('input[name=room_id]').val();
         $.ajax({
             type: 'post',
             url: '/submit-song',
-            data: { 'songid': songid },
+            data: { 'songid': songid, 'roomid': roomid },
             dataType: 'json'
         })
     })

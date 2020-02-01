@@ -22,6 +22,7 @@ const { User } = require('./models/user')
 const { Room } = require('./models/room')
 const { Library } = require('./models/library')
 const { Song } = require('./models/song')
+const { Play } = require('./models/play')
 
 
 app.use(bodyParser.urlencoded({
@@ -158,9 +159,20 @@ app.post('/new-playlist', (req, res) => {
 })
 
 app.post('/submit-song', (req, res) => {
-    //TOOD:
-    console.log('/submit-song')
-    console.log(req.body.songid)
+    const play = new Play({
+        songid: req.body.songid,
+        submitterId: req.session.uid
+    })
+    play.save((err, response) => {
+        if (err) {
+            res.status(400).send(err)
+        }
+        else {
+            Room.findOne({ _id: ObjectID(req.body.roomid) }, (err, room) => {
+                setPlays(room, play)
+            })
+        }
+    })
 })
 
 function goToIndex(req, res) {
@@ -227,6 +239,12 @@ function login(req, res, username, password) {
             })
         }
     })
+}
+
+function setPlays(room, play) {
+    //TODO: make this interact with other plays in room
+    room.currentPlay = play;
+    room.save()
 }
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {

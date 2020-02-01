@@ -5,7 +5,7 @@
     I AM A ROOM
 
     <form action="/submit-song" method="POST" id="submit-song">
-        <select name="songid">
+        <select name="song_id">
             <% for(var i = 0; i < options.songs.length; i++) { %>
             <option value="<%- options.songs[i]._id -%>"><%- options.songs[i].name -%></option>
             <% } %>
