@@ -4,7 +4,10 @@
 
     I AM A ROOM
 
-    <%- options.songs %>
-    <%- options.library %>
-
+    <select>
+        <% for(var i = 0; i < options.songs.length; i++) { %>
+        <option value="<%- options.songs[i]._id -%>"><%- options.songs[i].name -%></option> 
+        <% } %>
+    </select>
+    
 </div>
