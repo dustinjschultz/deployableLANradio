@@ -16,11 +16,15 @@ const roomSchema = mongoose.Schema({
         type: ObjectID,
         ref: 'User'
     },
-    //firstPlay: {
-    //    type: ObjectID,
-    //    ref: 'Play'
-    //},
+    firstPlay: {
+        type: ObjectID,
+        ref: 'Play'
+    },
     currentPlay: {
+        type: ObjectID,
+        ref: 'Play'
+    },
+    deepestPlay: {
         type: ObjectID,
         ref: 'Play'
     },

@@ -67,31 +67,41 @@ app.get('/newroom_dialog', (req, res) => {
 })
 
 app.post('/createroom', (req, res) => {
-    const room = new Room({
-        name: req.body.room_name,
-        description: req.body.room_description,
-        owner: ObjectID(req.session.uid)
-    })
+    getInitPlay().then(function (initPlay) {
+        const room = new Room({
+            name: req.body.room_name,
+            description: req.body.room_description,
+            owner: ObjectID(req.session.uid),
+            firstPlay: initPlay,
+            currentPlay: initPlay,
+            deepestPlay: initPlay
+        })
 
-    User.findOne({ _id: ObjectID(req.session.uid) }, (err, user) => {
-        if (!user) {
-            res.json({ message: 'You need to be logged in to make a room' })
-        }
-        else {
-            user.rooms.push(room)
-            user.save()
-        }
-    })
+        User.findOne({ _id: ObjectID(req.session.uid) }, (err, user) => {
+            if (!user) {
+                res.json({ message: 'You need to be logged in to make a room' })
+            }
+            else {
+                user.rooms.push(room)
+                user.save()
+            }
+        })
 
-    room.save((err, response) => {
-        if (err) {
-            res.status(400).send(err)
-        }
-        else {
-            //functionally slightly different from /join_room since this is not a GET request, URL will be different
-            goTo(req, res, '/public/views/room.html', { room_id: room._id }) 
-        }
+        room.save((err, response) => {
+            if (err) {
+                res.status(400).send(err)
+            }
+            else {
+                //functionally slightly different from /join_room since this is not a GET request, URL will be different
+                generalScripts.getLibrary(req.session.uid).then(function (library) {
+                    generalScripts.getLibraryContents(library).then(function (songs) {
+                        goTo(req, res, '/public/views/room.html', { room_id: req.query.room_id, songs: songs, library: library._id })
+                    })
+                })
+            }
+        })
     })
+    
 })
 
 app.post('/register', (req, res) => {
@@ -114,7 +124,6 @@ app.get('/join_room', (req, res) => {
     generalScripts.getLibrary(req.session.uid).then(function (library) {
         generalScripts.getLibraryContents(library).then(function (songs) {
             goTo(req, res, '/public/views/room.html', { room_id: req.query.room_id, songs: songs, library: library._id })
-
         })
     })
 })
@@ -248,6 +257,37 @@ function setPlays(room, play) {
     //TODO: make this interact with other plays in room
     room.currentPlay = play;
     room.save()
+}
+
+function getInitPlay() {
+    return new Promise(function (resolve, reject) {
+        Song.findOne({ name: 'INIT SONG' }, (err, song) => {
+            if (!song) {
+                res.json({ message: 'Could not find the INIT SONG' })
+            }
+            else {
+                User.findOne({ 'username': 'INIT SONG HOLDER' }, (err, user) => {
+                    if (!user) {
+                        res.json({ message: 'INIT SONG HOLDER not found' })
+                    }
+                    else {
+                        const play = new Play({
+                            songid: song._id,
+                            submitterId: user._id
+                        })
+                        play.save((err, response) => {
+                            if (err) {
+                                res.status(400).send(err)
+                            }
+                            else {
+                                return resolve(play)
+                            }
+                        })
+                    }
+                })
+            }
+        })
+    })
 }
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
