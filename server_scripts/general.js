@@ -64,7 +64,6 @@ function getSongDuration(type, link) {
             return null;
         }
     })
-    
 }
 
 function extractYoutubeId(link) {
