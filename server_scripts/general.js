@@ -1,6 +1,7 @@
 ﻿
 const mongoose = require('mongoose')
 const ObjectID = require('mongodb').ObjectID
+const youtubeInfo = require('youtube-info')
 
 const { User } = require('../models/user')
 const { Room } = require('../models/room')
@@ -50,6 +51,33 @@ function identifySongType(link) {
     }
 }
 
+function getSongDuration(type, link) {
+    return new Promise(function (resolve, reject) {
+        if (type == 'youtube') {
+            id = extractYoutubeId(link)
+            youtubeInfo(id, function (err, videoInfo) {
+                return resolve(videoInfo.duration)
+            })
+        }
+        else {
+            //TODO: more song types
+            return null;
+        }
+    })
+    
+}
+
+function extractYoutubeId(link) {
+    var start = link.indexOf("?v=") + 3;
+    var end = link.indexOf("&");
+    if (end > 0) {
+        return link.substring(start, end)
+    }
+    else {
+        return link.substring(start)
+    }
+}
+
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -62,5 +90,6 @@ module.exports = {
     getLibrary,
     identifySongType,
     getLibraryContents,
+    getSongDuration,
     linkedJS
 }

@@ -17,7 +17,9 @@ const songSchema = mongoose.Schema({
     },
     notes: {
         type: String,
-        required: true,
+    },
+    duration: {
+        type: Number
     }
     //tags: [{
     //    type: ObjectID,

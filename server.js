@@ -132,23 +132,26 @@ app.get('/newitem', (req, res) => {
 app.post('/new-song', (req, res) => {
     var link = req.body.link
     var type = generalScripts.identifySongType(link)
-    const song = new Song({
-        format: type,
-        link: link,
-        name: req.body.name,
-        notes: req.body.notes
-    })
-    song.save((err, response) => {
-        if (err) {
-            res.status(400).send(err)
-        }
-        else {
-            generalScripts.getLibrary(req.session.uid).then(function (library) {
-                library.songs.push(song)
-                library.save()
-                goTo(req, res, '/public/views/library.html', {library: library })
-            })
-        }
+    generalScripts.getSongDuration('youtube', link).then(function (duration) {
+        const song = new Song({
+            format: type,
+            link: link,
+            name: req.body.name,
+            notes: req.body.notes,
+            duration: duration
+        })
+        song.save((err, response) => {
+            if (err) {
+                res.status(400).send(err)
+            }
+            else {
+                generalScripts.getLibrary(req.session.uid).then(function (library) {
+                    library.songs.push(song)
+                    library.save()
+                    goTo(req, res, '/public/views/library.html', { library: library })
+                })
+            }
+        })
     })
 })
 
