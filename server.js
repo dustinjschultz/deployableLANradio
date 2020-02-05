@@ -68,12 +68,13 @@ app.get('/newroom_dialog', (req, res) => {
 
 app.post('/createroom', (req, res) => {
     getInitPlay().then(function (initPlay) {
-        console.log(initPlay)
-        //TODO: use initPlay
         const room = new Room({
             name: req.body.room_name,
             description: req.body.room_description,
-            owner: ObjectID(req.session.uid)
+            owner: ObjectID(req.session.uid),
+            firstPlay: initPlay,
+            currentPlay: initPlay,
+            deepestPlay: initPlay
         })
 
         User.findOne({ _id: ObjectID(req.session.uid) }, (err, user) => {
