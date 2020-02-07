@@ -123,7 +123,11 @@ app.get('/guest', (req, res) => {
 app.get('/join_room', (req, res) => {
     generalScripts.getLibrary(req.session.uid).then(function (library) {
         generalScripts.getLibraryContents(library).then(function (songs) {
-            goTo(req, res, '/public/views/room.html', { room_id: req.query.room_id, songs: songs, library: library._id })
+            goTo(req, res, '/public/views/room.html', {
+                room_id: req.query.room_id,
+                songs: songs,
+                library: library ? library._id : null
+            })
         })
     })
 })
@@ -234,7 +238,7 @@ function register(req, res, username, password) {
 function login(req, res, username, password) {
     User.findOne({ 'username': username }, (err, user) => {
         if (!user) {
-            res.json({ message: 'Dev not found' })
+            res.json({ message: 'User not found' })
         }
         else {
             user.comparePassword(password, (err, isMatch) => {
