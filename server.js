@@ -95,7 +95,7 @@ app.post('/createroom', (req, res) => {
                 //functionally slightly different from /join_room since this is not a GET request, URL will be different
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     generalScripts.getLibraryContents(library).then(function (songs) {
-                        goTo(req, res, '/public/views/room.html', { room_id: req.query.room_id, songs: songs, library: library._id })
+                        goTo(req, res, '/public/views/room.html', { room_id: room._id, songs: songs, library: library._id })
                     })
                 })
             }
@@ -262,18 +262,7 @@ function appendPlayToRoom(play, room) {
         room.save()
         play.save()
         oldDeepestPlay.save()
-        console.log(play.prevPlayId)
     })
-
-
-    //room.deepestPlay.nextPlayId = play._id
-    //play.prevPlayId = room.deepestPlay._id
-    //room.deepestPlay = play
-    //room.save()
-    //play.save()
-    //play.prevPlayId.save()
-    //console.log(play.prevPlayId)
-    //TODO: preform shift if necessary
 }
 
 function getInitPlay() {
