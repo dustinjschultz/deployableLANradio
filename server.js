@@ -181,7 +181,7 @@ app.post('/submit-song', (req, res) => {
         }
         else {
             Room.findOne({ _id: ObjectID(req.body.roomid) }, (err, room) => {
-                setPlays(room, play)
+                appendPlayToRoom(play, room)
             })
         }
     })
@@ -253,11 +253,15 @@ function login(req, res, username, password) {
     })
 }
 
-function setPlays(room, play) {
+function appendPlayToRoom(play, room) {
+    //TODO: this gets ID's, not objects, need to get the objects to update them
     room.deepestPlay.nextPlayId = play._id
     play.prevPlayId = room.deepestPlay._id
     room.deepestPlay = play
     room.save()
+    play.save()
+    play.prevPlayId.save()
+    console.log(play.prevPlayId)
     //TODO: preform shift if necessary
 }
 
