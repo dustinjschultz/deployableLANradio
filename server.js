@@ -254,7 +254,6 @@ function login(req, res, username, password) {
 }
 
 function appendPlayToRoom(play, room) {
-    //TODO: this gets ID's, not objects, need to get the objects to update them
     Play.findOne({ _id: ObjectID(room.deepestPlay) }, (err, oldDeepestPlay) => {
         oldDeepestPlay.nextPlayId = play._id
         play.prevPlayId = oldDeepestPlay._id
