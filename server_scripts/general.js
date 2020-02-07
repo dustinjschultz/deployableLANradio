@@ -29,20 +29,19 @@ function getLibrary(userid) {
 
 function getLibraryContents(library) {
     return new Promise(function (resolve, reject) {
-        //TODO: add playlists
-        if (library) {
-            var songIdsStrings = library.songs
-            var songIds = []
-            for (var i = 0; i < songIdsStrings.length; i++) {
-                songIds.push(ObjectID(songIdsStrings[i]))
-            }
-            Song.find({ _id: songIds }, (err, songs) => {
-                return resolve(songs)
-            })
-        }
-        else {
+        if (!library) {
             return resolve(null)
         }
+
+        //TODO: add playlists
+        var songIdsStrings = library.songs
+        var songIds = []
+        for (var i = 0; i < songIdsStrings.length; i++) {
+            songIds.push(ObjectID(songIdsStrings[i]))
+        }
+        Song.find({ _id: songIds }, (err, songs) => {
+            return resolve(songs)
+        })
     })
 }
 
