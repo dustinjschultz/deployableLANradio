@@ -254,21 +254,11 @@ function login(req, res, username, password) {
 }
 
 function setPlays(room, play) {
-
-    if (typeof room.currentPlay.nextPlayId == 'undefined') {
-        //if the current play has no next...
-        room.currentPlay.nextPlayId = play._id
-        play.prevPlayId = room.currentPlay._id
-    }
-    else {
-        //if the current play has a next...
-        room.deepestPlay.nextPlayId = play._id
-        play.prevPlayId = room.deepestPlay._id
-    }
-
+    room.deepestPlay.nextPlayId = play._id
+    play.prevPlayId = room.deepestPlay._id
     room.deepestPlay = play
     room.save()
-    //oh god this will take lots of testing lol
+    //TODO: preform shift if necessary
 }
 
 function getInitPlay() {
