@@ -29,6 +29,9 @@ function getLibrary(userid) {
 
 function getLibraryContents(library) {
     return new Promise(function (resolve, reject) {
+        if (!library) {
+            return resolve(null)
+        }
 
         //TODO: add playlists
         var songIdsStrings = library.songs
