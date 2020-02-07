@@ -1,5 +1,8 @@
 # deployableLANradio
 My Honors Capstone Project
 
-Test commit
-Test branch
+LANDR is a LAN Deployable Radio 
+
+Initialization: 
+Setup the database using
+npm run initdb
