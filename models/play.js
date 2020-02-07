@@ -11,14 +11,14 @@ const playSchema = mongoose.Schema({
         type: ObjectID,
         ref: 'User'
     },
-    //prevSongId: {
-    //    type: ObjectId,
-    //    ref: 'Play'
-    //},
-    //nextSongId: {
-    //    type: ObjectId,
-    //    ref: 'Play'
-    //},
+    prevPlayId: {
+        type: ObjectID,
+        ref: 'Play'
+    },
+    nextPlayId: {
+        type: ObjectID,
+        ref: 'Play'
+    },
     //skipped: {
     //    type: Boolean
     //},

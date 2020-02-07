@@ -95,7 +95,7 @@ app.post('/createroom', (req, res) => {
                 //functionally slightly different from /join_room since this is not a GET request, URL will be different
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     generalScripts.getLibraryContents(library).then(function (songs) {
-                        goTo(req, res, '/public/views/room.html', { room_id: req.query.room_id, songs: songs, library: library._id })
+                        goTo(req, res, '/public/views/room.html', { room_id: room._id, songs: songs, library: library._id })
                     })
                 })
             }
@@ -181,7 +181,7 @@ app.post('/submit-song', (req, res) => {
         }
         else {
             Room.findOne({ _id: ObjectID(req.body.roomid) }, (err, room) => {
-                setPlays(room, play)
+                appendPlayToRoom(play, room)
             })
         }
     })
@@ -253,10 +253,15 @@ function login(req, res, username, password) {
     })
 }
 
-function setPlays(room, play) {
-    //TODO: make this interact with other plays in room
-    room.currentPlay = play;
-    room.save()
+function appendPlayToRoom(play, room) {
+    Play.findOne({ _id: ObjectID(room.deepestPlay) }, (err, oldDeepestPlay) => {
+        oldDeepestPlay.nextPlayId = play._id
+        play.prevPlayId = oldDeepestPlay._id
+        room.deepestPlay = play
+        room.save()
+        play.save()
+        oldDeepestPlay.save()
+    })
 }
 
 function getInitPlay() {
