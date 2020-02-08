@@ -22,9 +22,9 @@ const playSchema = mongoose.Schema({
     //skipped: {
     //    type: Boolean
     //},
-    //startTime: {
-    //    type: Date
-    //},
+    startTime: {
+        type: Date
+    },
     //ratingsSubmitted: {
     //    type: Number
     //},

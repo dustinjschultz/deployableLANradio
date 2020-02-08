@@ -265,6 +265,11 @@ function appendPlayToRoom(play, room) {
         room.save()
         play.save()
         oldDeepestPlay.save()
+        checkRoomQueueShift(room).then(function (result) {
+            if (result) {
+                shiftRoomQueue(room)
+            }
+        })
     })
 }
 
@@ -282,7 +287,8 @@ function getInitPlay() {
                     else {
                         const play = new Play({
                             songid: song._id,
-                            submitterId: user._id
+                            submitterId: user._id,
+                            startTime: new Date(Date.now()).toISOString()
                         })
                         play.save((err, response) => {
                             if (err) {
@@ -295,6 +301,34 @@ function getInitPlay() {
                     }
                 })
             }
+        })
+    })
+}
+
+function shiftRoomQueue(room) {
+    Play.findOne({ _id: ObjectID(room.currentPlay) }, (err, curPlay) => {
+        Play.findOne({ _id: ObjectID(curPlay.nextPlayId) }, (err, nextPlay) => {
+            nextPlay.startTime = new Date(Date.now()).toISOString()
+            room.currentPlay = nextPlay._id
+            nextPlay.save()
+            room.save()
+        })
+    })
+}
+
+function checkRoomQueueShift(room) {
+    return new Promise(function (resolve, reject) {
+        Play.findOne({ _id: ObjectID(room.currentPlay) }, (err, curPlay) => {
+            Song.findOne({ _id: ObjectID(curPlay.songid) }, (err, song) => {
+                var time = curPlay.startTime
+                time.setSeconds(time.getSeconds() + song.duration)
+                if (time <= Date.now()) {
+                    return resolve(true)
+                }
+                else {
+                    return resolve(false)
+                }
+            })
         })
     })
 }
