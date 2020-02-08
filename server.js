@@ -192,8 +192,22 @@ app.post('/submit-song', (req, res) => {
 })
 
 app.post('/get-room-update', (req, res) => {
-    console.log('get-room-update for ' + req.body.roomid)
-    res.status(200).send({ myString: 'response from the server lmao'})
+    generalScripts.getRoom(req.body.roomid).then(function (room) {
+        generalScripts.getPlay(room.currentPlay).then(function (curPlay) {
+
+            if (typeof curPlay.nextPlayId !== 'undefined') { //if there's a next play set
+                generalScripts.getPlay(curPlay.nextPlayId).then(function (nextPlay) {
+                    res.status(200).send({ curPlay: curPlay, nextPlay: nextPlay })
+                })
+            }
+            else {
+                res.status(200).send({ curPlay: curPlay, nextPlay: null })
+            }
+
+        })
+    })
+
+    //res.status(200).send({ myString: 'response from the server lmao'})
 })
 
 
@@ -204,7 +218,8 @@ function goToIndex(req, res) {
             uid: req.session.uid,
             username: req.session.username,
             server_utils: generalScripts,
-            viewname: __dirname + '/public/views/index.html'
+            viewname: __dirname + '/public/views/index.html',
+            options: null
         })
     })
 }

@@ -92,7 +92,7 @@ function getPlay(idString) {
 function getRoom(idString) {
     return new Promise(function (resolve, reject) {
         Room.findOne({ _id: ObjectID(idString) }, (err, room) => {
-            return resolve(play)
+            return resolve(room)
         })
     })
 }

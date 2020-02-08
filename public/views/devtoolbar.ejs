@@ -6,6 +6,9 @@
             <button type="submit">Dev Login</button>
         </form>
         <% } %>
+        <% if(options && options.room_id) { %>
+        <button onclick="loadQueue('<%- options.room_id %>')">loadQueue()</button>
+        <% } %>
     </div>
 </div>
 
