@@ -265,7 +265,9 @@ function appendPlayToRoom(play, room) {
         room.save()
         play.save()
         oldDeepestPlay.save()
-        checkRoomQueueShift(room) //TODO: this is just here temp for testing
+        checkRoomQueueShift(room).then(function (result) {
+            console.log(result)
+        })
     })
 }
 
@@ -306,16 +308,18 @@ function shiftRoomQueue(room, curPlay) {
 }
 
 function checkRoomQueueShift(room) {
-    Play.findOne({ _id: ObjectID(room.currentPlay) }, (err, curPlay) => {
-        Song.findOne({ _id: ObjectID(curPlay.songid) }, (err, song) => {
-            var startTime = curPlay.startTime
-            startTime.setSeconds(startTime.getSeconds() + song.duration)
-            if (startTime <= Date.now()) {
-                console.log('need shift')
-            }
-            else {
-                console.log('dont need shift')
-            }
+    return new Promise(function (resolve, reject) {
+        Play.findOne({ _id: ObjectID(room.currentPlay) }, (err, curPlay) => {
+            Song.findOne({ _id: ObjectID(curPlay.songid) }, (err, song) => {
+                var time = curPlay.startTime
+                time.setSeconds(time.getSeconds() + song.duration)
+                if (time <= Date.now()) {
+                    return resolve(true)
+                }
+                else {
+                    return resolve(false)
+                }
+            })
         })
     })
 }
