@@ -282,7 +282,8 @@ function getInitPlay() {
                     else {
                         const play = new Play({
                             songid: song._id,
-                            submitterId: user._id
+                            submitterId: user._id,
+                            startTime: new Date(Date.now()).toISOString()
                         })
                         play.save((err, response) => {
                             if (err) {
