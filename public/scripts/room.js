@@ -13,3 +13,15 @@ $(document).ready(function () {
     })
     //TODO: same but for submit-playlist
 })
+
+function loadQueue(roomIdString){
+    $.ajax({
+        type: 'post',
+        url: '/get-room-update',
+        data: { 'roomid': roomIdString },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data)
+        }
+    })
+}

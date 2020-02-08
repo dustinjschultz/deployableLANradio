@@ -191,6 +191,12 @@ app.post('/submit-song', (req, res) => {
     })
 })
 
+app.post('/get-room-update', (req, res) => {
+    console.log('get-room-update for ' + req.body.roomid)
+    res.status(200).send({ myString: 'response from the server lmao'})
+})
+
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
