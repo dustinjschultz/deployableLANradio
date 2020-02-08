@@ -9,6 +9,9 @@
 </head>
 
 <body>
+    <!-- needs to be loaded before other custom scripts, including page specific ones that are loaded by ejs's `include` -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
+
     <div class="not-menu">
         <%- include(viewname, {
             username: username, 
@@ -21,11 +24,10 @@
     <%- include('../views/sidebar', {username: username}); -%>
     <%- include('../views/devtoolbar') -%>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src ="../public/scripts/general_client.js"></script>
     <script src ="../public/scripts/infocard.js"></script>
-    <script src ="../public/scripts/room.js"></script>
     <script src ="../public/scripts/newitem.js"></script>
+
 
 </body>
 

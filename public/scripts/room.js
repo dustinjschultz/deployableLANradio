@@ -4,6 +4,7 @@ $(document).ready(function () {
         e.preventDefault();
         var songid = $('select[name=song_id]').val();
         var roomid = $('input[name=room_id]').val();
+        console.log(roomid)
         $.ajax({
             type: 'post',
             url: '/submit-song',

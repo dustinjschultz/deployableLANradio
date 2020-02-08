@@ -8,6 +8,7 @@
         <% } %>
         <% if(options && options.room_id) { %>
         <button onclick="loadQueue('<%- options.room_id %>')">loadQueue()</button>
+        <button onclick="proposeUpdate('<%- options.room_id %>')">proUpdate()</button>
         <% } %>
     </div>
 </div>
@@ -19,8 +20,8 @@
         position: absolute;
         top: 5px;
         right: 5px;
-        height: 100px;
-        width: 80px;
+        height: 150px;
+        width: 120px;
     }
     .dev-toolbar-content{
         color: black;

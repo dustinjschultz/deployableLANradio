@@ -206,10 +206,21 @@ app.post('/get-room-update', (req, res) => {
 
         })
     })
-
-    //res.status(200).send({ myString: 'response from the server lmao'})
 })
 
+app.post('/propose-room-update', (req, res) => {
+    generalScripts.getRoom(req.body.roomid).then(function (room) {
+        checkRoomQueueShift(room).then(function (result) {
+            if (result) {
+                shiftRoomQueue(room)
+                console.log('proposal valid')
+            }
+            else {
+                console.log('proposal invalid')
+            }
+        })
+    })
+})
 
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
