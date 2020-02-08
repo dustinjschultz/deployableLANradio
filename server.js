@@ -266,7 +266,9 @@ function appendPlayToRoom(play, room) {
         play.save()
         oldDeepestPlay.save()
         checkRoomQueueShift(room).then(function (result) {
-            console.log(result)
+            if (result) {
+                shiftRoomQueue(room)
+            }
         })
     })
 }
@@ -303,8 +305,15 @@ function getInitPlay() {
     })
 }
 
-function shiftRoomQueue(room, curPlay) {
-
+function shiftRoomQueue(room) {
+    Play.findOne({ _id: ObjectID(room.currentPlay) }, (err, curPlay) => {
+        Play.findOne({ _id: ObjectID(curPlay.nextPlayId) }, (err, nextPlay) => {
+            nextPlay.startTime = new Date(Date.now()).toISOString()
+            room.currentPlay = nextPlay._id
+            nextPlay.save()
+            room.save()
+        })
+    })
 }
 
 function checkRoomQueueShift(room) {
