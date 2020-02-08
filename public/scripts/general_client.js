@@ -1,4 +1,4 @@
 ﻿
-function generalTestFunc() {
+function generalClientTestFunc() {
     return 'generalClient - testFunc()'
 }

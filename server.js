@@ -191,6 +191,37 @@ app.post('/submit-song', (req, res) => {
     })
 })
 
+app.post('/get-room-update', (req, res) => {
+    generalScripts.getRoom(req.body.roomid).then(function (room) {
+        generalScripts.getPlay(room.currentPlay).then(function (curPlay) {
+
+            if (typeof curPlay.nextPlayId !== 'undefined') { //if there's a next play set
+                generalScripts.getPlay(curPlay.nextPlayId).then(function (nextPlay) {
+                    res.status(200).send({ curPlay: curPlay, nextPlay: nextPlay })
+                })
+            }
+            else {
+                res.status(200).send({ curPlay: curPlay, nextPlay: null })
+            }
+
+        })
+    })
+})
+
+app.post('/propose-room-update', (req, res) => {
+    generalScripts.getRoom(req.body.roomid).then(function (room) {
+        checkRoomQueueShift(room).then(function (result) {
+            if (result) {
+                shiftRoomQueue(room)
+                console.log('proposal valid')
+            }
+            else {
+                console.log('proposal invalid')
+            }
+        })
+    })
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
@@ -198,7 +229,8 @@ function goToIndex(req, res) {
             uid: req.session.uid,
             username: req.session.username,
             server_utils: generalScripts,
-            viewname: __dirname + '/public/views/index.html'
+            viewname: __dirname + '/public/views/index.html',
+            options: null
         })
     })
 }

@@ -12,4 +12,31 @@ $(document).ready(function () {
         })
     })
     //TODO: same but for submit-playlist
+
+    loadQueue($('input[name=room_id]').val())
 })
+
+function loadQueue(roomIdString){
+    $.ajax({
+        type: 'post',
+        url: '/get-room-update',
+        data: { 'roomid': roomIdString },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data.curPlay)
+            console.log(data.nextPlay)
+        }
+    })
+}
+
+function proposeUpdate(roomIdString) {
+    $.ajax({
+        type: 'post',
+        url: '/propose-room-update',
+        data: { 'roomid': roomIdString },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data)
+        }
+    })
+}

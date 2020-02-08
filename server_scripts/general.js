@@ -7,6 +7,7 @@ const { User } = require('../models/user')
 const { Room } = require('../models/room')
 const { Library } = require('../models/library')
 const { Song } = require('../models/song')
+const { Play } = require('../models/play')
 
 const linkedJS = require('./linkedJS')
 
@@ -80,6 +81,22 @@ function extractYoutubeId(link) {
     }
 }
 
+function getPlay(idString) {
+    return new Promise(function (resolve, reject) {
+        Play.findOne({ _id: ObjectID(idString) }, (err, play) => {
+            return resolve(play)
+        })
+    })
+}
+
+function getRoom(idString) {
+    return new Promise(function (resolve, reject) {
+        Room.findOne({ _id: ObjectID(idString) }, (err, room) => {
+            return resolve(room)
+        })
+    })
+}
+
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -93,5 +110,7 @@ module.exports = {
     identifySongType,
     getLibraryContents,
     getSongDuration,
+    getPlay,
+    getRoom,
     linkedJS
 }
