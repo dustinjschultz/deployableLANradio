@@ -3,6 +3,7 @@
     <input type="hidden" class="room_id hidden" value="<%- options.room_id %>" name="room_id" />
 
     I AM A ROOM
+    <div><%= options.name %></div>
 
     <% if(options.library) { %>
     <form action="/submit-song" method="POST" id="submit-song">

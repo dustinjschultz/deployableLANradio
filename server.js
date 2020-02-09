@@ -123,11 +123,16 @@ app.get('/guest', (req, res) => {
 app.get('/join_room', (req, res) => {
     generalScripts.getLibrary(req.session.uid).then(function (library) {
         generalScripts.getLibraryContents(library).then(function (songs) {
-            goTo(req, res, '/public/views/room.html', {
-                room_id: req.query.room_id,
-                songs: songs,
-                library: library ? library._id : null
+            generalScripts.getRoom(req.query.room_id).then(function (room) {
+                goTo(req, res, '/public/views/room.html', {
+                    room_id: req.query.room_id,
+                    songs: songs,
+                    library: library ? library._id : null,
+                    name: room.name,
+                    description: room.description
+                })
             })
+            
         })
     })
 })
