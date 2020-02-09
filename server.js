@@ -95,7 +95,13 @@ app.post('/createroom', (req, res) => {
                 //functionally slightly different from /join_room since this is not a GET request, URL will be different
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     generalScripts.getLibraryContents(library).then(function (songs) {
-                        goTo(req, res, '/public/views/room.html', { room_id: room._id, songs: songs, library: library._id })
+                        goTo(req, res, '/public/views/room.html', {
+                            room_id: room._id,
+                            songs: songs,
+                            library: library._id,
+                            name: room.name,
+                            description: room.description
+                        })
                     })
                 })
             }
