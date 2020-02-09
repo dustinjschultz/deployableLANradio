@@ -23,8 +23,8 @@ function loadQueue(roomIdString){
         data: { 'roomid': roomIdString },
         dataType: 'json',
         success: function (data) {
-            console.log(data.curPlay)
-            console.log(data.nextPlay)
+            $('.room-container').data('curPlay', data.curPlay)
+            $('.room-container').data('nextPlay', data.nextPlay)
         }
     })
 }
@@ -39,4 +39,14 @@ function proposeUpdate(roomIdString) {
             console.log(data)
         }
     })
+}
+
+function hasNextLocally() {
+    return $('.room-container').data().nextPlay != null
+}
+
+function isPlayingCur() {
+    //TODO:
+    var curPlay = $('.room-container').data().curPlay
+    return curPlay
 }
