@@ -1,0 +1,37 @@
+﻿
+.room-container{
+    margin: auto;
+}
+
+.room-name{
+    margin: auto;
+    width: 50%;
+    text-align: center;
+}
+
+.media-container {
+    margin: auto;
+    width: 70%;
+    border: 1px solid black; 
+    height: 500px;
+}
+
+.play-name {
+    margin: auto;
+    width: 70%;
+    margin-top: 20px;
+}
+
+.room-bottom-bar {
+    margin: auto;
+    width: 70%;
+}
+
+.submission-container {
+    float: right;
+    display: inline-block;
+}
+
+.thumbs-container{
+    display: inline-block;
+}

@@ -20,8 +20,5 @@
 .not-menu {
     left: 65px;
     position: absolute;
-    /*width: 100%;*/
-}
-
-.rooms-container{
+    width: 90%;
 }
