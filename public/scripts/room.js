@@ -52,12 +52,17 @@ function isPlayingCur() {
 }
 
 function playYoutube(link, startTime) {
+    startTime = startTime ? startTime : 0 //in case it wasn't available
     link = link.replace("watch?v=", "embed/")
+    link = link + '?start=' + startTime + '&autoplay=1'
     var iframe = document.createElement('iframe')
+    iframe.classList.add('youtube-player')
     iframe.setAttribute('src', link)
     iframe.setAttribute('frameborder', 0)
     iframe.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture')
     $('.media-container').append(iframe)
+
+    $('.no-media').addClass('hidden')
 }
 
 function playYoutubeFromData() {
