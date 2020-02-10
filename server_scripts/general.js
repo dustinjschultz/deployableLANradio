@@ -97,6 +97,14 @@ function getRoom(idString) {
     })
 }
 
+function getSong(idString) {
+    return new Promise(function (resolve, reject) {
+        Song.findOne({ _id: ObjectID(idString) }, (err, song) => {
+            return resolve(song)
+        })
+    })
+}
+
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -112,5 +120,6 @@ module.exports = {
     getSongDuration,
     getPlay,
     getRoom,
+    getSong,
     linkedJS
 }
