@@ -233,6 +233,12 @@ app.post('/propose-room-update', (req, res) => {
     })
 })
 
+app.post('/get-song', (req, res) => {
+    generalScripts.getSong(req.body.songid).then(function (song) {
+        res.status(200).send({ song: song })
+    })
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
