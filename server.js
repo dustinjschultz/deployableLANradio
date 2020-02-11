@@ -95,6 +95,8 @@ app.post('/createroom', (req, res) => {
                 //functionally slightly different from /join_room since this is not a GET request, URL will be different
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     generalScripts.getLibraryContents(library).then(function (songs) {
+                        req.session.room_id = req.query.room_id
+                        req.session.save() //need to manually save if nothing is sent back
                         goTo(req, res, '/public/views/room.html', {
                             room_id: room._id,
                             songs: songs,
@@ -127,11 +129,21 @@ app.get('/guest', (req, res) => {
 }) 
 
 app.get('/join_room', (req, res) => {
+
+    var room_id = req.query.room_id ? req.query.room_id : req.session.room_id
+
+    if (!room_id) {
+        goToIndex(req, res)
+        return;
+    }
+
     generalScripts.getLibrary(req.session.uid).then(function (library) {
         generalScripts.getLibraryContents(library).then(function (songs) {
-            generalScripts.getRoom(req.query.room_id).then(function (room) {
+            generalScripts.getRoom(room_id).then(function (room) {
+                req.session.room_id = room_id
+                req.session.save() //need to manually save if nothing is sent back
                 goTo(req, res, '/public/views/room.html', {
-                    room_id: req.query.room_id,
+                    room_id: room_id,
                     songs: songs,
                     library: library ? library._id : null,
                     name: room.name,
