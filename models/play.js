@@ -3,7 +3,7 @@ const ObjectID = require('mongodb').ObjectID
 
 
 const playSchema = mongoose.Schema({
-    songid: {
+    songId: {
         type: ObjectID,
         ref: 'Song'
     },

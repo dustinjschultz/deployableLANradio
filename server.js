@@ -200,7 +200,7 @@ app.post('/new-playlist', (req, res) => {
 
 app.post('/submit-song', (req, res) => {
     const play = new Play({
-        songid: req.body.songid,
+        songId: req.body.songId,
         submitterId: req.session.uid
     })
     play.save((err, response) => {
@@ -247,7 +247,7 @@ app.post('/propose-room-update', (req, res) => {
 })
 
 app.post('/get-song', (req, res) => {
-    generalScripts.getSong(req.body.songid).then(function (song) {
+    generalScripts.getSong(req.body.songId).then(function (song) {
         res.status(200).send({ song: song })
     })
 })
@@ -348,7 +348,7 @@ function getInitPlay() {
                     }
                     else {
                         const play = new Play({
-                            songid: song._id,
+                            songId: song._id,
                             submitterId: user._id,
                             startTime: new Date(Date.now()).toISOString()
                         })
@@ -381,7 +381,7 @@ function shiftRoomQueue(room) {
 function checkRoomQueueShift(room) {
     return new Promise(function (resolve, reject) {
         Play.findOne({ _id: ObjectID(room.currentPlay) }, (err, curPlay) => {
-            Song.findOne({ _id: ObjectID(curPlay.songid) }, (err, song) => {
+            Song.findOne({ _id: ObjectID(curPlay.songId) }, (err, song) => {
                 var time = curPlay.startTime
                 time.setSeconds(time.getSeconds() + song.duration)
                 if (time <= Date.now()) {
