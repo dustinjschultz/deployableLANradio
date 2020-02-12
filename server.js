@@ -83,7 +83,7 @@ app.post('/createroom', (req, res) => {
                 res.json({ message: 'You need to be logged in to make a room' })
             }
             else {
-                user.rooms.push(room)
+                user.roomIds.push(room)
                 user.save()
             }
         })
@@ -183,7 +183,7 @@ app.post('/new-song', (req, res) => {
             }
             else {
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
-                    library.songIds.push(song) //TODO: uh this shouldnt work, should be song._id as the parameter
+                    library.songIds.push(song._id) 
                     library.save()
                     goTo(req, res, '/public/views/library.html', { library: library })
                 })

@@ -21,7 +21,7 @@ const songSchema = mongoose.Schema({
     duration: {
         type: Number
     }
-    //tags: [{
+    //tagIds: [{
     //    type: ObjectID,
     //    ref: 'Tag'
     //}],

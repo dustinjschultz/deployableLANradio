@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt-nodejs')
 const ObjectID = require('mongodb').ObjectID
 
 const userSchema = mongoose.Schema({
-    username:{
+    username: {
         type: String,
         required: true,
         unique: 1,
@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    rooms: [{
+    roomIds: [{
         type: ObjectID,
         ref: 'Room'
     }]
