@@ -85,9 +85,9 @@ function playYoutubeFromData() {
 }
 
 function clearMediaPlayer() {
-    var noMediaMessage = $('.no-media').clone()
-    noMediaMessage.removeClass('hidden')
+    var noMediaMessageEl = $('.no-media').clone()
+    noMediaMessageEl.removeClass('hidden')
     var mediaContainer = $('.media-container')
     mediaContainer.empty()
-    mediaContainer.append(noMediaMessage)
+    mediaContainer.append(noMediaMessageEl)
 }
