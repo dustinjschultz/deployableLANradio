@@ -4,12 +4,14 @@ $(document).ready(function () {
 })
 
 
-function initToom() {
+function initRoom() {
 
     initSubmitSongButton()
     //TODO: same but for submit-playlist
-
-    loadQueue($('input[name=room_id]').val())
+    var room_id = $('input[name=room_id]').val()
+    loadQueueIntoData(room_id).then(function () {
+        playMediaFromData()
+    })
 }
 
 function initSubmitSongButton() {
@@ -26,17 +28,21 @@ function initSubmitSongButton() {
     })
 }
 
-function loadQueue(roomIdString){
-    $.ajax({
-        type: 'post',
-        url: '/get-room-update',
-        data: { 'roomid': roomIdString },
-        dataType: 'json',
-        success: function (data) {
-            $('.room-container').data('curPlay', data.curPlay)
-            $('.room-container').data('nextPlay', data.nextPlay)
-        }
+function loadQueueIntoData(roomIdString) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'post',
+            url: '/get-room-update',
+            data: { 'roomid': roomIdString },
+            dataType: 'json',
+            success: function (data) {
+                $('.room-container').data('curPlay', data.curPlay)
+                $('.room-container').data('nextPlay', data.nextPlay)
+                return resolve()
+            }
+        })
     })
+
 }
 
 function proposeUpdate(roomIdString) {
@@ -85,7 +91,23 @@ function playYoutube(song, playId) {
     $('.play-name').text(song.name)
 }
 
-function playYoutubeFromData() {
+//function playYoutubeFromData() {
+//    clearMediaPlayer()
+//    var curPlay = $('.room-container').data().curPlay
+//    var playId = curPlay._id
+//    var songId = curPlay.songId
+//    $.ajax({
+//        type: 'post',
+//        url: '/get-song',
+//        data: { 'songId': songId },
+//        dataType: 'json',
+//        success: function (data) {
+//            playYoutube(data.song, playId) 
+//        }
+//    })
+//}
+
+function playMediaFromData() {
     clearMediaPlayer()
     var curPlay = $('.room-container').data().curPlay
     var playId = curPlay._id
@@ -96,7 +118,13 @@ function playYoutubeFromData() {
         data: { 'songId': songId },
         dataType: 'json',
         success: function (data) {
-            playYoutube(data.song, playId) 
+            if (data.song.format == 'youtube') {
+                playYoutube(data.song, playId)
+            }
+            else {
+                //TODO: support more song formats
+                console.log('recognized song format')
+            }
         }
     })
 }
