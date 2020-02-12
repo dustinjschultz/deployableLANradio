@@ -5,9 +5,9 @@ $(document).ready(function () {
 
 
 function initRoom() {
-
     initSubmitSongButton()
     //TODO: same but for submit-playlist
+
     var room_id = $('input[name=room_id]').val()
     loadQueueIntoData(room_id).then(function () {
         playMediaFromData()
@@ -90,22 +90,6 @@ function playYoutube(song, playId) {
     $('.no-media').addClass('hidden')
     $('.play-name').text(song.name)
 }
-
-//function playYoutubeFromData() {
-//    clearMediaPlayer()
-//    var curPlay = $('.room-container').data().curPlay
-//    var playId = curPlay._id
-//    var songId = curPlay.songId
-//    $.ajax({
-//        type: 'post',
-//        url: '/get-song',
-//        data: { 'songId': songId },
-//        dataType: 'json',
-//        success: function (data) {
-//            playYoutube(data.song, playId) 
-//        }
-//    })
-//}
 
 function playMediaFromData() {
     clearMediaPlayer()
