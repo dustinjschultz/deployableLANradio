@@ -68,6 +68,7 @@ function isPlayingCur() {
 }
 
 function playYoutube(song, playId) {
+    //TODO: move stuff that should happen regardless of format into playMediaFromData()
     var mediaContainer = $('.media-container')[0]
     mediaContainer.setAttribute('data-playId', playId)
 
@@ -89,6 +90,8 @@ function playYoutube(song, playId) {
 
     $('.no-media').addClass('hidden')
     $('.play-name').text(song.name)
+
+    scheduleSongEndHandler(song.duration)
 }
 
 function playMediaFromData() {
@@ -120,4 +123,12 @@ function clearMediaPlayer() {
     mediaContainer.empty()
     mediaContainer.append(noMediaMessageEl)
     $('.play-name').text('Play something!')
+}
+
+function songEndHandler() {
+    console.log('songs over man')
+}
+
+function scheduleSongEndHandler(duration) {
+    setTimeout(songEndHandler, duration*1000)
 }
