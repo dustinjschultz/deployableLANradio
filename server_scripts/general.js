@@ -35,7 +35,7 @@ function getLibraryContents(library) {
         }
 
         //TODO: add playlists
-        var songIdsStrings = library.songs
+        var songIdsStrings = library.songIds
         var songIds = []
         for (var i = 0; i < songIdsStrings.length; i++) {
             songIds.push(ObjectID(songIdsStrings[i]))
