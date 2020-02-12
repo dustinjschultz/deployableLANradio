@@ -58,6 +58,7 @@ function playYoutube(song, playId) {
     var link = song.link
     var startTime = song.startTime
 
+    //TODO: calculate time in video to start from
     startTime = startTime ? startTime : 0 //in case it wasn't available
 
     link = link.replace("watch?v=", "embed/")
@@ -77,8 +78,8 @@ function playYoutube(song, playId) {
 function playYoutubeFromData() {
     clearMediaPlayer()
     var curPlay = $('.room-container').data().curPlay
-    var songId = curPlay.songid
     var playId = curPlay._id
+    var songId = curPlay.songid
     $.ajax({
         type: 'post',
         url: '/get-song',
