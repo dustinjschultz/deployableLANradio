@@ -69,6 +69,7 @@ function playYoutube(link, startTime, playId) {
 }
 
 function playYoutubeFromData() {
+    clearMediaPlayer()
     var curPlay = $('.room-container').data().curPlay
     var playId = curPlay._id
     var songId = curPlay.songid
@@ -81,4 +82,12 @@ function playYoutubeFromData() {
             playYoutube(data.song.link, 0, playId) //TODO: pass in actual startTime instead of 0
         }
     })
+}
+
+function clearMediaPlayer() {
+    var noMediaMessage = $('.no-media').clone()
+    noMediaMessage.removeClass('hidden')
+    var mediaContainer = $('.media-container')
+    mediaContainer.empty()
+    mediaContainer.append(noMediaMessage)
 }
