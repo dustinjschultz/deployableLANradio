@@ -51,13 +51,18 @@ function isPlayingCur() {
     return curPlay._id == playId
 }
 
-function playYoutube(link, startTime, playId) {
+function playYoutube(song, playId) {
     var mediaContainer = $('.media-container')[0]
     mediaContainer.setAttribute('data-playId', playId)
 
+    var link = song.link
+    var startTime = song.startTime
+
     startTime = startTime ? startTime : 0 //in case it wasn't available
+
     link = link.replace("watch?v=", "embed/")
     link = link + '?start=' + startTime + '&autoplay=1'
+
     var iframe = document.createElement('iframe')
     iframe.classList.add('youtube-player')
     iframe.setAttribute('src', link)
@@ -66,20 +71,21 @@ function playYoutube(link, startTime, playId) {
     $('.media-container').append(iframe)
 
     $('.no-media').addClass('hidden')
+    $('.play-name').text(song.name)
 }
 
 function playYoutubeFromData() {
     clearMediaPlayer()
     var curPlay = $('.room-container').data().curPlay
-    var playId = curPlay._id
     var songId = curPlay.songid
+    var playId = curPlay._id
     $.ajax({
         type: 'post',
         url: '/get-song',
         data: { 'songid': songId },
         dataType: 'json',
         success: function (data) {
-            playYoutube(data.song.link, 0, playId) //TODO: pass in actual startTime instead of 0
+            playYoutube(data.song, playId) 
         }
     })
 }
@@ -90,4 +96,5 @@ function clearMediaPlayer() {
     var mediaContainer = $('.media-container')
     mediaContainer.empty()
     mediaContainer.append(noMediaMessageEl)
+    $('.play-name').text('Play something!')
 }
