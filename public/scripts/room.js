@@ -46,12 +46,15 @@ function hasNextLocally() {
 }
 
 function isPlayingCur() {
-    //TODO:
     var curPlay = $('.room-container').data().curPlay
-    return curPlay
+    var playId = $('.media-container').attr('data-playId')
+    return curPlay._id == playId
 }
 
-function playYoutube(link, startTime) {
+function playYoutube(link, startTime, playId) {
+    var mediaContainer = $('.media-container')[0]
+    mediaContainer.setAttribute('data-playId', playId)
+
     startTime = startTime ? startTime : 0 //in case it wasn't available
     link = link.replace("watch?v=", "embed/")
     link = link + '?start=' + startTime + '&autoplay=1'
@@ -66,14 +69,16 @@ function playYoutube(link, startTime) {
 }
 
 function playYoutubeFromData() {
-    var songid = $('.room-container').data().curPlay.songid
+    var curPlay = $('.room-container').data().curPlay
+    var playId = curPlay._id
+    var songId = curPlay.songid
     $.ajax({
         type: 'post',
         url: '/get-song',
-        data: { 'songid': songid },
+        data: { 'songid': songId },
         dataType: 'json',
         success: function (data) {
-            playYoutube(data.song.link)
+            playYoutube(data.song.link, 0, playId) //TODO: pass in actual startTime instead of 0
         }
     })
 }
