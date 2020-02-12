@@ -73,9 +73,9 @@ app.post('/createroom', (req, res) => {
             name: req.body.room_name,
             description: req.body.room_description,
             owner: ObjectID(req.session.uid),
-            firstPlay: initPlay,
-            currentPlay: initPlay,
-            deepestPlay: initPlay
+            firstPlayId: initPlay,
+            currentPlayId: initPlay,
+            deepestPlayId: initPlay
         })
 
         User.findOne({ _id: ObjectID(req.session.uid) }, (err, user) => {
@@ -83,7 +83,7 @@ app.post('/createroom', (req, res) => {
                 res.json({ message: 'You need to be logged in to make a room' })
             }
             else {
-                user.rooms.push(room)
+                user.roomIds.push(room)
                 user.save()
             }
         })
@@ -183,7 +183,7 @@ app.post('/new-song', (req, res) => {
             }
             else {
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
-                    library.songs.push(song)
+                    library.songIds.push(song._id) 
                     library.save()
                     goTo(req, res, '/public/views/library.html', { library: library })
                 })
@@ -200,7 +200,7 @@ app.post('/new-playlist', (req, res) => {
 
 app.post('/submit-song', (req, res) => {
     const play = new Play({
-        songid: req.body.songid,
+        songId: req.body.songId,
         submitterId: req.session.uid
     })
     play.save((err, response) => {
@@ -217,7 +217,7 @@ app.post('/submit-song', (req, res) => {
 
 app.post('/get-room-update', (req, res) => {
     generalScripts.getRoom(req.body.roomid).then(function (room) {
-        generalScripts.getPlay(room.currentPlay).then(function (curPlay) {
+        generalScripts.getPlay(room.currentPlayId).then(function (curPlay) {
 
             if (typeof curPlay.nextPlayId !== 'undefined') { //if there's a next play set
                 generalScripts.getPlay(curPlay.nextPlayId).then(function (nextPlay) {
@@ -247,7 +247,7 @@ app.post('/propose-room-update', (req, res) => {
 })
 
 app.post('/get-song', (req, res) => {
-    generalScripts.getSong(req.body.songid).then(function (song) {
+    generalScripts.getSong(req.body.songId).then(function (song) {
         res.status(200).send({ song: song })
     })
 })
@@ -320,10 +320,10 @@ function login(req, res, username, password) {
 }
 
 function appendPlayToRoom(play, room) {
-    Play.findOne({ _id: ObjectID(room.deepestPlay) }, (err, oldDeepestPlay) => {
+    Play.findOne({ _id: ObjectID(room.deepestPlayId) }, (err, oldDeepestPlay) => {
         oldDeepestPlay.nextPlayId = play._id
         play.prevPlayId = oldDeepestPlay._id
-        room.deepestPlay = play
+        room.deepestPlayId = play
         room.save()
         play.save()
         oldDeepestPlay.save()
@@ -348,7 +348,7 @@ function getInitPlay() {
                     }
                     else {
                         const play = new Play({
-                            songid: song._id,
+                            songId: song._id,
                             submitterId: user._id,
                             startTime: new Date(Date.now()).toISOString()
                         })
@@ -368,10 +368,10 @@ function getInitPlay() {
 }
 
 function shiftRoomQueue(room) {
-    Play.findOne({ _id: ObjectID(room.currentPlay) }, (err, curPlay) => {
+    Play.findOne({ _id: ObjectID(room.currentPlayId) }, (err, curPlay) => {
         Play.findOne({ _id: ObjectID(curPlay.nextPlayId) }, (err, nextPlay) => {
             nextPlay.startTime = new Date(Date.now()).toISOString()
-            room.currentPlay = nextPlay._id
+            room.currentPlayId = nextPlay._id
             nextPlay.save()
             room.save()
         })
@@ -380,8 +380,8 @@ function shiftRoomQueue(room) {
 
 function checkRoomQueueShift(room) {
     return new Promise(function (resolve, reject) {
-        Play.findOne({ _id: ObjectID(room.currentPlay) }, (err, curPlay) => {
-            Song.findOne({ _id: ObjectID(curPlay.songid) }, (err, song) => {
+        Play.findOne({ _id: ObjectID(room.currentPlayId) }, (err, curPlay) => {
+            Song.findOne({ _id: ObjectID(curPlay.songId) }, (err, song) => {
                 var time = curPlay.startTime
                 time.setSeconds(time.getSeconds() + song.duration)
                 if (time <= Date.now()) {

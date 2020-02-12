@@ -16,15 +16,15 @@ const roomSchema = mongoose.Schema({
         type: ObjectID,
         ref: 'User'
     },
-    firstPlay: {
+    firstPlayId: {
         type: ObjectID,
         ref: 'Play'
     },
-    currentPlay: {
+    currentPlayId: {
         type: ObjectID,
         ref: 'Play'
     },
-    deepestPlay: {
+    deepestPlayId: {
         type: ObjectID,
         ref: 'Play'
     },
@@ -41,7 +41,7 @@ const roomSchema = mongoose.Schema({
     //autoskipThreshold: {
     //    type: number
     //},
-    //usersForAutoplay: {
+    //userIdsForAutoplay: {
     //    type: ObjectID,
     //    ref: 'User'
     //},

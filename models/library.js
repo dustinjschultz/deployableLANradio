@@ -7,11 +7,11 @@ const librarySchema = mongoose.Schema({
         type: ObjectID,
         ref: 'User'
     },
-    songs: [{
+    songIds: [{
         type: ObjectID,
         ref: 'Song'
     }],
-    //playlists: [{
+    //playlistIds: [{
     //    type: ObjectID,
     //    ref: 'Playlist'
     //}]
