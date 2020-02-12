@@ -1,5 +1,18 @@
 ﻿
 $(document).ready(function () {
+    initRoom()
+})
+
+
+function initToom() {
+
+    initSubmitSongButton()
+    //TODO: same but for submit-playlist
+
+    loadQueue($('input[name=room_id]').val())
+}
+
+function initSubmitSongButton() {
     $("form#submit-song").on('submit', function (e) {
         e.preventDefault();
         var songId = $('select[name=song_id]').val();
@@ -11,10 +24,7 @@ $(document).ready(function () {
             dataType: 'json'
         })
     })
-    //TODO: same but for submit-playlist
-
-    loadQueue($('input[name=room_id]').val())
-})
+}
 
 function loadQueue(roomIdString){
     $.ajax({
