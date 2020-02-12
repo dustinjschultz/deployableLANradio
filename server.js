@@ -183,7 +183,7 @@ app.post('/new-song', (req, res) => {
             }
             else {
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
-                    library.songs.push(song)
+                    library.songIds.push(song) //TODO: uh this shouldnt work, should be song._id as the parameter
                     library.save()
                     goTo(req, res, '/public/views/library.html', { library: library })
                 })
