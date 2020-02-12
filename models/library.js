@@ -11,7 +11,7 @@ const librarySchema = mongoose.Schema({
         type: ObjectID,
         ref: 'Song'
     }],
-    //playlists: [{
+    //playlistIds: [{
     //    type: ObjectID,
     //    ref: 'Playlist'
     //}]
