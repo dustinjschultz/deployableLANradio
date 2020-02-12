@@ -58,6 +58,7 @@ app.get('/register', (req, res) => {
 app.get('/logout', (req, res) => {
     req.session.uid = null
     req.session.username = null
+    req.session.room_id = null
     req.session.save()
     goToIndex(req, res)
 })
