@@ -78,10 +78,6 @@ function isPlayingCur() {
 }
 
 function playYoutube(song, playId, startSecs) {
-    //TODO: move stuff that should happen regardless of format into playMediaFromData()
-    var mediaContainer = $('.media-container')[0]
-    mediaContainer.setAttribute('data-playId', playId)
-
     var link = song.link
     link = link.replace("watch?v=", "embed/")
     link = link + '?start=' + startSecs + '&autoplay=1'
@@ -92,11 +88,13 @@ function playYoutube(song, playId, startSecs) {
     iframe.setAttribute('frameborder', 0)
     iframe.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture')
     $('.media-container').append(iframe)
+}
 
+function conditionRoomForPlay(playId, name, secsToEnd) {
+    $('.media-container')[0].setAttribute('data-playId', playId)
     $('.no-media').addClass('hidden')
-    $('.play-name').text(song.name)
-
-    scheduleSongEndHandler(song.duration - startSecs) 
+    $('.play-name').text(name)
+    scheduleSongEndHandler(secsToEnd)
 }
 
 function playMediaFromData() {
@@ -120,6 +118,8 @@ function playMediaFromData() {
             if (startSecs >= data.song.duration) {
                 startSecs = 0
             }
+
+            conditionRoomForPlay(playId, data.song.name, data.song.duration - startSecs)
 
             if (data.song.format == 'youtube') {
                 playYoutube(data.song, playId, startSecs)
