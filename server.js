@@ -320,18 +320,17 @@ function login(req, res, username, password) {
 
 function appendPlayToRoom(play, room) {
     Play.findOne({ _id: ObjectID(room.deepestPlayId) }, (err, oldDeepestPlay) => {
-        //TODO: need to do handling here in case (cur == oldest), as when you oldDeespestPlay.save(), it doesn't update curPlay
-        //Above may or may not be right...
         oldDeepestPlay.nextPlayId = play._id
         play.prevPlayId = oldDeepestPlay._id
-        room.deepestPlayId = play
+        room.deepestPlayId = play._id
         room.save()
         play.save()
-        oldDeepestPlay.save()
-        checkRoomQueueShift(room).then(function (result) {
-            if (result) {
-                shiftRoomQueue(room)
-            }
+        oldDeepestPlay.save().then(function () {
+            checkRoomQueueShift(room).then(function (result) {
+                if (result) {
+                    shiftRoomQueue(room)
+                }
+            })
         })
     })
 }
