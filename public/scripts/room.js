@@ -47,7 +47,6 @@ function loadQueueIntoData(roomIdString) {
             success: function (data) {
                 $('.room-container').data('curPlay', data.curPlay)
                 $('.room-container').data('nextPlay', data.nextPlay)
-                console.log($('.room-container').data('curPlay'))
                 return resolve()
             }
         })
@@ -113,7 +112,6 @@ function playMediaFromData() {
 
     clearMediaPlayer()
     var curPlay = $('.room-container').data().curPlay
-    console.log(curPlay)
     var playId = curPlay._id
     var songId = curPlay.songId
     $.ajax({
