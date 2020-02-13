@@ -15,16 +15,18 @@ function initRoom() {
 }
 
 function initSubmitSongButton() {
-    $("form#submit-song").on('submit', function (e) {
-        e.preventDefault();
-        var songId = $('select[name=song_id]').val();
-        var roomid = $('input[name=room_id]').val();
-        $.ajax({
-            type: 'post',
-            url: '/submit-song',
-            data: { 'songId': songId, 'roomid': roomid },
-            dataType: 'json'
-        })
+    $("form#submit-song").on('submit', submitSongHandler)
+}
+
+function submitSongHandler(e) {
+    e.preventDefault();
+    var songId = $('select[name=song_id]').val();
+    var roomid = $('input[name=room_id]').val();
+    $.ajax({
+        type: 'post',
+        url: '/submit-song',
+        data: { 'songId': songId, 'roomid': roomid },
+        dataType: 'json'
     })
 }
 
@@ -42,7 +44,6 @@ function loadQueueIntoData(roomIdString) {
             }
         })
     })
-
 }
 
 function proposeUpdate(roomIdString) {
@@ -57,7 +58,6 @@ function proposeUpdate(roomIdString) {
             }
         })
     })
-
 }
 
 function hasNextLocally() {
