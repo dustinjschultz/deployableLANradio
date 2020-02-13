@@ -209,9 +209,10 @@ app.post('/submit-song', (req, res) => {
             res.status(400).send(err)
         }
         else {
-            Room.findOne({ _id: ObjectID(req.body.roomid) }, (err, room) => {
-                appendPlayToRoom(play, room)
-                res.status(200).send({ appended: true })
+            Room.findOne({ _id: ObjectID(req.body.roomId) }, (err, room) => {
+                appendPlayToRoom(play, room).then(function () {
+                    res.status(200).send({ appended: true })
+                })
             })
         }
     })
@@ -319,17 +320,20 @@ function login(req, res, username, password) {
 }
 
 function appendPlayToRoom(play, room) {
-    Play.findOne({ _id: ObjectID(room.deepestPlayId) }, (err, oldDeepestPlay) => {
-        oldDeepestPlay.nextPlayId = play._id
-        play.prevPlayId = oldDeepestPlay._id
-        room.deepestPlayId = play._id
-        room.save()
-        play.save()
-        oldDeepestPlay.save().then(function () {
-            checkRoomQueueShift(room).then(function (result) {
-                if (result) {
-                    shiftRoomQueue(room)
-                }
+    return new Promise(function (resolve, reject) {
+        Play.findOne({ _id: ObjectID(room.deepestPlayId) }, (err, oldDeepestPlay) => {
+            oldDeepestPlay.nextPlayId = play._id
+            play.prevPlayId = oldDeepestPlay._id
+            room.deepestPlayId = play._id
+            room.save()
+            play.save()
+            oldDeepestPlay.save().then(function () {
+                checkRoomQueueShift(room).then(function (result) {
+                    if (result) {
+                        shiftRoomQueue(room)
+                    }
+                    return resolve()
+                })
             })
         })
     })

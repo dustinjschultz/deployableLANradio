@@ -1,1 +1,0 @@
-{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"cowchips4charity.donations"}],"uuid":"75ede1cfc3ff4afeab336859594b6063"}

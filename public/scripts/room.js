@@ -15,16 +15,25 @@ function initRoom() {
 }
 
 function initSubmitSongButton() {
-    $("form#submit-song").on('submit', function (e) {
-        e.preventDefault();
-        var songId = $('select[name=song_id]').val();
-        var roomid = $('input[name=room_id]').val();
-        $.ajax({
-            type: 'post',
-            url: '/submit-song',
-            data: { 'songId': songId, 'roomid': roomid },
-            dataType: 'json'
-        })
+    $("form#submit-song").on('submit', submitSongHandler)
+}
+
+function submitSongHandler(e) {
+    e.preventDefault();
+    var songId = $('select[name=song_id]').val();
+    var roomId = $('input[name=room_id]').val();
+    $.ajax({
+        type: 'post',
+        url: '/submit-song',
+        data: { 'songId': songId, 'roomId': roomId },
+        dataType: 'json',
+        success: function (data) {
+            if (data.appended) {
+                loadQueueIntoData(roomId).then(function () {
+                    playMediaFromData()
+                })
+            }
+        }
     })
 }
 
@@ -38,11 +47,11 @@ function loadQueueIntoData(roomIdString) {
             success: function (data) {
                 $('.room-container').data('curPlay', data.curPlay)
                 $('.room-container').data('nextPlay', data.nextPlay)
+                console.log($('.room-container').data('curPlay'))
                 return resolve()
             }
         })
     })
-
 }
 
 function proposeUpdate(roomIdString) {
@@ -57,7 +66,6 @@ function proposeUpdate(roomIdString) {
             }
         })
     })
-
 }
 
 function hasNextLocally() {
@@ -98,8 +106,14 @@ function playYoutube(song, playId) {
 }
 
 function playMediaFromData() {
+
+    if (isPlayingCur()) {
+        return
+    }
+
     clearMediaPlayer()
     var curPlay = $('.room-container').data().curPlay
+    console.log(curPlay)
     var playId = curPlay._id
     var songId = curPlay.songId
     $.ajax({
@@ -126,6 +140,7 @@ function clearMediaPlayer() {
     mediaContainer.empty()
     mediaContainer.append(noMediaMessageEl)
     $('.play-name').text('Play something!')
+    $('.media-container').attr('data-playId', '')
 }
 
 function songEndHandler() {
