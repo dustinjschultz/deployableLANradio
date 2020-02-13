@@ -77,19 +77,14 @@ function isPlayingCur() {
     return curPlay._id == playId
 }
 
-function playYoutube(song, playId) {
+function playYoutube(song, playId, startSecs) {
     //TODO: move stuff that should happen regardless of format into playMediaFromData()
     var mediaContainer = $('.media-container')[0]
     mediaContainer.setAttribute('data-playId', playId)
 
     var link = song.link
-    var startTime = song.startTime
-
-    //TODO: calculate time in video to start from
-    startTime = startTime ? startTime : 0 //in case it wasn't available
-
     link = link.replace("watch?v=", "embed/")
-    link = link + '?start=' + startTime + '&autoplay=1'
+    link = link + '?start=' + startSecs + '&autoplay=1'
 
     var iframe = document.createElement('iframe')
     iframe.classList.add('youtube-player')
@@ -101,7 +96,7 @@ function playYoutube(song, playId) {
     $('.no-media').addClass('hidden')
     $('.play-name').text(song.name)
 
-    scheduleSongEndHandler(song.duration) //TODO: pass in actual time until completion
+    scheduleSongEndHandler(song.duration - startSecs) 
 }
 
 function playMediaFromData() {
@@ -114,14 +109,20 @@ function playMediaFromData() {
     var curPlay = $('.room-container').data().curPlay
     var playId = curPlay._id
     var songId = curPlay.songId
+
     $.ajax({
         type: 'post',
         url: '/get-song',
         data: { 'songId': songId },
         dataType: 'json',
         success: function (data) {
+            var startSecs = calcStartToNowGap(curPlay.startTime)
+            if (startSecs >= data.song.duration) {
+                startSecs = 0
+            }
+
             if (data.song.format == 'youtube') {
-                playYoutube(data.song, playId)
+                playYoutube(data.song, playId, startSecs)
             }
             else {
                 //TODO: support more song formats
@@ -158,4 +159,12 @@ function songEndHandler() {
 
 function scheduleSongEndHandler(duration) {
     setTimeout(songEndHandler, duration * 1000)
+}
+
+function calcStartToNowGap(startTime) {
+    var start = new Date(startTime)
+    var now = new Date(Date.now())
+    var diff = (now.getTime() - start.getTime()) / 1000
+    diff = Math.floor(diff)
+    return diff
 }
