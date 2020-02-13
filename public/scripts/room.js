@@ -46,15 +46,18 @@ function loadQueueIntoData(roomIdString) {
 }
 
 function proposeUpdate(roomIdString) {
-    $.ajax({
-        type: 'post',
-        url: '/propose-room-update',
-        data: { 'roomid': roomIdString },
-        dataType: 'json',
-        success: function (data) {
-            console.log(data)
-        }
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+            type: 'post',
+            url: '/propose-room-update',
+            data: { 'roomid': roomIdString },
+            dataType: 'json',
+            success: function (data) {
+                return resolve(data.proposalValid)
+            }
+        })
     })
+
 }
 
 function hasNextLocally() {
@@ -91,7 +94,7 @@ function playYoutube(song, playId) {
     $('.no-media').addClass('hidden')
     $('.play-name').text(song.name)
 
-    scheduleSongEndHandler(song.duration)
+    scheduleSongEndHandler(song.duration) //TODO: pass in actual time until completion
 }
 
 function playMediaFromData() {
@@ -126,9 +129,20 @@ function clearMediaPlayer() {
 }
 
 function songEndHandler() {
-    console.log('songs over man')
+    var room_id = $('input[name=room_id]').val()
+    proposeUpdate(room_id).then(function (proposalValid) {
+        if (proposalValid) {
+            loadQueueIntoData(room_id).then(function () {
+                playMediaFromData()
+            })
+        }
+        else {
+            clearMediaPlayer()
+            //TODO: setup pooling of update checking
+        }
+    })
 }
 
 function scheduleSongEndHandler(duration) {
-    setTimeout(songEndHandler, duration*1000)
+    setTimeout(songEndHandler, duration * 1000)
 }

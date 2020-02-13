@@ -201,7 +201,8 @@ app.post('/new-playlist', (req, res) => {
 app.post('/submit-song', (req, res) => {
     const play = new Play({
         songId: req.body.songId,
-        submitterId: req.session.uid
+        submitterId: req.session.uid,
+        startTime: null
     })
     play.save((err, response) => {
         if (err) {
@@ -210,6 +211,7 @@ app.post('/submit-song', (req, res) => {
         else {
             Room.findOne({ _id: ObjectID(req.body.roomid) }, (err, room) => {
                 appendPlayToRoom(play, room)
+                es.status(200).send({ appended: true })
             })
         }
     })
@@ -237,11 +239,8 @@ app.post('/propose-room-update', (req, res) => {
         checkRoomQueueShift(room).then(function (result) {
             if (result) {
                 shiftRoomQueue(room)
-                console.log('proposal valid')
             }
-            else {
-                console.log('proposal invalid')
-            }
+            res.status(200).send({ proposalValid: result })
         })
     })
 })
