@@ -211,7 +211,7 @@ app.post('/submit-song', (req, res) => {
         else {
             Room.findOne({ _id: ObjectID(req.body.roomid) }, (err, room) => {
                 appendPlayToRoom(play, room)
-                es.status(200).send({ appended: true })
+                res.status(200).send({ appended: true })
             })
         }
     })
@@ -320,6 +320,8 @@ function login(req, res, username, password) {
 
 function appendPlayToRoom(play, room) {
     Play.findOne({ _id: ObjectID(room.deepestPlayId) }, (err, oldDeepestPlay) => {
+        //TODO: need to do handling here in case (cur == oldest), as when you oldDeespestPlay.save(), it doesn't update curPlay
+        //Above may or may not be right...
         oldDeepestPlay.nextPlayId = play._id
         play.prevPlayId = oldDeepestPlay._id
         room.deepestPlayId = play
@@ -380,6 +382,11 @@ function shiftRoomQueue(room) {
 function checkRoomQueueShift(room) {
     return new Promise(function (resolve, reject) {
         Play.findOne({ _id: ObjectID(room.currentPlayId) }, (err, curPlay) => {
+
+            if (!curPlay.nextPlayId) {
+                return resolve(false)
+            }
+
             Song.findOne({ _id: ObjectID(curPlay.songId) }, (err, song) => {
                 var time = curPlay.startTime
                 time.setSeconds(time.getSeconds() + song.duration)
