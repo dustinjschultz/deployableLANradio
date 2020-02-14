@@ -1,13 +1,38 @@
+<% 
+var style = ""
+if(locals.infocard_style) { 
+    style = infocard_style
+} %>
 
-<div class="infocard">
-    <%= card_main_text %>
-    <button class="infocard-button-plus" onclick="toggleDropdown(this)">+</button>
-    <button class="infocard-button-minus hidden" onclick="toggleDropdown(this)">-</button>
-    <form action="/join_room" method="GET" style="display: inline-block">
-        <input type="hidden" class="hidden" value="<%- room_id %>" name="room_id"/>
-        <button type="submit">Join</button>
-    </form>
-    <div class="infocard-dropdown hidden">
-        <%- card_dropdown_text %>
+<div class="infocard" style="<%- style %>">
+
+    <div class="infocard-main-text"><%= card_main_text %></div>
+    <div class="infocard-button-container">
+        <% if(locals.partial_buttons_left) { %>
+        <%- include('./' + partial_buttons_left, {
+            options: partial_buttons_left_options
+        }) -%>
+        <% } %>
+
+        <button class="infocard-button-plus" onclick="toggleDropdown(this)">+</button>
+        <button class="infocard-button-minus hidden" onclick="toggleDropdown(this)">-</button>
+
+        <% if(locals.partial_buttons_right) { %>
+        <%- include('./' + partial_buttons_right, {
+            options: partial_buttons_right_options
+        }) -%>
+        <% } %>
     </div>
+
+    <div class="infocard-dropdown hidden">
+        <div class="infocard-dropdown-text"><%- card_dropdown_text %></div>
+        <div class="infocard-dropdown-body">
+            <% if(locals.partial_dropdown_body) { %>
+            <%- include('./' + partial_dropdown_body, {
+                options: partial_dropdown_body_options
+            }) -%>
+            <% } %>
+        </div>
+    </div>
+
 </div>

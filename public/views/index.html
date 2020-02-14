@@ -9,7 +9,14 @@
 
 <div class="rooms-container">
     <% for(var i = 0; i < rooms.length; i++) { %>
-    <%- include('../views/partials/infocard', {card_main_text: rooms[i].name, card_dropdown_text: rooms[i].description, room_id: rooms[i]._id}) -%>
+    <%- include('../views/partials/infocard', {
+        card_main_text: rooms[i].name,
+        card_dropdown_text: rooms[i].description,
+        room_id: rooms[i]._id,
+        partial_buttons_right: 'infocard_room_buttons_right',
+        partial_buttons_right_options: { room_id: rooms[i]._id },
+        infocard_style: "width: 90%"
+    }) -%>
     <% } %>
 </div>
 
