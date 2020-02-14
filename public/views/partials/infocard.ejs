@@ -1,13 +1,17 @@
 
 <div class="infocard">
-    <%= card_main_text %>
-    <button class="infocard-button-plus" onclick="toggleDropdown(this)">+</button>
-    <button class="infocard-button-minus hidden" onclick="toggleDropdown(this)">-</button>
-    <form action="/join_room" method="GET" style="display: inline-block">
+    <div class="infocard-main-text"><%= card_main_text %></div>
+    <div class="infocard-button-container">
+        <button class="infocard-button-plus" onclick="toggleDropdown(this)">+</button>
+        <button class="infocard-button-minus hidden" onclick="toggleDropdown(this)">-</button>
+        <form action="/join_room" method="GET" style="display: inline-block">
         <input type="hidden" class="hidden" value="<%- room_id %>" name="room_id"/>
         <button type="submit">Join</button>
     </form>
+    </div>
+    
     <div class="infocard-dropdown hidden">
-        <%- card_dropdown_text %>
+        <div class="infocard-dropdown-text"><%- card_dropdown_text %></div>
+        <div class="infocard-dropdown-body">TODO</div>
     </div>
 </div>

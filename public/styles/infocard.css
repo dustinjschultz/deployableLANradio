@@ -11,5 +11,14 @@
 }
 
 .infocard-button{
+    /*float: right;*/
+}
+
+.infocard-button-container{
     float: right;
+    display: inline-block;
+}
+
+.infocard-main-text{
+    display: inline-block;
 }
