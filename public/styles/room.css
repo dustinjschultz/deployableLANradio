@@ -30,6 +30,7 @@
 .submission-container {
     float: right;
     display: inline-block;
+    width: 30%;
 }
 
 .thumbs-container{
