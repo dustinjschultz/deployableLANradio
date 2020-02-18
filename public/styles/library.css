@@ -1,5 +1,5 @@
 ﻿
-.library-name{
+.library-name {
     margin: auto;
     width: 50%;
     text-align: center;
@@ -18,7 +18,7 @@
     width: 70%;
 }
 
-.library-new-item-conatiner{
+.library-new-item-conatiner {
     display: inline-block;
     float: right;
 }
@@ -27,6 +27,6 @@
     margin: auto;
     width: 70%;
 }
-.edit-tags-song{
+.edit-tags-song {
     display: inline-block;
 }
