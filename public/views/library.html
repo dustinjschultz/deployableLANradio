@@ -29,7 +29,17 @@
         }) -%>
         <% } %>
 
-    </div>
+        <div class="spacer" style="height: 10px;"></div>
 
+        <% for(var i = 0; i < options.playlists.length; i++) { %>
+        <%- include('../views/partials/infocard', {
+        card_main_text: options.playlists[i].name,
+        card_dropdown_text: options.playlists[i].notes,
+        partial_buttons_left: 'infocard_library_playlist_buttons_left',
+        partial_buttons_left_options: null,
+        }) -%>
+        <% } %>
+
+    </div>
 
 </div>

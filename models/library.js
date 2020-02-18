@@ -11,10 +11,10 @@ const librarySchema = mongoose.Schema({
         type: ObjectID,
         ref: 'Song'
     }],
-    //playlistIds: [{
-    //    type: ObjectID,
-    //    ref: 'Playlist'
-    //}]
+    playlistIds: [{
+        type: ObjectID,
+        ref: 'Playlist'
+    }]
 })
 
 const Library = mongoose.model('Library', librarySchema)
