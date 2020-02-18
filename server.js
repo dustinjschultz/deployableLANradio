@@ -189,8 +189,8 @@ app.post('/new-song', (req, res) => {
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     library.songIds.push(song._id) 
                     library.save()
-                    generalScripts.getLibraryContents(library).then(function (songs, playlists) {
-                        goTo(req, res, '/public/views/library.html', { library: library, songs: songs, playlists: playlists })
+                    generalScripts.getLibraryContents(library).then(function (contents) {
+                        goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists })
                     })
                 })
             }
@@ -212,8 +212,8 @@ app.post('/new-playlist', (req, res) => {
             generalScripts.getLibrary(req.session.uid).then(function (library) {
                 library.playlistIds.push(playlist._id)
                 library.save()
-                generalScripts.getLibraryContents(library).then(function (songs, playlists) {
-                    goTo(req, res, '/public/views/library.html', { library: library, songs: songs, playlists: playlists })
+                generalScripts.getLibraryContents(library).then(function (contents) {
+                    goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists })
                 })
             })
         }
