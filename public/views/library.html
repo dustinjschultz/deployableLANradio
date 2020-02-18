@@ -19,26 +19,17 @@
     <div class="spacer" style="height: 40px;"></div>
 
     <div class="library-content-container">
-        <%- include('../views/partials/infocard', {
-        card_main_text: 'temp hardcoded1 name',
-        card_dropdown_text: 'temp hardcoded1 description',
-        partial_buttons_left: 'infocard_library_song_buttons_left',
-        partial_buttons_left_options: null,
-        }) -%>
 
+        <% for(var i = 0; i < options.songs.length; i++) { %>
         <%- include('../views/partials/infocard', {
-        card_main_text: 'temp hardcoded2 name',
-        card_dropdown_text: 'temp hardcoded2 description',
+        card_main_text: options.songs[i].name,
+        card_dropdown_text: options.songs[i].notes,
         partial_buttons_left: 'infocard_library_song_buttons_left',
         partial_buttons_left_options: null,
         }) -%>
+        <% } %>
 
-        <%- include('../views/partials/infocard', {
-        card_main_text: 'temp hardcoded3 name',
-        card_dropdown_text: 'temp hardcoded3 description',
-        partial_buttons_left: 'infocard_library_song_buttons_left',
-        partial_buttons_left_options: null,
-        }) -%>
     </div>
+
 
 </div>

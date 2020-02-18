@@ -157,8 +157,11 @@ app.get('/join_room', (req, res) => {
 })
 
 app.get('/library', (req, res) => {
+    //TODO: support updated getLibraryContents that returns playlists
     generalScripts.getLibrary(req.session.uid).then(function (library) {
-        goTo(req, res, '/public/views/library.html', {library: library})
+        generalScripts.getLibraryContents(library).then(function (songs) {
+            goTo(req, res, '/public/views/library.html', { library: library, songs: songs })
+        })
     })
 })
 
