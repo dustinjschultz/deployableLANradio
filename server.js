@@ -23,6 +23,8 @@ const { Room } = require('./models/room')
 const { Library } = require('./models/library')
 const { Song } = require('./models/song')
 const { Play } = require('./models/play')
+const { Playlist } = require('./models/playlist')
+const { PlaylistElement } = require('./models/playlistelement')
 
 
 app.use(bodyParser.urlencoded({
@@ -188,6 +190,7 @@ app.post('/new-song', (req, res) => {
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     library.songIds.push(song._id) 
                     library.save()
+                    //TODO: put songs in here
                     goTo(req, res, '/public/views/library.html', { library: library })
                 })
             }
@@ -196,8 +199,25 @@ app.post('/new-song', (req, res) => {
 })
 
 app.post('/new-playlist', (req, res) => {
-    //TOOD:
-    console.log('new-playlist')
+
+    const playlist = new Playlist({
+        name: req.body.name,
+        notes: req.body.notes
+    })
+    playlist.save((err, response) => {
+        if (err) {
+            res.status(400).send(err)
+        }
+        else {
+            generalScripts.getLibrary(req.session.uid).then(function (library) {
+                library.playlistIds.push(playlist._id)
+                library.save()
+                //TODO: put songs in here
+                goTo(req, res, '/public/views/library.html', { library: library })
+            })
+        }
+    })
+
     goTo(req, res, '/public/views/library.html')
 })
 
