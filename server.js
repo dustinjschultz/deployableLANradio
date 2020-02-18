@@ -159,10 +159,9 @@ app.get('/join_room', (req, res) => {
 })
 
 app.get('/library', (req, res) => {
-    //TODO: support updated getLibraryContents that returns playlists
     generalScripts.getLibrary(req.session.uid).then(function (library) {
-        generalScripts.getLibraryContents(library).then(function (songs) {
-            goTo(req, res, '/public/views/library.html', { library: library, songs: songs })
+        generalScripts.getLibraryContents(library).then(function (contents) {
+            goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists })
         })
     })
 })
@@ -190,9 +189,8 @@ app.post('/new-song', (req, res) => {
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     library.songIds.push(song._id) 
                     library.save()
-                    //TODO: put songs in here
-                    generalScripts.getLibraryContents(library).then(function (songs) {
-                        goTo(req, res, '/public/views/library.html', { library: library, songs: songs })
+                    generalScripts.getLibraryContents(library).then(function (songs, playlists) {
+                        goTo(req, res, '/public/views/library.html', { library: library, songs: songs, playlists: playlists })
                     })
                 })
             }
@@ -214,9 +212,8 @@ app.post('/new-playlist', (req, res) => {
             generalScripts.getLibrary(req.session.uid).then(function (library) {
                 library.playlistIds.push(playlist._id)
                 library.save()
-                //TODO: put songs in here
-                generalScripts.getLibraryContents(library).then(function (songs) {
-                    goTo(req, res, '/public/views/library.html', { library: library, songs: songs })
+                generalScripts.getLibraryContents(library).then(function (songs, playlists) {
+                    goTo(req, res, '/public/views/library.html', { library: library, songs: songs, playlists: playlists })
                 })
             })
         }

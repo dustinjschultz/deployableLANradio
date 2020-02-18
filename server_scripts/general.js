@@ -8,6 +8,8 @@ const { Room } = require('../models/room')
 const { Library } = require('../models/library')
 const { Song } = require('../models/song')
 const { Play } = require('../models/play')
+const { Playlist } = require('../models/playlist')
+const { PlaylistElement } = require('../models/playlistelement')
 
 const linkedJS = require('./linkedJS')
 
@@ -28,20 +30,29 @@ function getLibrary(userid) {
     })
 }
 
+//returns promise with object that is {songs, playlists}
 function getLibraryContents(library) {
     return new Promise(function (resolve, reject) {
         if (!library) {
             return resolve(null)
         }
 
-        //TODO: add playlists
         var songIdsStrings = library.songIds
         var songIds = []
         for (var i = 0; i < songIdsStrings.length; i++) {
             songIds.push(ObjectID(songIdsStrings[i]))
         }
         Song.find({ _id: songIds }, (err, songs) => {
-            return resolve(songs)
+
+            var playlistIdsStrings = library.playlistIds
+            var playlistIds = []
+            for (var i = 0; i < playlistIdsStrings.length; i++) {
+                playlistIds.push(ObjectID(playlistIdsStrings[i]))
+            }
+            Playlist.find({ _id: playlistIds }, (err, playlists) => {
+                return resolve({songs: songs, playlists: playlists})
+            })
+
         })
     })
 }
