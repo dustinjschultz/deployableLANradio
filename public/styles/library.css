@@ -1,0 +1,32 @@
+﻿
+.library-name {
+    margin: auto;
+    width: 50%;
+    text-align: center;
+}
+
+.library-control-bar {
+    border: 1px dashed black;
+    margin: auto;
+    width: 70%;
+    padding: 10px;
+}
+
+.library-searchbar-container {
+    display: inline-block;
+    border: 1px dashed black;
+    width: 70%;
+}
+
+.library-new-item-conatiner {
+    display: inline-block;
+    float: right;
+}
+
+.library-content-container {
+    margin: auto;
+    width: 70%;
+}
+.edit-tags-song {
+    display: inline-block;
+}
