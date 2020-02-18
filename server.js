@@ -191,7 +191,9 @@ app.post('/new-song', (req, res) => {
                     library.songIds.push(song._id) 
                     library.save()
                     //TODO: put songs in here
-                    goTo(req, res, '/public/views/library.html', { library: library })
+                    generalScripts.getLibraryContents(library).then(function (songs) {
+                        goTo(req, res, '/public/views/library.html', { library: library, songs: songs })
+                    })
                 })
             }
         })
@@ -213,12 +215,12 @@ app.post('/new-playlist', (req, res) => {
                 library.playlistIds.push(playlist._id)
                 library.save()
                 //TODO: put songs in here
-                goTo(req, res, '/public/views/library.html', { library: library })
+                generalScripts.getLibraryContents(library).then(function (songs) {
+                    goTo(req, res, '/public/views/library.html', { library: library, songs: songs })
+                })
             })
         }
     })
-
-    goTo(req, res, '/public/views/library.html')
 })
 
 app.post('/submit-song', (req, res) => {
