@@ -1,9 +1,44 @@
 ﻿
 <div class="library-container">
 
-    I AM LIBRARY <%- options.library._id -%>
+    <div class="spacer" style="height: 100px;"></div>
+    <div class="library-name"> <%= username %>'s library</div>
 
-    <form action="/newitem" method="GET">
-        <button type="submit">New Item</button>
-    </form>
+    <div class="library-control-bar">
+        <div class="library-searchbar-container">
+            SEARCHBAR CONTAINER
+        </div>
+
+        <div class="library-new-item-conatiner">
+            <form action="/newitem" method="GET">
+                <button type="submit">New Item</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="spacer" style="height: 40px;"></div>
+
+    <div class="library-content-container">
+        <%- include('../views/partials/infocard', {
+        card_main_text: 'temp hardcoded1 name',
+        card_dropdown_text: 'temp hardcoded1 description',
+        partial_buttons_left: 'infocard_library_song_buttons_left',
+        partial_buttons_left_options: null,
+        }) -%>
+
+        <%- include('../views/partials/infocard', {
+        card_main_text: 'temp hardcoded2 name',
+        card_dropdown_text: 'temp hardcoded2 description',
+        partial_buttons_left: 'infocard_library_song_buttons_left',
+        partial_buttons_left_options: null,
+        }) -%>
+
+        <%- include('../views/partials/infocard', {
+        card_main_text: 'temp hardcoded3 name',
+        card_dropdown_text: 'temp hardcoded3 description',
+        partial_buttons_left: 'infocard_library_song_buttons_left',
+        partial_buttons_left_options: null,
+        }) -%>
+    </div>
+
 </div>
