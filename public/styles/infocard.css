@@ -18,13 +18,24 @@
     float: right;
     display: inline-block;
     margin-right: 10px;
+    /*min-width: 100px;*/
 }
 
 .infocard-main-text {
     display: inline-block;
     margin-left: 10px;
+    margin-right: 10px;
+    /*min-width: 100px;*/
+    /*float: left;*/
 }
 
 .infocard-main-body {
+    display: inline-block;
+    /*width: 100%;*/
+    float: right;
+}
+
+.infocard-main-body-conatiner {
+    /*float: left;*/
     display: inline-block;
 }
