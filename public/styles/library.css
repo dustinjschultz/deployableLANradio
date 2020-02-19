@@ -27,6 +27,17 @@
     margin: auto;
     width: 70%;
 }
+
 .edit-tags-song {
+    display: inline-block;
+}
+
+.tags-container {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.tag {
+    border: 1px dashed black;
     display: inline-block;
 }

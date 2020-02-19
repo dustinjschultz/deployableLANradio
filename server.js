@@ -25,6 +25,7 @@ const { Song } = require('./models/song')
 const { Play } = require('./models/play')
 const { Playlist } = require('./models/playlist')
 const { PlaylistElement } = require('./models/playlistelement')
+const { Tag } = require('./models/tag')
 
 
 app.use(bodyParser.urlencoded({
@@ -161,7 +162,7 @@ app.get('/join_room', (req, res) => {
 app.get('/library', (req, res) => {
     generalScripts.getLibrary(req.session.uid).then(function (library) {
         generalScripts.getLibraryContents(library).then(function (contents) {
-            goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists })
+            goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists, tags: contents.tags })
         })
     })
 })
@@ -190,7 +191,7 @@ app.post('/new-song', (req, res) => {
                     library.songIds.push(song._id) 
                     library.save()
                     generalScripts.getLibraryContents(library).then(function (contents) {
-                        goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists })
+                        goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists, tags: contents.tags })
                     })
                 })
             }
@@ -213,7 +214,7 @@ app.post('/new-playlist', (req, res) => {
                 library.playlistIds.push(playlist._id)
                 library.save()
                 generalScripts.getLibraryContents(library).then(function (contents) {
-                    goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists })
+                    goTo(req, res, '/public/views/library.html', { library: library, songs: contents.songs, playlists: contents.playlists, tags: contents.tags })
                 })
             })
         }

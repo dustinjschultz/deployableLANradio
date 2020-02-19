@@ -20,11 +20,11 @@ const songSchema = mongoose.Schema({
     },
     duration: {
         type: Number
-    }
-    //tagIds: [{
-    //    type: ObjectID,
-    //    ref: 'Tag'
-    //}],
+    },
+    tagIds: [{
+        type: ObjectID,
+        ref: 'Tag'
+    }],
 })
 
 const Song = mongoose.model('Song', songSchema)

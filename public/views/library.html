@@ -1,4 +1,5 @@
-﻿
+﻿<script src="../public/scripts/library.js"></script>
+
 <div class="library-container">
 
     <div class="spacer" style="height: 100px;"></div>
@@ -26,6 +27,8 @@
         card_dropdown_text: options.songs[i].notes,
         partial_buttons_left: 'infocard_library_song_buttons_left',
         partial_buttons_left_options: null,
+        partial_main_body: 'infocard_library_element_main_body',
+        partial_main_body_options: {tags: options.tags, relevantTagIds: options.songs[i].tagIds, server_utils: server_utils}
         }) -%>
         <% } %>
 
@@ -37,6 +40,8 @@
         card_dropdown_text: options.playlists[i].notes,
         partial_buttons_left: 'infocard_library_playlist_buttons_left',
         partial_buttons_left_options: null,
+        partial_main_body: 'infocard_library_element_main_body',
+        partial_main_body_options: {tags: options.tags, relevantTagIds: options.playlists[i].tagIds, server_utils: server_utils}
         }) -%>
         <% } %>
 

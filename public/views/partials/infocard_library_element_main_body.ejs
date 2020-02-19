@@ -1,0 +1,7 @@
+
+<div class="tags-container">
+<% for(var i = 0; i < options.relevantTagIds.length; i++) { %>
+<% var tag = options.server_utils.matchTagWithId(options.tags, options.relevantTagIds[i])%>
+    <div class="tag"> <%- tag.name %> : <%- tag.value %></div>
+<% } %>
+</div>

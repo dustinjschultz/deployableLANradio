@@ -15,7 +15,18 @@ if(locals.card_dropdown_text){
 
 <div class="infocard" style="<%- style %>">
 
-    <div class="infocard-main-text"><%= main_text %></div>
+    <div class="infocard-main-body-conatiner">
+        <div class="infocard-main-text"><%= main_text %></div>
+
+        <div class="infocard-main-body">
+            <% if(locals.partial_main_body) { %>
+            <%- include('./' + partial_main_body, {
+                options: partial_main_body_options
+            }) -%>
+            <% } %>
+        </div>
+    </div>
+
     <div class="infocard-button-container">
         <% if(locals.partial_buttons_left) { %>
         <%- include('./' + partial_buttons_left, {

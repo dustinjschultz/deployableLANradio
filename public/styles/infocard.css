@@ -1,5 +1,5 @@
 ﻿
-.infocard{
+.infocard {
     border: 1px solid black;
     padding: 10px 0px 10px 0px;
     /*padding: 10px;*/
@@ -10,17 +10,27 @@
     margin-left: 10px;
 }
 
-.infocard-button{
+.infocard-button {
     /*float: right;*/
 }
 
-.infocard-button-container{
+.infocard-button-container {
     float: right;
     display: inline-block;
     margin-right: 10px;
 }
 
-.infocard-main-text{
+.infocard-main-text {
     display: inline-block;
     margin-left: 10px;
+    margin-right: 10px;
+}
+
+.infocard-main-body {
+    display: inline-block;
+    float: right;
+}
+
+.infocard-main-body-conatiner {
+    display: inline-block;
 }
