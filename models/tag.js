@@ -1,9 +1,16 @@
 const mongoose = require('mongoose')
 const ObjectID = require('mongodb').ObjectID
 
-//https://www.chunkofcode.net/how-to-define-multiple-types-for-a-field-in-mongodb-mongoose/
 
-const playlistelementSchema = mongoose.Schema({
+const tagSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    value: {
+        type: Number,
+        required: true
+    },
     elementType: {
         type: String,
         required: true,
@@ -15,5 +22,5 @@ const playlistelementSchema = mongoose.Schema({
     }
 })
 
-const PlaylistElement = mongoose.model('PlaylistElement', playlistelementSchema)
-module.exports = { PlaylistElement }
+const Tag = mongoose.model('Tag', tagSchema)
+module.exports = { Tag }
