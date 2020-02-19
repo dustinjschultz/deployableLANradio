@@ -135,6 +135,15 @@ function extractTagIds(songs, playlists) {
     return tagIds
 }
 
+function matchTagWithId(tags, id) {
+    for (var i = 0; i < tags.length; i++) {
+        if (tags[i]._id.toString() == id.toString()) { //converting to strings make it work
+            return tags[i]
+        }
+    }
+    return null
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -151,5 +160,6 @@ module.exports = {
     getRoom,
     getSong,
     extractTagIds,
+    matchTagWithId,
     linkedJS
 }
