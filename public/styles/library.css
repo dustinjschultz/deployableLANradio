@@ -41,3 +41,39 @@
     border: 1px dashed black;
     display: inline-block;
 }
+
+.newitem-container {
+    width: 70%;
+    margin: auto;
+}
+
+.new-item-text {
+    text-align: center;
+}
+
+.new-item-form-container {
+    margin: auto;
+    text-align: center;
+    padding: 20px;
+}
+
+.new-item-form-container input {
+    display: block;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 400px;
+}
+
+.new-item-toggle-button {
+    margin: auto;
+    width: 60px;
+}
+
+.new-item-header {
+    
+}
+
+.new-item-button-container {
+    text-align: center;
+}

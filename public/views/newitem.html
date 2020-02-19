@@ -1,32 +1,45 @@
 ﻿
+<div class="spacer" style="height: 100px;"></div>
+
 <div class="newitem-container">
 
-    I AM NEW ITEM
-
-    <button onclick="toggleMenus()">
-        <i class="fa fa-exchange fa-lg"></i>
-    </button>
-
     <div class="new-song-container">
+        <div class="new-item-header">
+            <div class="new-item-text">NEW SONG</div>
+            <div class="new-item-button-container">
+                <button class="new-item-toggle-button" onclick="toggleMenus()">
+                    <i class="fa fa-exchange fa-xs"></i>
+                </button>
+            </div>
+        </div>
 
-        I AM NEW SONG
-
-        <form action="/new-song" method="POST">
-            <input type="text" name="name" placeholder="name" />
-            <input type="text" name="notes" placeholder="notes" />
-            <input type="text" name="link" placeholder="link" />
-            <button type="submit">New Song</button>
-        </form>
+        <div class="new-item-form-container">
+            <form action="/new-song" method="POST">
+                <input type="text" name="name" placeholder="name" />
+                <input type="text" name="notes" placeholder="notes" />
+                <input type="text" name="link" placeholder="link" />
+                <button type="submit">New Song</button>
+            </form>
+        </div>
     </div>
 
     <div class="new-playlist-container hidden">
+        <div class="new-item-header">
+            <div class="new-item-text">NEW PLAYLIST</div>
+            <div class="new-item-button-container">
+                <button class="new-item-toggle-button" onclick="toggleMenus()">
+                    <i class="fa fa-exchange fa-lg"></i>
+                </button>
+            </div>
+        </div>
 
-        I AM NEW PLAYLIST
-
-        <form action="/new-playlist" method="POST">
-            <input type="text" name="name" placeholder="name" />
-            <input type="text" name="notes" placeholder="notes" />
-            <button type="submit">New Playlist</button>
-        </form>
+        <div class="new-item-form-container">
+            <form action="/new-playlist" method="POST">
+                <input type="text" name="name" placeholder="name" />
+                <input type="text" name="notes" placeholder="notes" />
+                <button type="submit">New Playlist</button>
+            </form>
+        </div>
     </div>
+
 </div>
