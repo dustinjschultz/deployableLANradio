@@ -41,4 +41,5 @@
 
 .tag {
     border: 1px dashed black;
+    display: inline-block;
 }
