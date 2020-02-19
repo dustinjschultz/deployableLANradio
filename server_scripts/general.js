@@ -51,7 +51,10 @@ function getLibraryContents(library) {
                 playlistIds.push(ObjectID(playlistIdsStrings[i]))
             }
             Playlist.find({ _id: playlistIds }, (err, playlists) => {
-                return resolve({songs: songs, playlists: playlists})
+                tagIds = extractTagIds(songs, playlists)
+                Tag.find({ _id: tagIds }, (err, tags) => {
+                    return resolve({ songs: songs, playlists: playlists, tags: tags })
+                })
             })
 
         })
