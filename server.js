@@ -25,6 +25,7 @@ const { Song } = require('./models/song')
 const { Play } = require('./models/play')
 const { Playlist } = require('./models/playlist')
 const { PlaylistElement } = require('./models/playlistelement')
+const { Tag } = require('./models/tag')
 
 
 app.use(bodyParser.urlencoded({

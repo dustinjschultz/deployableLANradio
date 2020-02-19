@@ -10,6 +10,7 @@ const { Song } = require('../models/song')
 const { Play } = require('../models/play')
 const { Playlist } = require('../models/playlist')
 const { PlaylistElement } = require('../models/playlistelement')
+const { Tag } = require('../models/tag')
 
 const linkedJS = require('./linkedJS')
 
@@ -116,6 +117,20 @@ function getSong(idString) {
     })
 }
 
+function extractTagIds(songs, playlists) {
+    var tagIds = []
+    for (var i = 0; i < songs.length; i++) {
+        for (var j = 0; j < songs[i].tagIds.length; j++) {
+            tagIds.push(songs[i].tagIds[j])
+        }
+    }
+    for (var i = 0; i < playlists.length; i++) {
+        for (var j = 0; j < playlists[i].tagIds.length; j++) {
+            tagIds.push(playlists[i].tagIds[j])
+        }
+    }
+    return tagIds
+}
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -132,5 +147,6 @@ module.exports = {
     getPlay,
     getRoom,
     getSong,
+    extractTagIds,
     linkedJS
 }

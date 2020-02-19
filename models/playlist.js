@@ -10,10 +10,10 @@ const playlistSchema = mongoose.Schema({
     notes: {
         type: String,
     },
-    //tagIds: [{
-    //    type: ObjectID,
-    //    ref: 'Tag'
-    //}],
+    tagIds: [{
+        type: ObjectID,
+        ref: 'Tag'
+    }],
     elementIds: [{
         type: ObjectID,
         ref: 'PlaylistElement'
