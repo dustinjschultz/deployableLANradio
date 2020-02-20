@@ -53,7 +53,20 @@ function getLibraryContents(library) {
             Playlist.find({ _id: playlistIds }, (err, playlists) => {
                 tagIds = extractTagIds(songs, playlists)
                 Tag.find({ _id: tagIds }, (err, tags) => {
-                    return resolve({ songs: songs, playlists: playlists, tags: tags })
+
+                    var playlistElementIdsStrings = []
+                    for (var i = 0; i < playlists.length; i++) {
+                        playlistElementIdsStrings = playlistElementIdsStrings.concat(playlists[i].elementIds)
+                    }
+
+                    playlistElementIds = []
+                    for (var i = 0; i < playlistElementIdsStrings.length; i++) {
+                        playlistElementIds.push(ObjectID(playlistElementIdsStrings[i]))
+                    }
+
+                    PlaylistElement.find({_id: playlistElementIds}, (err, elements) => {
+                        return resolve({ songs: songs, playlists: playlists, tags: tags, playlistelements: elements })
+                    })
                 })
             })
 
@@ -135,10 +148,10 @@ function extractTagIds(songs, playlists) {
     return tagIds
 }
 
-function matchTagWithId(tags, id) {
-    for (var i = 0; i < tags.length; i++) {
-        if (tags[i]._id.toString() == id.toString()) { //converting to strings make it work
-            return tags[i]
+function matchDbObjectWithId(dbObject, id) {
+    for (var i = 0; i < dbObject.length; i++) {
+        if (dbObject[i]._id.toString() == id.toString()) { //converting to strings make it work
+            return dbObject[i]
         }
     }
     return null
@@ -160,6 +173,6 @@ module.exports = {
     getRoom,
     getSong,
     extractTagIds,
-    matchTagWithId,
+    matchDbObjectWithId,
     linkedJS
 }

@@ -1,0 +1,21 @@
+
+<div class="playlist-content-container">
+    <% for(var i = 0; i < options.playlist.elementIds.length; i++) { %>
+        <% var element = options.server_utils.matchDbObjectWithId(options.playlistelements, options.playlist.elementIds[i]) %>
+        <% var elementContent = options.server_utils.matchDbObjectWithId(options.songs, element.elementId) %>
+        <% if(elementContent) { %>
+            <div class="playlistelement-song">
+                <%- elementContent.name %>
+            </div>
+        <% } else {%>
+            <% elementContent = options.server_utils.matchDbObjectWithId(options.allPlaylists, element.elementId) %>
+            <div class="playlistelement-playlist">
+                <%- elementContent.name %>
+
+                <%- include('infocard_library_playlist_dropdown_body', {
+                    options: {playlist: elementContent, songs: options.songs, server_utils: server_utils, playlistelements: options.playlistelements, allPlaylists: options.allPlaylists}
+                }) -%>
+            </div>
+        <% } %>
+    <% } %>
+</div>
