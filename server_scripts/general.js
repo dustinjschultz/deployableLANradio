@@ -31,25 +31,17 @@ function getLibrary(userid) {
     })
 }
 
-//returns promise with object that is {songs, playlists}
+//returns promise with object that is {songs, playlists, tags, playlistelements}
 function getLibraryContents(library) {
     return new Promise(function (resolve, reject) {
         if (!library) {
             return resolve(null)
         }
 
-        var songIdsStrings = library.songIds
-        var songIds = []
-        for (var i = 0; i < songIdsStrings.length; i++) {
-            songIds.push(ObjectID(songIdsStrings[i]))
-        }
+        var songIds = convertStringsToObjectIDs(library.songIds)
         Song.find({ _id: songIds }, (err, songs) => {
 
-            var playlistIdsStrings = library.playlistIds
-            var playlistIds = []
-            for (var i = 0; i < playlistIdsStrings.length; i++) {
-                playlistIds.push(ObjectID(playlistIdsStrings[i]))
-            }
+            var playlistIds = convertStringsToObjectIDs(library.playlistIds)
             Playlist.find({ _id: playlistIds }, (err, playlists) => {
                 tagIds = extractTagIds(songs, playlists)
                 Tag.find({ _id: tagIds }, (err, tags) => {
@@ -59,17 +51,13 @@ function getLibraryContents(library) {
                         playlistElementIdsStrings = playlistElementIdsStrings.concat(playlists[i].elementIds)
                     }
 
-                    playlistElementIds = []
-                    for (var i = 0; i < playlistElementIdsStrings.length; i++) {
-                        playlistElementIds.push(ObjectID(playlistElementIdsStrings[i]))
-                    }
+                    playlistElementIds = convertStringsToObjectIDs(playlistElementIdsStrings)
 
                     PlaylistElement.find({_id: playlistElementIds}, (err, elements) => {
                         return resolve({ songs: songs, playlists: playlists, tags: tags, playlistelements: elements })
                     })
                 })
             })
-
         })
     })
 }
@@ -155,6 +143,14 @@ function matchDbObjectWithId(dbObject, id) {
         }
     }
     return null
+}
+
+function convertStringsToObjectIDs(strings) {
+    objectIDs = []
+    for (var i = 0; i < strings.length; i++) {
+        objectIDs.push(ObjectID(strings[i]))
+    }
+    return objectIDs
 }
 
 function generalTestFunc() {
