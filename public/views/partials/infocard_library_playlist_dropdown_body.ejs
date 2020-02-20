@@ -1,7 +1,7 @@
 
 <div class="">
     <% for(var i = 0; i < options.playlist.elementIds.length; i++) { %>
-        <% var element = options.server_utils.matchElementWithId(options.playlistelements, options.playlist.elementIds[i]) %>
+        <% var element = options.server_utils.matchDbObjectWithId(options.playlistelements, options.playlist.elementIds[i]) %>
         <%- element %>
     <% } %>
 </div>

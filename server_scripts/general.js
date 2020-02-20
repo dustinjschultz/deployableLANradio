@@ -148,23 +148,23 @@ function extractTagIds(songs, playlists) {
     return tagIds
 }
 
-function matchTagWithId(tags, id) {
-    for (var i = 0; i < tags.length; i++) {
-        if (tags[i]._id.toString() == id.toString()) { //converting to strings make it work
-            return tags[i]
+function matchDbObjectWithId(dbObject, id) {
+    for (var i = 0; i < dbObject.length; i++) {
+        if (dbObject[i]._id.toString() == id.toString()) { //converting to strings make it work
+            return dbObject[i]
         }
     }
     return null
 }
 
-function matchElementWithId(elements, id) {
-    for (var i = 0; i < elements.length; i++) {
-        if (elements[i]._id.toString() == id.toString()) { //converting to strings make it work
-            return elements[i]
-        }
-    }
-    return null
-}
+//function matchElementWithId(elements, id) {
+//    for (var i = 0; i < elements.length; i++) {
+//        if (elements[i]._id.toString() == id.toString()) { //converting to strings make it work
+//            return elements[i]
+//        }
+//    }
+//    return null
+//}
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -182,7 +182,6 @@ module.exports = {
     getRoom,
     getSong,
     extractTagIds,
-    matchTagWithId,
-    matchElementWithId,
+    matchDbObjectWithId,
     linkedJS
 }
