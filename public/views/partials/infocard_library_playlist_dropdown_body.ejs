@@ -2,6 +2,12 @@
 <div class="">
     <% for(var i = 0; i < options.playlist.elementIds.length; i++) { %>
         <% var element = options.server_utils.matchDbObjectWithId(options.playlistelements, options.playlist.elementIds[i]) %>
-        <%- element %>
+        <% var elementContent = options.server_utils.matchDbObjectWithId(options.songs, element.elementId) %>
+        <% if(elementContent) { %>
+            <%- elementContent.name %>
+        <% } else {%>
+            <% elementContent = options.server_utils.matchDbObjectWithId(options.allPlaylists, element.elementId) %>
+            <%- elementContent.name %>
+        <% } %>
     <% } %>
 </div>

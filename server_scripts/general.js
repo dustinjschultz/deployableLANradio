@@ -157,15 +157,6 @@ function matchDbObjectWithId(dbObject, id) {
     return null
 }
 
-//function matchElementWithId(elements, id) {
-//    for (var i = 0; i < elements.length; i++) {
-//        if (elements[i]._id.toString() == id.toString()) { //converting to strings make it work
-//            return elements[i]
-//        }
-//    }
-//    return null
-//}
-
 function generalTestFunc() {
     return 'general - testFunc()'
 }
