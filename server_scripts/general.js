@@ -53,7 +53,20 @@ function getLibraryContents(library) {
             Playlist.find({ _id: playlistIds }, (err, playlists) => {
                 tagIds = extractTagIds(songs, playlists)
                 Tag.find({ _id: tagIds }, (err, tags) => {
-                    return resolve({ songs: songs, playlists: playlists, tags: tags })
+
+                    var playlistElementIdsStrings = []
+                    for (var i = 0; i < playlists.length; i++) {
+                        playlistElementIdsStrings = playlistElementIdsStrings.concat(playlists[i].elementIds)
+                    }
+
+                    playlistElementIds = []
+                    for (var i = 0; i < playlistElementIdsStrings.length; i++) {
+                        playlistElementIds.push(ObjectID(playlistElementIdsStrings[i]))
+                    }
+
+                    PlaylistElement.find({_id: playlistElementIds}, (err, elements) => {
+                        return resolve({ songs: songs, playlists: playlists, tags: tags, playlistelements: elements })
+                    })
                 })
             })
 
@@ -144,6 +157,15 @@ function matchTagWithId(tags, id) {
     return null
 }
 
+function matchElementWithId(elements, id) {
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i]._id.toString() == id.toString()) { //converting to strings make it work
+            return elements[i]
+        }
+    }
+    return null
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -161,5 +183,6 @@ module.exports = {
     getSong,
     extractTagIds,
     matchTagWithId,
+    matchElementWithId,
     linkedJS
 }
