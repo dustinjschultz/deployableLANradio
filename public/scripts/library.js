@@ -10,9 +10,12 @@ function toggleTagEdits(element) {
 function editIfPossible(element) {
     var infocard = element.parentElement.parentElement.parentElement.parentElement
     if (infocard.classList.contains('tags-editable')) {
-        console.log('editable')
+        startTagEdit(element)
     }
-    else {
-        console.log('not editable')
-    }
+}
+
+function startTagEdit(element) {
+    //TODO: 
+    console.log('trying to edit: ')
+    console.log(element)
 }
