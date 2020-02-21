@@ -81,3 +81,7 @@
 .playlistelement-playlist {
     margin-left: 10px;
 }
+
+.tags-editable .tag:hover {
+    background-color: lightgray;
+}

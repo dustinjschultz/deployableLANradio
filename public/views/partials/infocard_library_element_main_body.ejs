@@ -2,6 +2,6 @@
 <div class="tags-container">
 <% for(var i = 0; i < options.relevantTagIds.length; i++) { %>
 <% var tag = options.server_utils.matchDbObjectWithId(options.tags, options.relevantTagIds[i])%>
-    <div class="tag"> <%- tag.name %> : <%- tag.value %></div>
+    <div class="tag" onclick="editIfPossible(this)"> <%- tag.name %> : <%- tag.value %></div>
 <% } %>
 </div>
