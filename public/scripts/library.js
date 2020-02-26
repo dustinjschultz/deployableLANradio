@@ -10,10 +10,9 @@ function toggleTagEdits(element) {
 
 function toggleEditButton(element) {
     var parent = element.parentElement
-    var children = parent.querySelectorAll('button')
-    console.log(children)
-    for (var i = 0; i < children.length; i++) {
-        children[i].classList.toggle('hidden')
+    var buttons = parent.querySelectorAll('button')
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].classList.toggle('hidden')
     }
 }
 
@@ -22,6 +21,11 @@ function editIfPossible(element) {
     if (infocard.classList.contains('tags-editable')) {
         startTagEdit(element)
     }
+}
+
+function saveTags(element) {
+    toggleTagEdits(element)
+    //TODO: saving
 }
 
 function startTagEdit(element) {

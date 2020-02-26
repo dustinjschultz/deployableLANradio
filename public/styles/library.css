@@ -85,3 +85,15 @@
 .tags-editable .tag:hover {
     background-color: lightgray;
 }
+
+.tag-name {
+    display: inline-block;
+}
+
+.tag-delimiter {
+    display: inline-block;
+}
+
+.tag-value {
+    display: inline-block;
+}
