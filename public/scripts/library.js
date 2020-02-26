@@ -29,7 +29,22 @@ function saveTags(element) {
 }
 
 function startTagEdit(element) {
-    //TODO: 
-    console.log('trying to edit: ')
-    console.log(element)
+
+    var nameInput = document.createElement('input')
+    var tagNameDiv = element.querySelector('.tag-name')
+    var curName = tagNameDiv.textContent
+    nameInput.setAttribute('type', 'text')
+    nameInput.setAttribute('value', curName)
+    nameInput.setAttribute('style', 'width: 100px;')
+    element.insertBefore(nameInput, element.childNodes[0] || null) //put the input first
+    tagNameDiv.setAttribute('style', 'display: none;') //can't add hidden tag, since the display: none gets overriden by library's css
+
+    var valueInput = document.createElement('input')
+    var tagValueDiv = element.querySelector('.tag-value')
+    var curVal = tagValueDiv.textContent
+    valueInput.setAttribute('type', 'text')
+    valueInput.setAttribute('value', curVal)
+    valueInput.setAttribute('style', 'width: 100px;')
+    element.append(valueInput)
+    tagValueDiv.setAttribute('style', 'display: none;') //can't add hidden tag, since the display: none gets overriden by library's css
 }
