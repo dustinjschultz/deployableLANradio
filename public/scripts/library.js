@@ -28,9 +28,21 @@ function saveTags(element) {
     var infocard = element.parentElement.parentElement.parentElement
     var tags = infocard.querySelectorAll('.tag')
 
+    var editedTags = gatherTagEdits(tags)
+
     for (var i = 0; i < tags.length; i++) {
         endTagEdit(tags[i])
     }
+
+    $.ajax({
+        type: 'get',
+        url: '/edit-tags',
+        data: { 'tags': editedTags },
+        dataType: 'json',
+        success: function (data) {
+            console.log('tags edits saved')
+        }
+    })
 
     //TODO: saving
 }
@@ -80,4 +92,20 @@ function endTagEdit(element) {
         tagValueDiv.setAttribute('style', '') //removing display: none
     }
 
+}
+
+function gatherTagEdits(tags) {
+    var editedTags = []
+    for (var i = 0; i < tags.length; i++) {
+        if (tags[i].classList.contains('editing')) {
+            var nameInput = tags[i].querySelector('.tag-name-edit')
+            var newName = nameInput.value
+            var valInput = tags[i].querySelector('.tag-value-edit')
+            var newValue = valInput.value
+            var tagId = tags[i].getAttribute('data-tag-id')
+            var tagInfo = { 'tag_id': tagId, 'tag_name': newName, 'tag_value': newValue }
+            editedTags.push(tagInfo)
+        }
+    }
+    return editedTags 
 }

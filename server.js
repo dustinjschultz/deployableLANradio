@@ -277,6 +277,13 @@ app.post('/get-song', (req, res) => {
     })
 })
 
+app.get('/edit-tags', (req, res) => {
+    console.log('edit tags')
+    console.log(req.query.tags)
+    res.status(200).send()
+    //TODO: save them
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
