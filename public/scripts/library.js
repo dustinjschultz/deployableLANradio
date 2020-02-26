@@ -39,12 +39,7 @@ function saveTags(element) {
         url: '/edit-tags',
         data: { 'tags': editedTags },
         dataType: 'json',
-        success: function (data) {
-            console.log('tags edits saved')
-        }
     })
-
-    //TODO: saving
 }
 
 function startTagEdit(element) {

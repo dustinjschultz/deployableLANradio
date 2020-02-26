@@ -278,10 +278,7 @@ app.post('/get-song', (req, res) => {
 })
 
 app.get('/edit-tags', (req, res) => {
-    console.log('edit tags')
-    console.log(req.query.tags)
-    res.status(200).send()
-    //TODO: save them
+    generalScripts.saveTagEdits(req.query.tags)
 })
 
 function goToIndex(req, res) {

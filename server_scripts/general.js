@@ -153,6 +153,19 @@ function convertStringsToObjectIDs(strings) {
     return objectIDs
 }
 
+//expecicting array of objects in format {tag_id, tag_name, tag_value}
+function saveTagEdits(tags) {
+    console.log(tags)
+    for (var i = 0; i < tags.length; i++) {
+        Tag.findOne({ _id: ObjectID(tags[i].tag_id) }, (err, tag) => {
+            //TODO: how do I access tags[i] in here... it's a callback so issues... (make saveTagEdit(tag) so no contamination??)
+            tag.name = tags[i].tag_name
+            tag.value = tags[i].tag_value
+            tag.save()
+        })
+    }
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -170,5 +183,6 @@ module.exports = {
     getSong,
     extractTagIds,
     matchDbObjectWithId,
+    saveTagEdits,
     linkedJS
 }
