@@ -5,6 +5,16 @@
 function toggleTagEdits(element) {
     var infocard = element.parentElement.parentElement.parentElement
     infocard.classList.toggle('tags-editable')
+    toggleEditButton(element)
+}
+
+function toggleEditButton(element) {
+    var parent = element.parentElement
+    var children = parent.querySelectorAll('button')
+    console.log(children)
+    for (var i = 0; i < children.length; i++) {
+        children[i].classList.toggle('hidden')
+    }
 }
 
 function editIfPossible(element) {
