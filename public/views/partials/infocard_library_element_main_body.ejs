@@ -2,7 +2,7 @@
 <div class="tags-container">
 <% for(var i = 0; i < options.relevantTagIds.length; i++) { %>
 <% var tag = options.server_utils.matchDbObjectWithId(options.tags, options.relevantTagIds[i])%>
-    <div class="tag" onclick="editIfPossible(this)"> 
+    <div class="tag" data-tag-id="<%- tag._id %>" onclick="editIfPossible(this)"> 
         <div class="tag-name"><%- tag.name %></div>
         <div class="tag-delimiter">:</div>
         <div class="tag-value"><%- tag.value %></div>

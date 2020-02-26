@@ -25,8 +25,14 @@ function editIfPossible(element) {
 
 function saveTags(element) {
     toggleTagEdits(element)
+    var infocard = element.parentElement.parentElement.parentElement
+    var tags = infocard.querySelectorAll('.tag')
+
+    for (var i = 0; i < tags.length; i++) {
+        endTagEdit(tags[i])
+    }
+
     //TODO: saving
-    //TODO: remove '.editing' from tag
 }
 
 function startTagEdit(element) {
@@ -38,15 +44,40 @@ function startTagEdit(element) {
     nameInput.setAttribute('type', 'text')
     nameInput.setAttribute('value', curName)
     nameInput.setAttribute('style', 'width: 100px;')
+    nameInput.setAttribute('class', 'tag-name-edit')
     element.insertBefore(nameInput, element.childNodes[0] || null) //put the input first
     tagNameDiv.setAttribute('style', 'display: none;') //can't add hidden tag, since the display: none gets overriden by library's css
 
     var valueInput = document.createElement('input')
     var tagValueDiv = element.querySelector('.tag-value')
     var curVal = tagValueDiv.textContent
-    valueInput.setAttribute('type', 'text')
+    valueInput.setAttribute('type', 'number')
+    valueInput.setAttribute('min', '0')
+    valueInput.setAttribute('max', '100')
     valueInput.setAttribute('value', curVal)
     valueInput.setAttribute('style', 'width: 100px;')
+    valueInput.setAttribute('class', 'tag-value-edit')
     element.append(valueInput)
     tagValueDiv.setAttribute('style', 'display: none;') //can't add hidden tag, since the display: none gets overriden by library's css
+}
+
+function endTagEdit(element) {
+    if (element.classList.contains('editing')) {
+        element.classList.remove('editing')
+
+        var nameInput = element.querySelector('.tag-name-edit')
+        var tagNameDiv = element.querySelector('.tag-name')
+        var newName = nameInput.value
+        tagNameDiv.textContent = newName
+        nameInput.remove()
+        tagNameDiv.setAttribute('style', '') //removing display: none
+
+        var valInput = element.querySelector('.tag-value-edit')
+        var tagValueDiv = element.querySelector('.tag-value')
+        var newValue = valInput.value
+        tagValueDiv.textContent = newValue
+        valInput.remove()
+        tagValueDiv.setAttribute('style', '') //removing display: none
+    }
+
 }
