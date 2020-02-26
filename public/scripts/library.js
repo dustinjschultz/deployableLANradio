@@ -18,7 +18,7 @@ function toggleEditButton(element) {
 
 function editIfPossible(element) {
     var infocard = element.parentElement.parentElement.parentElement.parentElement
-    if (infocard.classList.contains('tags-editable')) {
+    if (infocard.classList.contains('tags-editable') && !element.classList.contains('editing')) {
         startTagEdit(element)
     }
 }
@@ -26,9 +26,11 @@ function editIfPossible(element) {
 function saveTags(element) {
     toggleTagEdits(element)
     //TODO: saving
+    //TODO: remove '.editing' from tag
 }
 
 function startTagEdit(element) {
+    element.classList.add('editing')
 
     var nameInput = document.createElement('input')
     var tagNameDiv = element.querySelector('.tag-name')
