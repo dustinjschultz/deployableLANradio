@@ -155,6 +155,9 @@ function convertStringsToObjectIDs(strings) {
 
 //expecting array of objects in format {tag_id, tag_name, tag_value}
 function saveTagEdits(tags) {
+    if (!tags) {
+        return
+    }
     for (var i = 0; i < tags.length; i++) {
         saveTagEdit(tags[i])
     }
@@ -167,6 +170,11 @@ function saveTagEdit(tagToSave) {
         tag.value = tagToSave.tag_value
         tag.save()
     })
+}
+
+//expecting array of objects in format {tag_name, tag_value}
+function saveTagCreations(tags) {
+    console.log(tags)
 }
 
 function generalTestFunc() {
@@ -187,5 +195,6 @@ module.exports = {
     extractTagIds,
     matchDbObjectWithId,
     saveTagEdits,
+    saveTagCreations,
     linkedJS
 }
