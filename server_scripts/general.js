@@ -153,6 +153,22 @@ function convertStringsToObjectIDs(strings) {
     return objectIDs
 }
 
+//expecting array of objects in format {tag_id, tag_name, tag_value}
+function saveTagEdits(tags) {
+    for (var i = 0; i < tags.length; i++) {
+        saveTagEdit(tags[i])
+    }
+}
+
+//expecting object in format {tag_id, tag_name, tag_value}
+function saveTagEdit(tagToSave) {
+    Tag.findOne({ _id: ObjectID(tagToSave.tag_id) }, (err, tag) => {
+        tag.name = tagToSave.tag_name
+        tag.value = tagToSave.tag_value
+        tag.save()
+    })
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -170,5 +186,6 @@ module.exports = {
     getSong,
     extractTagIds,
     matchDbObjectWithId,
+    saveTagEdits,
     linkedJS
 }
