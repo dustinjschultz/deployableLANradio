@@ -191,8 +191,31 @@ function saveTagCreation(tag) {
         elementType: tag.tag_type,
         elementId: tag.tag_elId
     })
-    newTag.save()
+    newTag.save((err, response) => {
+        if (tag.tag_type == 'Song') {
+            appendTagToSong(newTag, tag.tag_elId)
+        }
+        else if(tag.tag_type == 'Playlist') {
+            appendTagToPlaylist(newTag, tag.tag_elId)
+        }
+    })
 }
+
+function appendTagToSong(tag, idString) {
+    Song.findOne({ _id: ObjectID(idString) }, (err, song) => {
+        song.tagIds.push(tag)
+        song.save()
+    })
+}
+
+function appendTagToPlaylist(tag, id) {
+    //TODO: this hasn't been tested
+    Playlist.findOne({ _id: ObjectID(idString) }, (err, playlist) => {
+        playlist.tagIds.push(tag)
+        playlist.save()
+    })
+}
+
 
 function generalTestFunc() {
     return 'general - testFunc()'
