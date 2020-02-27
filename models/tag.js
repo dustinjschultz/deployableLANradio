@@ -20,6 +20,7 @@ const tagSchema = mongoose.Schema({
     },
     elementId: {
         type: ObjectID,
+        required: true,
         refPath: 'elementType'
     }
 })

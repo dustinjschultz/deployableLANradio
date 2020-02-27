@@ -155,6 +155,9 @@ function convertStringsToObjectIDs(strings) {
 
 //expecting array of objects in format {tag_id, tag_name, tag_value}
 function saveTagEdits(tags) {
+    if (!tags) {
+        return
+    }
     for (var i = 0; i < tags.length; i++) {
         saveTagEdit(tags[i])
     }
@@ -168,6 +171,50 @@ function saveTagEdit(tagToSave) {
         tag.save()
     })
 }
+
+//expecting array of objects in format {tag_name, tag_value, tag_type, tag_elId}
+function saveTagCreations(tags) {
+    if (!tags) {
+        return
+    }
+    for (var i = 0; i < tags.length; i++) {
+        saveTagCreation(tags[i])
+    }
+}
+
+//expecting array of objects in format {tag_name, tag_value, tag_type, tag_elId}
+function saveTagCreation(tag) {
+    const newTag = new Tag({
+        name: tag.tag_name,
+        value: tag.tag_value,
+        elementType: tag.tag_type,
+        elementId: tag.tag_elId
+    })
+    newTag.save((err, response) => {
+        if (tag.tag_type == 'Song') {
+            appendTagToSong(newTag, tag.tag_elId)
+        }
+        else if(tag.tag_type == 'Playlist') {
+            appendTagToPlaylist(newTag, tag.tag_elId)
+        }
+    })
+}
+
+function appendTagToSong(tag, idString) {
+    Song.findOne({ _id: ObjectID(idString) }, (err, song) => {
+        song.tagIds.push(tag)
+        song.save()
+    })
+}
+
+function appendTagToPlaylist(tag, id) {
+    //TODO: this hasn't been tested
+    Playlist.findOne({ _id: ObjectID(idString) }, (err, playlist) => {
+        playlist.tagIds.push(tag)
+        playlist.save()
+    })
+}
+
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -187,5 +234,6 @@ module.exports = {
     extractTagIds,
     matchDbObjectWithId,
     saveTagEdits,
+    saveTagCreations,
     linkedJS
 }

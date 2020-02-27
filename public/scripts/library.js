@@ -29,15 +29,22 @@ function saveTags(element) {
     var tags = infocard.querySelectorAll('.tag')
 
     var editedTags = gatherTagEdits(tags)
+    var newTags = gatherTagCreations(tags)
+
+    if (editedTags.length == 0 && newTags.length == 0) {
+        return
+    }
 
     for (var i = 0; i < tags.length; i++) {
         endTagEdit(tags[i])
     }
 
+
+
     $.ajax({
         type: 'get',
         url: '/edit-tags',
-        data: { 'tags': editedTags },
+        data: { 'editedTags': editedTags, 'newTags': newTags },
         dataType: 'json',
     })
 }
@@ -91,7 +98,7 @@ function endTagEdit(element) {
 function gatherTagEdits(tags) {
     var editedTags = []
     for (var i = 0; i < tags.length; i++) {
-        if (tags[i].classList.contains('editing')) {
+        if (tags[i].classList.contains('editing') && !tags[i].classList.contains('new-tag')) {
             var nameInput = tags[i].querySelector('.tag-name-edit')
             var newName = nameInput.value
             var valInput = tags[i].querySelector('.tag-value-edit')
@@ -102,4 +109,51 @@ function gatherTagEdits(tags) {
         }
     }
     return editedTags 
+}
+
+function gatherTagCreations(tags) {
+    if (!tags) {
+        return []
+    }
+
+    var elementType = tags[0].parentElement.getAttribute('data-element-type')
+    var elementId = tags[0].parentElement.getAttribute('data-elementid')
+
+    var newTags = []
+    for (var i = 0; i < tags.length; i++) {
+        if (tags[i].classList.contains('new-tag')) {
+            var nameInput = tags[i].querySelector('.tag-name-edit')
+            var newName = nameInput.value
+            var valInput = tags[i].querySelector('.tag-value-edit')
+            var newValue = valInput.value
+            var tagInfo = { 'tag_name': newName, 'tag_value': newValue, 'tag_type': elementType, 'tag_elId': elementId }
+            newTags.push(tagInfo)
+        }
+    }
+    return newTags
+}
+
+function createNewTag(element) {
+    var infocard = element.parentElement.parentElement.parentElement
+    var tagContainer = infocard.querySelector('.tags-container')
+
+    var newTag = document.createElement('div')
+    newTag.setAttribute('class', 'tag new-tag')
+
+    var newTagName = document.createElement('div')
+    newTagName.setAttribute('class', 'tag-name')
+
+    var newTagDelimiter = document.createElement('div')
+    newTagDelimiter.setAttribute('class', 'tag-name')
+    newTagDelimiter.textContent = ':'
+
+    var newTagValue = document.createElement('div')
+    newTagValue.setAttribute('class', 'tag-value')
+
+    newTag.append(newTagName)
+    newTag.append(newTagDelimiter)
+    newTag.append(newTagValue)
+    tagContainer.append(newTag)
+
+    editIfPossible(newTag)
 }

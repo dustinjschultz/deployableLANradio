@@ -1,5 +1,5 @@
 
-<div class="tags-container">
+<div class="tags-container" data-elementId="<%- options.elementId %>" data-element-type="<%- options.element_type %>">
 <% for(var i = 0; i < options.relevantTagIds.length; i++) { %>
 <% var tag = options.server_utils.matchDbObjectWithId(options.tags, options.relevantTagIds[i])%>
     <div class="tag" data-tag-id="<%- tag._id %>" onclick="editIfPossible(this)"> 
