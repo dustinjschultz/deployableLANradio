@@ -112,6 +112,13 @@ function gatherTagEdits(tags) {
 }
 
 function gatherTagCreations(tags) {
+    if (!tags) {
+        return []
+    }
+
+    var elementType = tags[0].parentElement.getAttribute('data-element-type')
+    var elementId = tags[0].parentElement.getAttribute('data-elementid')
+
     var newTags = []
     for (var i = 0; i < tags.length; i++) {
         if (tags[i].classList.contains('new-tag')) {
@@ -119,7 +126,7 @@ function gatherTagCreations(tags) {
             var newName = nameInput.value
             var valInput = tags[i].querySelector('.tag-value-edit')
             var newValue = valInput.value
-            var tagInfo = { 'tag_name': newName, 'tag_value': newValue }
+            var tagInfo = { 'tag_name': newName, 'tag_value': newValue, 'tag_type': elementType, 'tag_elId': elementId }
             newTags.push(tagInfo)
         }
     }

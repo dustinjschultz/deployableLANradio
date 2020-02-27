@@ -172,9 +172,26 @@ function saveTagEdit(tagToSave) {
     })
 }
 
-//expecting array of objects in format {tag_name, tag_value}
+//expecting array of objects in format {tag_name, tag_value, tag_type, tag_elId}
 function saveTagCreations(tags) {
-    console.log(tags)
+    if (!tags) {
+        return
+    }
+    for (var i = 0; i < tags.length; i++) {
+        saveTagCreation(tags[i])
+    }
+}
+
+//expecting array of objects in format {tag_name, tag_value, tag_type, tag_elId}
+function saveTagCreation(tag) {
+    console.log(tag)
+    const newTag = new Tag({
+        name: tag.tag_name,
+        value: tag.tag_value,
+        elementType: tag.tag_type,
+        elementId: tag.tag_elId
+    })
+    newTag.save()
 }
 
 function generalTestFunc() {
