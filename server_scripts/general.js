@@ -185,7 +185,6 @@ function saveTagCreations(tags) {
 //expecting array of objects in format {tag_name, tag_value, tag_type, tag_elId}
 function saveTagCreation(tag) {
     console.log(tag)
-    const newTag = new Tag({
         name: tag.tag_name,
         value: tag.tag_value,
         elementType: tag.tag_type,
