@@ -86,7 +86,6 @@ function endTagEdit(element) {
         valInput.remove()
         tagValueDiv.setAttribute('style', '') //removing display: none
     }
-
 }
 
 function gatherTagEdits(tags) {
