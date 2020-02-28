@@ -7,7 +7,10 @@
 
     <div class="library-control-bar">
         <div class="library-searchbar-container">
-            SEARCHBAR CONTAINER
+            <input type="text" class="library-searchbar-query"/>
+            <button onclick="submitQuery()">
+                <i class="fa fa-search fa-lg" style="width: 20px; height: 20px;"></i>
+            </button>
         </div>
 
         <div class="library-new-item-conatiner">
@@ -15,6 +18,12 @@
                 <button type="submit">New Item</button>
             </form>
         </div>
+    </div>
+
+    <div class="library-searchbar-help-text">
+        Search using either "Name: nameHere", "Description: descriptionHere", or "Tag: tagHere expression1 expression2" <br />
+        Where the expressions are an equalty (&lt; &gt; &lt;= &gt;= =) and a value <br />
+        Example: "Tag: Fast &lt;90 &gt;=50" (without quotes)
     </div>
 
     <div class="spacer" style="height: 40px;"></div>
