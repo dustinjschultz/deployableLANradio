@@ -159,7 +159,44 @@ function createNewTag(element) {
 }
 
 function submitQuery() {
-    //console.log('submitQuery()')
     var queryString = $('.library-searchbar-query').val()
-    console.log(queryString)
+    var songs = getSongs()
+    var playlists = getPlaylists()
+}
+
+//returns array of objects of form {name, desc, tags}
+function getSongs() {
+    return getElements('infocard-song')
+}
+
+//returns array of objects of form {name, desc, tags}
+function getPlaylists() {
+    return getElements('infocard-playlist')
+}
+
+//returns array of objects of form {name, desc, tags}
+function getElements(infocardClass) {
+    var relevantInfocard = $('.' + infocardClass)
+    var elements = []
+    for (var i = 0; i < relevantInfocard.length; i++) {
+        var name = relevantInfocard[i].querySelector('.infocard-main-text').textContent
+        var desc = relevantInfocard[i].querySelector('.infocard-dropdown-text').textContent
+        var tagDivs = relevantInfocard[i].querySelectorAll('.tag')
+        var tags = gatherTags(tagDivs)
+        var song = { 'name': name, 'desc': desc, 'tags': tags }
+        elements.push(song)
+    }
+    return elements
+}
+
+//returns array of objects of form {name, value}
+function gatherTags(tagDivs) {
+    var tags = []
+    for (var i = 0; i < tagDivs.length; i++) {
+        var tagName = tagDivs[i].querySelector('.tag-name').textContent
+        var tagValue = tagDivs[i].querySelector('.tag-value').textContent
+        var tag = { 'name': tagName, 'value': tagValue }
+        tags.push(tag)
+    }
+    return tags
 }

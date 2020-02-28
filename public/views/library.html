@@ -34,6 +34,7 @@
         <%- include('../views/partials/infocard', {
         card_main_text: options.songs[i].name,
         card_dropdown_text: options.songs[i].notes,
+        infocard_classes: 'infocard-song',
         partial_buttons_left: 'infocard_library_song_buttons_left',
         partial_buttons_left_options: null,
         partial_main_body: 'infocard_library_element_main_body',
@@ -47,6 +48,7 @@
         <%- include('../views/partials/infocard', {
         card_main_text: options.playlists[i].name,
         card_dropdown_text: options.playlists[i].notes,
+        infocard_classes: 'infocard-playlist',
         partial_buttons_left: 'infocard_library_playlist_buttons_left',
         partial_buttons_left_options: null,
         partial_main_body: 'infocard_library_element_main_body',
