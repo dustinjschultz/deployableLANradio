@@ -162,6 +162,24 @@ function submitQuery() {
     var queryString = $('.library-searchbar-query').val()
     var songs = getSongs()
     var playlists = getPlaylists()
+
+    //TODO: check for bad input
+
+    var queryType = queryString.split(':')[0].toLowerCase()
+    var query = queryString.split(':')[1].trim()
+    switch (queryType) {
+        case 'name':
+            filterByName(query, songs, playlists)
+            break;
+        case 'description':
+            filterByDesc(query, songs, playlists)
+            break;
+        case 'tag':
+            //do tag;
+            break;
+        default:
+            //TODO: idk what to do here
+    }
 }
 
 //returns array of objects of form {name, desc, tags}
@@ -172,6 +190,41 @@ function getSongs() {
 //returns array of objects of form {name, desc, tags}
 function getPlaylists() {
     return getElements('infocard-playlist')
+}
+
+function filterByName(query, songs, playlists) {
+    var songTexts = extractNames(songs)
+    var playlistTexts = extractNames(playlists)
+    filterByText(query, songTexts, playlistTexts)
+}
+
+function filterByDesc(query, songs, playlists) {
+    var songTexts = extractDescs(songs)
+    var playlistTexts = extractDescs(playlists)
+    filterByText(query, songTexts, playlistTexts) 
+}
+
+function filterByText(query, songTexts, playlistTexts) {
+    console.log(query)
+    console.log(songTexts)
+    console.log(playlistTexts)
+    //TODO:
+}
+
+function extractNames(elements) {
+    var names = []
+    for (var i = 0; i < elements.length; i++) {
+        names.push(elements[i].name)
+    }
+    return names
+}
+
+function extractDescs(elements) {
+    var descs = []
+    for (var i = 0; i < elements.length; i++) {
+        descs.push(elements[i].desc)
+    }
+    return descs
 }
 
 //returns array of objects of form {name, desc, tags}
