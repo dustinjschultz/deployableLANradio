@@ -14,8 +14,15 @@
 
 .library-searchbar-container {
     display: inline-block;
-    border: 1px dashed black;
+    /*border: 1px dashed black;*/
     width: 70%;
+    margin: auto;
+}
+
+.library-searchbar-help-text {
+    /*display: inline-block;*/
+    width: 70%;
+    margin: auto;
 }
 
 .library-new-item-conatiner {
@@ -96,4 +103,8 @@
 
 .tag-value {
     display: inline-block;
+}
+
+.library-searchbar-query {
+    width: 90%;
 }

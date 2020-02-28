@@ -157,3 +157,9 @@ function createNewTag(element) {
 
     editIfPossible(newTag)
 }
+
+function submitQuery() {
+    //console.log('submitQuery()')
+    var queryString = $('.library-searchbar-query').val()
+    console.log(queryString)
+}
