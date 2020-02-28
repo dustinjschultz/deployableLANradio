@@ -172,6 +172,7 @@ function submitQuery() {
             filterByName(query, songs, playlists)
             break;
         case 'description':
+        case 'desc':
             filterByDesc(query, songs, playlists)
             break;
         case 'tag':
@@ -193,39 +194,39 @@ function getPlaylists() {
 }
 
 function filterByName(query, songs, playlists) {
-    var songTexts = extractNames(songs)
-    var playlistTexts = extractNames(playlists)
+    var songTexts = extractProp(songs, 'name')
+    var playlistTexts = extractProp(playlists, 'name')
     filterByText(query, songTexts, playlistTexts)
 }
 
 function filterByDesc(query, songs, playlists) {
-    var songTexts = extractDescs(songs)
-    var playlistTexts = extractDescs(playlists)
+    var songTexts = extractProp(songs, 'desc')
+    var playlistTexts = extractProp(playlists, 'desc')
     filterByText(query, songTexts, playlistTexts) 
 }
 
 function filterByText(query, songTexts, playlistTexts) {
-    console.log(query)
-    console.log(songTexts)
-    console.log(playlistTexts)
+    var relevantSongs = songTexts.filter(function (text) {
+        return text.toLowerCase().includes(query)
+    })
+    var relevantPlaylists = playlistTexts.filter(function (text) {
+        return text.toLowerCase().includes(query)
+    })
+    console.log(relevantSongs)
+    console.log(relevantPlaylists)
     //TODO:
 }
 
-function extractNames(elements) {
-    var names = []
+function extractProp(elements, prop) {
+    var props = []
     for (var i = 0; i < elements.length; i++) {
-        names.push(elements[i].name)
+        var el = elements[i]
+        props.push(el[prop])
     }
-    return names
+    return props
 }
 
-function extractDescs(elements) {
-    var descs = []
-    for (var i = 0; i < elements.length; i++) {
-        descs.push(elements[i].desc)
-    }
-    return descs
-}
+
 
 //returns array of objects of form {name, desc, tags}
 function getElements(infocardClass) {
