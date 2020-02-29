@@ -234,21 +234,18 @@ function filterByTag(query, songs, playlists) {
     }
 
     var filteredSongs = splitForFilterByTag(tagName, exp1, exp2, songs)
-    //var filterInSongs = filteredSongs['filterInElements']
-    //var filterOutSongs = filteredSongs['filterOutElements']
+    var filterInSongs = filteredSongs['filterInElements']
+    var filterOutSongs = filteredSongs['filterOutElements']
 
-    //console.log(filterInSongs)
-    //console.log(filterOutSongs)
+    var filteredPlaylists = splitForFilterByTag(tagName, exp1, exp2, playlists)
+    var filterInPlaylists = filteredPlaylists['filterInElements']
+    var filterOutPlaylists = filteredPlaylists['filterOutElements']
 
-    //var filteredPlaylists = splitForFilterByTag(tagName, exp1, exp2, playlists)
-    //var filterInPlaylists = filteredPlaylists['filterInElements']
-    //var filterOutPlaylists = filteredPlaylists['filterOutElements']
-
-    //resetFilter(songs, playlists)
-    //filterIn(filterInSongs)
-    //filterIn(filterInPlaylists)
-    //filterOut(filterOutSongs)
-    //filterOut(filterOutPlaylists)
+    resetFilter(songs, playlists)
+    filterIn(filterInSongs)
+    filterIn(filterInPlaylists)
+    filterOut(filterOutSongs)
+    filterOut(filterOutPlaylists)
 }
 
 function resetFilter(songs, playlists) {
@@ -320,7 +317,12 @@ function hasSatisfyingTag(tagName, exp1, exp2, element) {
     for (var j = 0; j < tags.length; j++) {
         var tag = tags[j]
         if (tag['name'].toLowerCase().trim() == tagName.toLowerCase().trim()) {
-
+            var tagValue = tag['value']
+            var exp1String = '' + tagValue + exp1Equality + exp1Value
+            var exp2String = '' + tagValue + exp2Equality + exp2Value
+            if (eval(exp1String) && eval(exp2String)) {
+                return true
+            }
         }
     }
     return false
@@ -363,12 +365,12 @@ function gatherTags(tagDivs) {
 }
 
 function isTagExpressionValid(exp) {
-    var regex = RegExp('(<=|>=|=|<|>)(\\d+)')
+    var regex = RegExp('(<=|>=|==|<|>)(\\d+)')
     return regex.test(exp)
 }
 
 function extractEquality(exp) {
-    var regex = /<=|>=|=|<|>/
+    var regex = /<=|>=|==|<|>/
     return exp.match(regex)[0]
 }
 
