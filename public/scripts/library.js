@@ -169,11 +169,11 @@ function submitQuery() {
     var query = queryString.split(':')[1].trim()
     switch (queryType) {
         case 'name':
-            filterByName(query, songs, playlists)
+            filterByTextProp(query, songs, playlists, 'name')
             break;
         case 'description':
         case 'desc':
-            filterByDesc(query, songs, playlists)
+            filterByTextProp(query, songs, playlists, 'desc')
             break;
         case 'tag':
             //do tag;
@@ -193,28 +193,37 @@ function getPlaylists() {
     return getElements('infocard-playlist')
 }
 
-function filterByName(query, songs, playlists) {
-    var songTexts = extractProp(songs, 'name')
-    var playlistTexts = extractProp(playlists, 'name')
-    filterByText(query, songTexts, playlistTexts)
-}
+function filterByTextProp(query, songs, playlists, textProp) {
+    var filteredSongs = splitForFilteringByTextProp(query, songs, textProp)
+    var filterInSongs = filteredSongs['filterInElements']
+    var filterOutSongs = filteredSongs['filterOutElements']
 
-function filterByDesc(query, songs, playlists) {
-    var songTexts = extractProp(songs, 'desc')
-    var playlistTexts = extractProp(playlists, 'desc')
-    filterByText(query, songTexts, playlistTexts) 
-}
+    var filteredPlaylists = splitForFilteringByTextProp(query, playlists, textProp)
+    var filterInPlaylists = filteredPlaylists['filterInElements']
+    var filterOutPlaylists = filteredPlaylists['filterOutElements']
 
-function filterByText(query, songTexts, playlistTexts) {
-    var relevantSongs = songTexts.filter(function (text) {
-        return text.toLowerCase().includes(query)
-    })
-    var relevantPlaylists = playlistTexts.filter(function (text) {
-        return text.toLowerCase().includes(query)
-    })
-    console.log(relevantSongs)
-    console.log(relevantPlaylists)
+    console.log(filterInSongs)
+    console.log(filterOutSongs)
+    console.log(filterInPlaylists)
+    console.log(filterOutPlaylists)
     //TODO:
+}
+
+//returns object of form {filterInElements, filterOutElements}
+function splitForFilteringByTextProp(query, elements, textProp) {
+    var filterInElements = []
+    var filterOutElements = []
+
+    for (var i = 0; i < elements.length; i++) {
+        var element = elements[i]
+        if (element[textProp].toLowerCase().includes(query)) {
+            filterInElements.push(element)
+        }
+        else {
+            filterOutElements.push(element)
+        }
+    }
+    return { 'filterInElements': filterInElements, 'filterOutElements': filterOutElements}
 }
 
 function extractProp(elements, prop) {
@@ -225,8 +234,6 @@ function extractProp(elements, prop) {
     }
     return props
 }
-
-
 
 //returns array of objects of form {name, desc, tags}
 function getElements(infocardClass) {
