@@ -233,10 +233,22 @@ function filterByTag(query, songs, playlists) {
         return
     }
 
-    var exp1Equality = extractEquality(exp1)
-    var exp1Value = extractValue(exp1)
-    var exp2Equality = extractEquality(exp2)
-    var exp2Value = extractValue(exp2)
+    var filteredSongs = splitForFilterByTag(tagName, exp1, exp2, songs)
+    //var filterInSongs = filteredSongs['filterInElements']
+    //var filterOutSongs = filteredSongs['filterOutElements']
+
+    //console.log(filterInSongs)
+    //console.log(filterOutSongs)
+
+    //var filteredPlaylists = splitForFilterByTag(tagName, exp1, exp2, playlists)
+    //var filterInPlaylists = filteredPlaylists['filterInElements']
+    //var filterOutPlaylists = filteredPlaylists['filterOutElements']
+
+    //resetFilter(songs, playlists)
+    //filterIn(filterInSongs)
+    //filterIn(filterInPlaylists)
+    //filterOut(filterOutSongs)
+    //filterOut(filterOutPlaylists)
 }
 
 function resetFilter(songs, playlists) {
@@ -277,6 +289,41 @@ function splitForFilteringByTextProp(query, elements, textProp) {
         }
     }
     return { 'filterInElements': filterInElements, 'filterOutElements': filterOutElements}
+}
+
+//returns object of form {filterInElements, filterOutElements}
+function splitForFilterByTag(tagName, exp1, exp2, elements) {
+
+    var filterInElements = []
+    var filterOutElements = []
+
+    for (var i = 0; i < elements.length; i++) {
+        var element = elements[i]
+        if (hasSatisfyingTag(tagName, exp1, exp2, element)) {
+            filterInElements.push(element)
+        }
+        else {
+            filterOutElements.push(element)
+        }
+    }
+
+    return { 'filterInElements': filterInElements, 'filterOutElements': filterOutElements }
+}
+
+function hasSatisfyingTag(tagName, exp1, exp2, element) {
+    var exp1Equality = extractEquality(exp1)
+    var exp1Value = extractValue(exp1)
+    var exp2Equality = extractEquality(exp2)
+    var exp2Value = extractValue(exp2)
+
+    var tags = element['tags']
+    for (var j = 0; j < tags.length; j++) {
+        var tag = tags[j]
+        if (tag['name'].toLowerCase().trim() == tagName.toLowerCase().trim()) {
+
+        }
+    }
+    return false
 }
 
 function extractProp(elements, prop) {
