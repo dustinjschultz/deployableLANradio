@@ -163,10 +163,15 @@ function submitQuery() {
     var songs = getSongs()
     var playlists = getPlaylists()
 
-    //TODO: check for bad input
-
-    var queryType = queryString.split(':')[0].toLowerCase()
-    var query = queryString.split(':')[1].trim()
+    try {
+        var queryType = queryString.split(':')[0].toLowerCase()
+        var query = queryString.split(':')[1].trim()
+    }
+    catch (err) {
+        //catches most bad input
+        resetFilter(songs, playlists)
+    }
+    
     switch (queryType) {
         case 'name':
             filterByTextProp(query, songs, playlists, 'name')
@@ -179,7 +184,7 @@ function submitQuery() {
             //do tag;
             break;
         default:
-            //TODO: idk what to do here
+            resetFilter(songs, playlists)
     }
 }
 
