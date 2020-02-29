@@ -184,7 +184,7 @@ function submitQuery() {
             break;
         case 'tag':
         case 't':
-            //do tag;
+            filterByTag(query, songs, playlists)
             break;
         default:
             resetFilter(songs, playlists)
@@ -215,6 +215,28 @@ function filterByTextProp(query, songs, playlists, textProp) {
     filterIn(filterInPlaylists)
     filterOut(filterOutSongs)
     filterOut(filterOutPlaylists)
+}
+
+function filterByTag(query, songs, playlists) {
+    var split = query.split(' ')
+    if (split.length != 3 && split.length != 2 && split.length != 1) {
+        resetFilter(songs, playlists)
+        return
+    }
+
+    var tagName = split[0].trim()
+    var exp1 = split[1] ? split[1].trim() : '<=100'
+    var exp2 = split[2] ? split[2].trim() : '>=0'
+
+    if (!isTagExpressionValid(exp1) || !isTagExpressionValid(exp2)) {
+        resetFilter(songs, playlists)
+        return
+    }
+
+    var exp1Equality = extractEquality(exp1)
+    var exp1Value = extractValue(exp1)
+    var exp2Equality = extractEquality(exp2)
+    var exp2Value = extractValue(exp2)
 }
 
 function resetFilter(songs, playlists) {
@@ -291,4 +313,19 @@ function gatherTags(tagDivs) {
         tags.push(tag)
     }
     return tags
+}
+
+function isTagExpressionValid(exp) {
+    var regex = RegExp('(<=|>=|=|<|>)(\\d+)')
+    return regex.test(exp)
+}
+
+function extractEquality(exp) {
+    var regex = /<=|>=|=|<|>/
+    return exp.match(regex)[0]
+}
+
+function extractValue(exp) {
+    var regex = /\d+/
+    return exp.match(regex)[0]
 }
