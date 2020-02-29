@@ -184,7 +184,7 @@ function submitQuery() {
             break;
         case 'tag':
         case 't':
-            //do tag;
+            filterByTag(query, songs, playlists)
             break;
         default:
             resetFilter(songs, playlists)
@@ -207,6 +207,37 @@ function filterByTextProp(query, songs, playlists, textProp) {
     var filterOutSongs = filteredSongs['filterOutElements']
 
     var filteredPlaylists = splitForFilteringByTextProp(query, playlists, textProp)
+    var filterInPlaylists = filteredPlaylists['filterInElements']
+    var filterOutPlaylists = filteredPlaylists['filterOutElements']
+
+    resetFilter(songs, playlists)
+    filterIn(filterInSongs)
+    filterIn(filterInPlaylists)
+    filterOut(filterOutSongs)
+    filterOut(filterOutPlaylists)
+}
+
+function filterByTag(query, songs, playlists) {
+    var split = query.split(' ')
+    if (split.length != 3 && split.length != 2 && split.length != 1) {
+        resetFilter(songs, playlists)
+        return
+    }
+
+    var tagName = split[0].trim()
+    var exp1 = split[1] ? split[1].trim() : '<=100'
+    var exp2 = split[2] ? split[2].trim() : '>=0'
+
+    if (!isTagExpressionValid(exp1) || !isTagExpressionValid(exp2)) {
+        resetFilter(songs, playlists)
+        return
+    }
+
+    var filteredSongs = splitForFilterByTag(tagName, exp1, exp2, songs)
+    var filterInSongs = filteredSongs['filterInElements']
+    var filterOutSongs = filteredSongs['filterOutElements']
+
+    var filteredPlaylists = splitForFilterByTag(tagName, exp1, exp2, playlists)
     var filterInPlaylists = filteredPlaylists['filterInElements']
     var filterOutPlaylists = filteredPlaylists['filterOutElements']
 
@@ -257,6 +288,46 @@ function splitForFilteringByTextProp(query, elements, textProp) {
     return { 'filterInElements': filterInElements, 'filterOutElements': filterOutElements}
 }
 
+//returns object of form {filterInElements, filterOutElements}
+function splitForFilterByTag(tagName, exp1, exp2, elements) {
+
+    var filterInElements = []
+    var filterOutElements = []
+
+    for (var i = 0; i < elements.length; i++) {
+        var element = elements[i]
+        if (hasSatisfyingTag(tagName, exp1, exp2, element)) {
+            filterInElements.push(element)
+        }
+        else {
+            filterOutElements.push(element)
+        }
+    }
+
+    return { 'filterInElements': filterInElements, 'filterOutElements': filterOutElements }
+}
+
+function hasSatisfyingTag(tagName, exp1, exp2, element) {
+    var exp1Equality = extractEquality(exp1)
+    var exp1Value = extractValue(exp1)
+    var exp2Equality = extractEquality(exp2)
+    var exp2Value = extractValue(exp2)
+
+    var tags = element['tags']
+    for (var j = 0; j < tags.length; j++) {
+        var tag = tags[j]
+        if (tag['name'].toLowerCase().trim() == tagName.toLowerCase().trim()) {
+            var tagValue = tag['value']
+            var exp1String = '' + tagValue + exp1Equality + exp1Value
+            var exp2String = '' + tagValue + exp2Equality + exp2Value
+            if (eval(exp1String) && eval(exp2String)) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
 function extractProp(elements, prop) {
     var props = []
     for (var i = 0; i < elements.length; i++) {
@@ -291,4 +362,19 @@ function gatherTags(tagDivs) {
         tags.push(tag)
     }
     return tags
+}
+
+function isTagExpressionValid(exp) {
+    var regex = RegExp('(<=|>=|==|<|>)(\\d+)')
+    return regex.test(exp)
+}
+
+function extractEquality(exp) {
+    var regex = /<=|>=|==|<|>/
+    return exp.match(regex)[0]
+}
+
+function extractValue(exp) {
+    var regex = /\d+/
+    return exp.match(regex)[0]
 }
