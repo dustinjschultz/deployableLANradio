@@ -159,7 +159,136 @@ function createNewTag(element) {
 }
 
 function submitQuery() {
-    //console.log('submitQuery()')
     var queryString = $('.library-searchbar-query').val()
-    console.log(queryString)
+    var songs = getSongs()
+    var playlists = getPlaylists()
+
+    try {
+        var queryType = queryString.split(':')[0].toLowerCase().trim()
+        var query = queryString.split(':')[1].trim()
+    }
+    catch (err) {
+        //catches most bad input
+        resetFilter(songs, playlists)
+    }
+    
+    switch (queryType) {
+        case 'name':
+        case 'n':
+            filterByTextProp(query, songs, playlists, 'name')
+            break;
+        case 'description':
+        case 'desc':
+        case 'd':
+            filterByTextProp(query, songs, playlists, 'desc')
+            break;
+        case 'tag':
+        case 't':
+            //do tag;
+            break;
+        default:
+            resetFilter(songs, playlists)
+    }
+}
+
+//returns array of objects of form {name, desc, tags, HTMLelement}
+function getSongs() {
+    return getElements('infocard-song')
+}
+
+//returns array of objects of form {name, desc, tags, HTMLelement}
+function getPlaylists() {
+    return getElements('infocard-playlist')
+}
+
+function filterByTextProp(query, songs, playlists, textProp) {
+    var filteredSongs = splitForFilteringByTextProp(query, songs, textProp)
+    var filterInSongs = filteredSongs['filterInElements']
+    var filterOutSongs = filteredSongs['filterOutElements']
+
+    var filteredPlaylists = splitForFilteringByTextProp(query, playlists, textProp)
+    var filterInPlaylists = filteredPlaylists['filterInElements']
+    var filterOutPlaylists = filteredPlaylists['filterOutElements']
+
+    resetFilter(songs, playlists)
+    filterIn(filterInSongs)
+    filterIn(filterInPlaylists)
+    filterOut(filterOutSongs)
+    filterOut(filterOutPlaylists)
+}
+
+function resetFilter(songs, playlists) {
+    for (var i = 0; i < songs.length; i++) {
+        songs[i].HTMLelement.classList.remove('search-filter-in')
+        songs[i].HTMLelement.classList.remove('search-filter-out')
+    }
+    for (var i = 0; i < playlists.length; i++) {
+        playlists[i].HTMLelement.classList.remove('search-filter-in')
+        playlists[i].HTMLelement.classList.remove('search-filter-out')
+    }
+}
+
+function filterOut(elements) {
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].HTMLelement.classList.add('search-filter-out')
+    }
+}
+
+function filterIn(elements) {
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].HTMLelement.classList.add('search-filter-in')
+    }
+}
+
+//returns object of form {filterInElements, filterOutElements}
+function splitForFilteringByTextProp(query, elements, textProp) {
+    var filterInElements = []
+    var filterOutElements = []
+
+    for (var i = 0; i < elements.length; i++) {
+        var element = elements[i]
+        if (element[textProp].toLowerCase().includes(query)) {
+            filterInElements.push(element)
+        }
+        else {
+            filterOutElements.push(element)
+        }
+    }
+    return { 'filterInElements': filterInElements, 'filterOutElements': filterOutElements}
+}
+
+function extractProp(elements, prop) {
+    var props = []
+    for (var i = 0; i < elements.length; i++) {
+        var el = elements[i]
+        props.push(el[prop])
+    }
+    return props
+}
+
+//returns array of objects of form {name, desc, tags, HTMLelement}
+function getElements(infocardClass) {
+    var relevantInfocards = $('.' + infocardClass)
+    var elements = []
+    for (var i = 0; i < relevantInfocards.length; i++) {
+        var name = relevantInfocards[i].querySelector('.infocard-main-text').textContent
+        var desc = relevantInfocards[i].querySelector('.infocard-dropdown-text').textContent
+        var tagDivs = relevantInfocards[i].querySelectorAll('.tag')
+        var tags = gatherTags(tagDivs)
+        var element = { 'name': name, 'desc': desc, 'tags': tags, 'HTMLelement': relevantInfocards[i] }
+        elements.push(element)
+    }
+    return elements
+}
+
+//returns array of objects of form {name, value}
+function gatherTags(tagDivs) {
+    var tags = []
+    for (var i = 0; i < tagDivs.length; i++) {
+        var tagName = tagDivs[i].querySelector('.tag-name').textContent
+        var tagValue = tagDivs[i].querySelector('.tag-value').textContent
+        var tag = { 'name': tagName, 'value': tagValue }
+        tags.push(tag)
+    }
+    return tags
 }

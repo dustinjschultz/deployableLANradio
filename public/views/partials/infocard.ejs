@@ -11,9 +11,13 @@ var dropdown_text = ""
 if(locals.card_dropdown_text){
     dropdown_text = card_dropdown_text
 }
+var classes = ""
+if(locals.infocard_classes){
+    classes = infocard_classes
+}
 %>
 
-<div class="infocard" style="<%- style %>">
+<div class="infocard <%- classes %>" style="<%- style %>">
 
     <div class="infocard-main-body-conatiner">
         <div class="infocard-main-text"><%= main_text %></div>
