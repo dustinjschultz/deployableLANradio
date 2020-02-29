@@ -275,8 +275,8 @@ function getElements(infocardClass) {
         var desc = relevantInfocards[i].querySelector('.infocard-dropdown-text').textContent
         var tagDivs = relevantInfocards[i].querySelectorAll('.tag')
         var tags = gatherTags(tagDivs)
-        var song = { 'name': name, 'desc': desc, 'tags': tags, 'HTMLelement': relevantInfocards[i] }
-        elements.push(song)
+        var element = { 'name': name, 'desc': desc, 'tags': tags, 'HTMLelement': relevantInfocards[i] }
+        elements.push(element)
     }
     return elements
 }
