@@ -183,12 +183,12 @@ function submitQuery() {
     }
 }
 
-//returns array of objects of form {name, desc, tags}
+//returns array of objects of form {name, desc, tags, HTMLelement}
 function getSongs() {
     return getElements('infocard-song')
 }
 
-//returns array of objects of form {name, desc, tags}
+//returns array of objects of form {name, desc, tags, HTMLelement}
 function getPlaylists() {
     return getElements('infocard-playlist')
 }
@@ -202,11 +202,34 @@ function filterByTextProp(query, songs, playlists, textProp) {
     var filterInPlaylists = filteredPlaylists['filterInElements']
     var filterOutPlaylists = filteredPlaylists['filterOutElements']
 
-    console.log(filterInSongs)
-    console.log(filterOutSongs)
-    console.log(filterInPlaylists)
-    console.log(filterOutPlaylists)
-    //TODO:
+    resetFilter(songs, playlists)
+    filterIn(filterInSongs)
+    filterIn(filterInPlaylists)
+    filterOut(filterOutSongs)
+    filterOut(filterOutPlaylists)
+}
+
+function resetFilter(songs, playlists) {
+    for (var i = 0; i < songs.length; i++) {
+        songs[i].HTMLelement.classList.remove('search-filter-in')
+        songs[i].HTMLelement.classList.remove('search-filter-out')
+    }
+    for (var i = 0; i < playlists.length; i++) {
+        playlists[i].HTMLelement.classList.remove('search-filter-in')
+        playlists[i].HTMLelement.classList.remove('search-filter-out')
+    }
+}
+
+function filterOut(elements) {
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].HTMLelement.classList.add('search-filter-out')
+    }
+}
+
+function filterIn(elements) {
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].HTMLelement.classList.add('search-filter-in')
+    }
 }
 
 //returns object of form {filterInElements, filterOutElements}
@@ -235,16 +258,16 @@ function extractProp(elements, prop) {
     return props
 }
 
-//returns array of objects of form {name, desc, tags}
+//returns array of objects of form {name, desc, tags, HTMLelement}
 function getElements(infocardClass) {
-    var relevantInfocard = $('.' + infocardClass)
+    var relevantInfocards = $('.' + infocardClass)
     var elements = []
-    for (var i = 0; i < relevantInfocard.length; i++) {
-        var name = relevantInfocard[i].querySelector('.infocard-main-text').textContent
-        var desc = relevantInfocard[i].querySelector('.infocard-dropdown-text').textContent
-        var tagDivs = relevantInfocard[i].querySelectorAll('.tag')
+    for (var i = 0; i < relevantInfocards.length; i++) {
+        var name = relevantInfocards[i].querySelector('.infocard-main-text').textContent
+        var desc = relevantInfocards[i].querySelector('.infocard-dropdown-text').textContent
+        var tagDivs = relevantInfocards[i].querySelectorAll('.tag')
         var tags = gatherTags(tagDivs)
-        var song = { 'name': name, 'desc': desc, 'tags': tags }
+        var song = { 'name': name, 'desc': desc, 'tags': tags, 'HTMLelement': relevantInfocards[i] }
         elements.push(song)
     }
     return elements

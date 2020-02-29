@@ -108,3 +108,7 @@
 .library-searchbar-query {
     width: 90%;
 }
+
+.search-filter-out {
+    display: none;
+}
