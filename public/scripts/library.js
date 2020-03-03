@@ -398,3 +398,19 @@ function togglePlaylistAddButtons(element) {
     var buttonContainer = infocard.querySelector('.playlist-button-container')
     buttonContainer.classList.toggle('hidden')
 }
+
+function addSong(element) {
+    var infocard = element.parentElement.parentElement.parentElement.parentElement.parentElement
+    var playlistId = infocard.querySelector('.tags-container').getAttribute('data-elementid')
+    var songToAddId = infocard.querySelector('select[name=song_id]').value
+
+    $.ajax({
+        type: 'get',
+        url: '/add-song-to-playlist',
+        data: { 'playlistId': playlistId, 'songToAddId': songToAddId },
+        dataType: 'json',
+        success: function (data) {
+            location.reload() //refresh the page
+        }
+    })
+}

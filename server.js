@@ -282,6 +282,12 @@ app.get('/edit-tags', (req, res) => {
     generalScripts.saveTagCreations(req.query.newTags)
 })
 
+app.get('/add-song-to-playlist', (req, res) => {
+    generalScripts.addSongToPlaylist(req.query.songToAddId, req.query.playlistId).then(function() {
+        res.status(200).send({})
+    })
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
