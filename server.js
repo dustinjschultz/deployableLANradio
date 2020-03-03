@@ -288,6 +288,12 @@ app.get('/add-song-to-playlist', (req, res) => {
     })
 })
 
+app.get('/add-playlist-to-playlist', (req, res) => {
+    generalScripts.addPlaylistToPlaylist(req.query.playlistToAddId, req.query.playlistId).then(function () {
+        res.status(200).send({})
+    })
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {

@@ -414,3 +414,19 @@ function addSong(element) {
         }
     })
 }
+
+function addPlaylist(element) {
+    var infocard = element.parentElement.parentElement.parentElement.parentElement.parentElement
+    var playlistId = infocard.querySelector('.tags-container').getAttribute('data-elementid')
+    var playlistToAddId = infocard.querySelector('select[name=playlist_id]').value
+
+    $.ajax({
+        type: 'get',
+        url: '/add-playlist-to-playlist',
+        data: { 'playlistId': playlistId, 'playlistToAddId': playlistToAddId },
+        dataType: 'json',
+        success: function (data) {
+            location.reload() //refresh the page
+        }
+    })
+}
