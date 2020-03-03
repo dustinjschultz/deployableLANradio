@@ -255,8 +255,9 @@ function createPlaylistElement(elementId, type) {
 function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
     return new Promise(function (resolve, reject) {
         collectNestedPlaylists(playlistToAddId).then(function (allNestedPlaylists) {
+            console.log(allNestedPlaylists)
             for (var i = 0; i < allNestedPlaylists.length; i++) {
-                if (allNestedPlaylists._id.toString() == playlistId.toString()) {
+                if (allNestedPlaylists[i]._id.toString() == playlistId.toString()) {
                     return resolve(true)
                 }
             }
@@ -272,14 +273,20 @@ function collectNestedPlaylists(playlistIdString) {
 
         var nestedPlaylists = []
 
-        getPlaylistElementIds(playlistToAddId).then(function (playlistElementIds) {
-            getPlaylistElements(playlistElementIds).then(function (playlistElements) {
-                var filteredElements = filterPlaylistElements('Playlist', playlistElements)
-                nestedPlaylists = arrayPushAll(filteredElements)
-            })
-        })
+        getPlaylistElementsFromPlaylistId(playlistIdString).then(function (playlistElements) {
 
-        return resolve(nestedPlaylists)
+            var filteredElements = filterPlaylistElements('Playlist', playlistElements)
+            nestedPlaylists = arrayPushAll(nestedPlaylists, filteredElements)
+
+            for (var i = 0; i < filteredElements.length; i++) {
+                console.log('about to collectNested for ' + filteredElements[i]._id)
+                collectNestedPlaylists(filteredElements[i]._id).then(function (nextLayersOfElements) {
+                    nestedPlaylists = arrayPushAll(nestedPlaylists, nextLayersOfElements)
+                })
+            }
+
+            return resolve(nestedPlaylists) //this is returning before the for loop's then()s finish
+        })
     })
 }
 
@@ -300,9 +307,9 @@ function getPlaylistElements(playlistElementIdStrings) {
     })
 }
 
-function getPlaylistElementsFromPlaylistId() {
+function getPlaylistElementsFromPlaylistId(playlistId) {
     return new Promise(function (resolve, reject) {
-        getPlaylistElementIds(playlistToAddId).then(function (playlistElementIds) {
+        getPlaylistElementIds(playlistId).then(function (playlistElementIds) {
             getPlaylistElements(playlistElementIds).then(function (playlistElements) {
                 return resolve(playlistElements)
             })
