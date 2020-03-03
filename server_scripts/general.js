@@ -216,8 +216,28 @@ function appendTagToPlaylist(tag, idString) {
 
 function addSongToPlaylist(songId, playlistId) {
     return new Promise(function (resolve, reject) {
-        return resolve()
+        Playlist.findOne({ _id: ObjectID(playlistId) }, (err, playlist) => {
+            createPlaylistElement(songId, 'Song').then(function (playlistElement) {
+                playlist.elementIds.push(playlistElement._id)
+                playlist.save((err, response) => {
+                    return resolve()
+                })
+            }) 
+        })
     })
+}
+
+function createPlaylistElement(elementId, type) {
+    return new Promise(function (resolve, reject) {
+        const playlistElement = new PlaylistElement({
+            elementType: type,
+            elementId: elementId
+        })
+        playlistElement.save((err, response) => {
+            return resolve(playlistElement)
+        })
+    })
+
 }
 
 
