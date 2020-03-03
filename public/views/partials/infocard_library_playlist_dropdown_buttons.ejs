@@ -1,25 +1,19 @@
 <div class="playlist-button-container hidden">
-    <!-- TODO: like all of this -->
     <div class="add-song-container">
-        <form action="/submit-song" method="POST" id="submit-song">
-            <select name="song_id">
-                <% for(var i = 0; i < options.allSongs.length; i++) { %>
-                    <option value="<%- options.allSongs[i]._id -%>"><%- options.allSongs[i].name -%></option>
-                <% } %>
-            </select>
-            <!--To use ajax, this button is being overriden, see room.js-->
-            <button type="submit">New Song</button>
+        <select name="song_id">
+            <% for(var i = 0; i < options.allSongs.length; i++) { %>
+                <option value="<%- options.allSongs[i]._id -%>"><%- options.allSongs[i].name -%></option>
+            <% } %>
+        </select>
+        <button onclick="addSong(this)">Add Song</button>
     </div>
 
     <div class="add-playlist-container">
-        <form action="/submit-song" method="POST" id="submit-song">
-            <select name="song_id">
-                <% for(var i = 0; i < options.allPlaylists.length; i++) { %>
-                    <option value="<%- options.allPlaylists[i]._id -%>"><%- options.allPlaylists[i].name -%></option>
-                <% } %>
-            </select>
-            <!--To use ajax, this button is being overriden, see room.js-->
-            <button type="submit">New Song</button>
-        </form>
+        <select name="playlist_id">
+            <% for(var i = 0; i < options.allPlaylists.length; i++) { %>
+                <option value="<%- options.allPlaylists[i]._id -%>"><%- options.allPlaylists[i].name -%></option>
+            <% } %>
+        </select>
+        <button >Add Playlist</button>
     </div>
 </div>

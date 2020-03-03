@@ -214,6 +214,12 @@ function appendTagToPlaylist(tag, idString) {
     })
 }
 
+function addSongToPlaylist(songId, playlistId) {
+    return new Promise(function (resolve, reject) {
+        return resolve()
+    })
+}
+
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -234,5 +240,6 @@ module.exports = {
     matchDbObjectWithId,
     saveTagEdits,
     saveTagCreations,
+    addSongToPlaylist,
     linkedJS
 }
