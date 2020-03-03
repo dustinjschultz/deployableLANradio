@@ -112,3 +112,12 @@
 .search-filter-out {
     display: none;
 }
+
+.playlist-content-container-toplevel {
+    display: inline-block;
+    width: 70%;
+}
+
+.playlist-button-container {
+    display: inline-block;
+}
