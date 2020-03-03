@@ -2,6 +2,15 @@
     console.log('yay libtest()')
 }
 
+function togglePlaylistEdits(element) {
+    toggleTagEdits(element)
+    togglePlaylistAddButtons(element)
+}
+
+function toggleSongEdits(element) {
+    toggleTagEdits(element)
+}
+
 function toggleTagEdits(element) {
     var infocard = element.parentElement.parentElement.parentElement
     infocard.classList.toggle('tags-editable')
@@ -21,6 +30,11 @@ function editIfPossible(element) {
     if (infocard.classList.contains('tags-editable') && !element.classList.contains('editing')) {
         startTagEdit(element)
     }
+}
+
+function savePlaylist(element) {
+    saveTags(element)
+    togglePlaylistAddButtons(element)
 }
 
 function saveTags(element) {
@@ -377,4 +391,10 @@ function extractEquality(exp) {
 function extractValue(exp) {
     var regex = /\d+/
     return exp.match(regex)[0]
+}
+
+function togglePlaylistAddButtons(element) {
+    var infocard = element.parentElement.parentElement.parentElement
+    var buttonContainer = infocard.querySelector('.playlist-button-container')
+    buttonContainer.classList.toggle('hidden')
 }
