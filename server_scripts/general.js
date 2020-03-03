@@ -252,6 +252,77 @@ function createPlaylistElement(elementId, type) {
     })
 }
 
+function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
+    return new Promise(function (resolve, reject) {
+        collectNestedPlaylists(playlistToAddId).then(function (allNestedPlaylists) {
+            for (var i = 0; i < allNestedPlaylists.length; i++) {
+                if (allNestedPlaylists._id.toString() == playlistId.toString()) {
+                    return resolve(true)
+                }
+            }
+            return resolve(false)
+        })
+    })
+
+    
+}
+
+function collectNestedPlaylists(playlistIdString) {
+    return new Promise(function (resolve, reject) {
+
+        var nestedPlaylists = []
+
+        getPlaylistElementIds(playlistToAddId).then(function (playlistElementIds) {
+            getPlaylistElements(playlistElementIds).then(function (playlistElements) {
+                var filteredElements = filterPlaylistElements('Playlist', playlistElements)
+                nestedPlaylists = arrayPushAll(filteredElements)
+            })
+        })
+
+        return resolve(nestedPlaylists)
+    })
+}
+
+function getPlaylistElementIds(playlistId) {
+    return new Promise(function (resolve, reject) {
+        Playlist.findOne({ _id: ObjectID(playlistId) }, (err, playlist) => {
+            return resolve(playlist.elementIds)
+        })
+    })
+}
+
+function getPlaylistElements(playlistElementIdStrings) {
+    return new Promise(function (resolve, reject) {
+        playlistElementIds = convertStringsToObjectIDs(playlistElementIdStrings)
+        PlaylistElement.find({ _id: playlistElementIds }, (err, playlistElements) => {
+            return resolve(playlistElements)
+        })
+    })
+}
+
+function getPlaylistElementsFromPlaylistId() {
+    return new Promise(function (resolve, reject) {
+        getPlaylistElementIds(playlistToAddId).then(function (playlistElementIds) {
+            getPlaylistElements(playlistElementIds).then(function (playlistElements) {
+                return resolve(playlistElements)
+            })
+        })
+    })
+}
+
+function filterPlaylistElements(desiredType, playlistElements) {
+    var filtered = playlistElements.filter(element => {
+        return element.elementType == desiredType
+    })
+    return filtered
+}
+
+function arrayPushAll(array1, array2) {
+    for (var i = 0; i < array2.length; i++) {
+        array1.push(array2)
+    }
+    return array1
+}
 
 function generalTestFunc() {
     return 'general - testFunc()'
@@ -274,5 +345,6 @@ module.exports = {
     saveTagCreations,
     addSongToPlaylist,
     addPlaylistToPlaylist,
+    isDangerousRecursiveAdd,
     linkedJS
 }

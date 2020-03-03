@@ -289,6 +289,7 @@ app.get('/add-song-to-playlist', (req, res) => {
 })
 
 app.get('/add-playlist-to-playlist', (req, res) => {
+    generalScripts.isDangerousRecursiveAdd(req.query.playlistToAddId, req.query.playlistId) //TODO: wrap this in if/else
     generalScripts.addPlaylistToPlaylist(req.query.playlistToAddId, req.query.playlistId).then(function () {
         res.status(200).send({})
     })
