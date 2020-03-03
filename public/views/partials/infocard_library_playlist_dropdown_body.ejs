@@ -7,7 +7,7 @@ if(options.depth == 1) {
 <div class="playlist-content-container <%- classes %>">
     <% for(var i = 0; i < options.playlist.elementIds.length; i++) { %>
         <% var element = options.server_utils.matchDbObjectWithId(options.playlistelements, options.playlist.elementIds[i]) %>
-        <% var elementContent = options.server_utils.matchDbObjectWithId(options.songs, element.elementId) %>
+        <% var elementContent = options.server_utils.matchDbObjectWithId(options.allSongs, element.elementId) %>
         <% if(elementContent) { %>
             <div class="playlistelement-song">
                 <%- elementContent.name %>
@@ -19,7 +19,7 @@ if(options.depth == 1) {
 
                 <%- include('infocard_library_playlist_dropdown_body', {
                     options: {playlist: elementContent, 
-                    songs: options.songs, 
+                    allSongs: options.allSongs, 
                     server_utils: server_utils, 
                     playlistelements: options.playlistelements, 
                     allPlaylists: options.allPlaylists, 
@@ -31,5 +31,5 @@ if(options.depth == 1) {
 </div>
 
 <% if(options.depth == 1) { %>
-    <%- include('infocard_library_playlist_dropdown_buttons') -%>
+    <%- include('infocard_library_playlist_dropdown_buttons', {allSongs: options.allSongs, allPlaylists: options.allPlaylists}) -%>
 <% } %>
