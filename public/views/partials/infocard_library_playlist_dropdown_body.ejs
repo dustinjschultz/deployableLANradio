@@ -18,12 +18,12 @@ if(options.depth == 1) {
                 <%- elementContent.name %>
 
                 <%- include('infocard_library_playlist_dropdown_body', {
-                    options: {playlist: elementContent, 
-                    allSongs: options.allSongs, 
-                    server_utils: server_utils, 
-                    playlistelements: options.playlistelements, 
-                    allPlaylists: options.allPlaylists, 
-                    depth: (options.depth + 1)}
+                        options: {playlist: elementContent, 
+                        allSongs: options.allSongs, 
+                        server_utils: server_utils, 
+                        playlistelements: options.playlistelements, 
+                        allPlaylists: options.allPlaylists, 
+                        depth: (options.depth + 1)}
                 }) -%>
             </div>
         <% } %>
