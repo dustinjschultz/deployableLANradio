@@ -237,7 +237,6 @@ function createPlaylistElement(elementId, type) {
             return resolve(playlistElement)
         })
     })
-
 }
 
 
