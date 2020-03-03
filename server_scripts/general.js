@@ -208,7 +208,6 @@ function appendTagToSong(tag, idString) {
 }
 
 function appendTagToPlaylist(tag, idString) {
-    //TODO: this hasn't been tested
     Playlist.findOne({ _id: ObjectID(idString) }, (err, playlist) => {
         playlist.tagIds.push(tag)
         playlist.save()

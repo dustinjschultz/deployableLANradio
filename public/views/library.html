@@ -38,7 +38,13 @@
         partial_buttons_left: 'infocard_library_song_buttons_left',
         partial_buttons_left_options: null,
         partial_main_body: 'infocard_library_element_main_body',
-        partial_main_body_options: {tags: options.tags, relevantTagIds: options.songs[i].tagIds, server_utils: server_utils, element_type: 'Song', elementId: options.songs[i]._id}
+        partial_main_body_options: {
+            tags: options.tags, 
+            relevantTagIds: options.songs[i].tagIds, 
+            server_utils: server_utils, 
+            element_type: 'Song', 
+            elementId: options.songs[i]._id
+        }
         }) -%>
         <% } %>
 
@@ -52,9 +58,22 @@
         partial_buttons_left: 'infocard_library_playlist_buttons_left',
         partial_buttons_left_options: null,
         partial_main_body: 'infocard_library_element_main_body',
-        partial_main_body_options: {tags: options.tags, relevantTagIds: options.playlists[i].tagIds, server_utils: server_utils, element_type: 'Playlist', elementId: options.playlists[i]._id},
+        partial_main_body_options: {
+            tags: options.tags, 
+            relevantTagIds: options.playlists[i].tagIds, 
+            server_utils: server_utils, 
+            element_type: 'Playlist', 
+            elementId: options.playlists[i]._id
+        },
         partial_dropdown_body: 'infocard_library_playlist_dropdown_body',
-        partial_dropdown_body_options: {playlist: options.playlists[i], songs: options.songs, server_utils: server_utils, playlistelements: options.playlistelements, allPlaylists: options.playlists}
+        partial_dropdown_body_options: {
+            playlist: options.playlists[i], 
+            allSongs: options.songs, 
+            server_utils: server_utils, 
+            playlistelements: options.playlistelements, 
+            allPlaylists: options.playlists, 
+            depth: 1
+        },
         }) -%>
         <% } %>
 
