@@ -121,6 +121,22 @@ function getSong(idString) {
     })
 }
 
+function getPlaylist(idString) {
+    return new Promise(function (resolve, reject) {
+        Playlist.findOne({ _id: ObjectID(idString) }, (err, playlist) => {
+            return resolve(playlist)
+        })
+    })
+}
+
+function getPlaylists(idStrings) {
+    return new Promise(function (resolve, reject) {
+        Playlist.find({ _id: idStrings }, (err, playlists) => {
+            return resolve(playlists)
+        })
+    })
+}
+
 function extractTagIds(songs, playlists) {
     var tagIds = []
     for (var i = 0; i < songs.length; i++) {
@@ -255,6 +271,7 @@ function createPlaylistElement(elementId, type) {
 function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
     return new Promise(function (resolve, reject) {
         collectNestedPlaylists(playlistToAddId).then(function (allNestedPlaylists) {
+            console.log('isDangerous() called collectNested() and got: ')
             console.log(allNestedPlaylists)
             for (var i = 0; i < allNestedPlaylists.length; i++) {
                 if (allNestedPlaylists[i]._id.toString() == playlistId.toString()) {
@@ -264,32 +281,87 @@ function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
             return resolve(false)
         })
     })
-
-    
 }
+
+//function collectNestedPlaylists(playlistIdString) {
+//    return new Promise(function (resolve, reject) {
+
+//        var nestedPlaylists = []
+
+//        getPlaylistElementsFromPlaylistId(playlistIdString).then(function (playlistElements) {
+
+//            var filteredElements = filterPlaylistElements('Playlist', playlistElements)
+//            nestedPlaylists = arrayPushAll(nestedPlaylists, filteredElements)
+
+//            for (var i = 0; i < filteredElements.length; i++) {
+//                console.log('about to collectNested for ' + filteredElements[i]._id)
+//                collectNestedPlaylists(filteredElements[i]._id).then(function (nextLayersOfElements) {
+//                    nestedPlaylists = arrayPushAll(nestedPlaylists, nextLayersOfElements)
+//                })
+//            }
+//            //TODO: also looks like there's an issue with nestedPlaylists becoming an array of arrays...
+//            return resolve(nestedPlaylists) //this is returning before the for loop's then()s finish
+//        })
+//    })
+//}
 
 function collectNestedPlaylists(playlistIdString) {
     return new Promise(function (resolve, reject) {
-
         var nestedPlaylists = []
 
-        getPlaylistElementsFromPlaylistId(playlistIdString).then(function (playlistElements) {
+        getPlaylist(playlistIdString).then(function (playlist) {
+            nestedPlaylists.push(playlist)
+            var playlistArray = []
+            playlistArray.push(playlist)
 
-            var filteredElements = filterPlaylistElements('Playlist', playlistElements)
-            nestedPlaylists = arrayPushAll(nestedPlaylists, filteredElements)
+            getElementsOfPlaylists(playlistArray).then(function (elements) {
+                var plElements = filterPlaylistElements('Playlist', elements)
+                //TODO: these are playlistElements of type Playlist, but NOT Playlists
 
-            for (var i = 0; i < filteredElements.length; i++) {
-                console.log('about to collectNested for ' + filteredElements[i]._id)
-                collectNestedPlaylists(filteredElements[i]._id).then(function (nextLayersOfElements) {
-                    nestedPlaylists = arrayPushAll(nestedPlaylists, nextLayersOfElements)
+                var playlistIdStrings = []
+                for (var i = 0; i < plElements.length; i++) {
+                    playlistIdStrings.push(plElements[i].elementId)
+                }
+                var playlistIds = convertStringsToObjectIDs(playlistIdStrings)
+
+                getPlaylists(playlistIds).then(function (playlists) {
+                    nestedPlaylists = arrayPushAll(nestedPlaylists, playlists)
+
+                    getNextLayers(playlists).then(function (nestedElements) {
+                        console.log('collectNestedPlaylist() called getNextLayers() and got: ')
+                        console.log(nestedElements)
+                        nestedPlaylists = arrayPushAll(nestedPlaylists, nestedElements)
+                        return resolve(nestedPlaylists)
+                    })
                 })
-            }
-
-            return resolve(nestedPlaylists) //this is returning before the for loop's then()s finish
+            })
         })
     })
 }
 
+function getNextLayers(playlistArray) {
+    console.log('getNextLayers() with: ')
+    console.log(playlistArray)
+    return new Promise(function (resolve, reject) {
+        var returnArray = []
+        getElementsOfPlaylists(playlistArray).then(function (elements) {
+            if (elements.length == 0) {
+                return resolve ([])
+            }
+            else {
+                var plElements = filterPlaylistElements('Playlist', elements)
+                returnArray = arrayPushAll(returnArray, plElements)
+
+                getNextLayers(plElements).then(function (nestedElements) {
+                    returnArray = arrayPushAll(returnArray, plElements)
+                    return resolve(returnArray)
+                })
+            }
+        })
+    })
+}
+
+//TODO: still needed?
 function getPlaylistElementIds(playlistId) {
     return new Promise(function (resolve, reject) {
         Playlist.findOne({ _id: ObjectID(playlistId) }, (err, playlist) => {
@@ -298,6 +370,7 @@ function getPlaylistElementIds(playlistId) {
     })
 }
 
+//TODO: still needed?
 function getPlaylistElements(playlistElementIdStrings) {
     return new Promise(function (resolve, reject) {
         playlistElementIds = convertStringsToObjectIDs(playlistElementIdStrings)
@@ -307,12 +380,29 @@ function getPlaylistElements(playlistElementIdStrings) {
     })
 }
 
+//TODO: still needed?
 function getPlaylistElementsFromPlaylistId(playlistId) {
     return new Promise(function (resolve, reject) {
         getPlaylistElementIds(playlistId).then(function (playlistElementIds) {
             getPlaylistElements(playlistElementIds).then(function (playlistElements) {
                 return resolve(playlistElements)
             })
+        })
+    })
+}
+
+function getElementsOfPlaylists(playlistArray) {
+    console.log('getElementsOfPlaylists with: ')
+    console.log(playlistArray)
+    return new Promise(function (resolve, reject) {
+        var elements = []
+        var elementIdStrings = []
+        for (var i = 0; i < playlistArray.length; i++) {
+            elementIdStrings = arrayPushAll(elementIdStrings, playlistArray[i].elementIds)
+        }
+        var elementIds = convertStringsToObjectIDs(elementIdStrings)
+        PlaylistElement.find({ _id: elementIds }, (err, elements) => {
+            return resolve(elements)
         })
     })
 }
@@ -326,7 +416,7 @@ function filterPlaylistElements(desiredType, playlistElements) {
 
 function arrayPushAll(array1, array2) {
     for (var i = 0; i < array2.length; i++) {
-        array1.push(array2)
+        array1.push(array2[i])
     }
     return array1
 }
@@ -346,6 +436,7 @@ module.exports = {
     getPlay,
     getRoom,
     getSong,
+    getPlaylist,
     extractTagIds,
     matchDbObjectWithId,
     saveTagEdits,
