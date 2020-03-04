@@ -350,12 +350,23 @@ function getNextLayers(playlistArray) {
             }
             else {
                 var plElements = filterPlaylistElements('Playlist', elements)
-                returnArray = arrayPushAll(returnArray, plElements)
 
-                getNextLayers(plElements).then(function (nestedElements) {
-                    returnArray = arrayPushAll(returnArray, plElements)
-                    return resolve(returnArray)
+                var playlistIdStrings = []
+                for (var i = 0; i < plElements.length; i++) {
+                    playlistIdStrings.push(plElements[i].elementId)
+                }
+                var playlistIds = convertStringsToObjectIDs(playlistIdStrings)
+
+                getPlaylists(playlistIds).then(function (playlists) {
+                    returnArray = arrayPushAll(returnArray, playlists)
+
+                    getNextLayers(playlists).then(function (nestedElements) {
+                        returnArray = arrayPushAll(returnArray, nestedElements)
+                        return resolve(returnArray)
+                    })
                 })
+
+                
             }
         })
     })
