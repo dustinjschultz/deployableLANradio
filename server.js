@@ -289,8 +289,16 @@ app.get('/add-song-to-playlist', (req, res) => {
 })
 
 app.get('/add-playlist-to-playlist', (req, res) => {
-    generalScripts.addPlaylistToPlaylist(req.query.playlistToAddId, req.query.playlistId).then(function () {
-        res.status(200).send({})
+    generalScripts.isDangerousRecursiveAdd(req.query.playlistToAddId, req.query.playlistId).then(function (isDangerous) {
+        if (isDangerous) {
+            //TODO: how to notify that it wasn't added?
+            res.status(200).send({})
+        }
+        else {
+            generalScripts.addPlaylistToPlaylist(req.query.playlistToAddId, req.query.playlistId).then(function () {
+                res.status(200).send({})
+            })
+        }
     })
 })
 
