@@ -129,9 +129,9 @@ function getPlaylist(idString) {
     })
 }
 
-function getPlaylists(idStrings) {
+function getPlaylists(ids) {
     return new Promise(function (resolve, reject) {
-        Playlist.find({ _id: idStrings }, (err, playlists) => {
+        Playlist.find({ _id: ids }, (err, playlists) => {
             return resolve(playlists)
         })
     })
