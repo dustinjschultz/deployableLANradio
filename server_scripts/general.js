@@ -271,7 +271,6 @@ function createPlaylistElement(elementId, type) {
 function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
     return new Promise(function (resolve, reject) {
         collectNestedPlaylists(playlistToAddId).then(function (allNestedPlaylists) {
-            console.log('isDangerous() called collectNested() and got: ')
             console.log(allNestedPlaylists)
             for (var i = 0; i < allNestedPlaylists.length; i++) {
                 if (allNestedPlaylists[i]._id.toString() == playlistId.toString()) {
@@ -282,28 +281,6 @@ function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
         })
     })
 }
-
-//function collectNestedPlaylists(playlistIdString) {
-//    return new Promise(function (resolve, reject) {
-
-//        var nestedPlaylists = []
-
-//        getPlaylistElementsFromPlaylistId(playlistIdString).then(function (playlistElements) {
-
-//            var filteredElements = filterPlaylistElements('Playlist', playlistElements)
-//            nestedPlaylists = arrayPushAll(nestedPlaylists, filteredElements)
-
-//            for (var i = 0; i < filteredElements.length; i++) {
-//                console.log('about to collectNested for ' + filteredElements[i]._id)
-//                collectNestedPlaylists(filteredElements[i]._id).then(function (nextLayersOfElements) {
-//                    nestedPlaylists = arrayPushAll(nestedPlaylists, nextLayersOfElements)
-//                })
-//            }
-//            //TODO: also looks like there's an issue with nestedPlaylists becoming an array of arrays...
-//            return resolve(nestedPlaylists) //this is returning before the for loop's then()s finish
-//        })
-//    })
-//}
 
 function collectNestedPlaylists(playlistIdString) {
     return new Promise(function (resolve, reject) {
@@ -328,8 +305,6 @@ function collectNestedPlaylists(playlistIdString) {
                     nestedPlaylists = arrayPushAll(nestedPlaylists, playlists)
 
                     getNextLayers(playlists).then(function (nestedElements) {
-                        console.log('collectNestedPlaylist() called getNextLayers() and got: ')
-                        console.log(nestedElements)
                         nestedPlaylists = arrayPushAll(nestedPlaylists, nestedElements)
                         return resolve(nestedPlaylists)
                     })
@@ -340,8 +315,6 @@ function collectNestedPlaylists(playlistIdString) {
 }
 
 function getNextLayers(playlistArray) {
-    console.log('getNextLayers() with: ')
-    console.log(playlistArray)
     return new Promise(function (resolve, reject) {
         var returnArray = []
         getElementsOfPlaylists(playlistArray).then(function (elements) {
