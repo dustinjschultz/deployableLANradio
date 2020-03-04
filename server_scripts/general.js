@@ -271,7 +271,6 @@ function createPlaylistElement(elementId, type) {
 function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
     return new Promise(function (resolve, reject) {
         collectNestedPlaylists(playlistToAddId).then(function (allNestedPlaylists) {
-            console.log(allNestedPlaylists)
             for (var i = 0; i < allNestedPlaylists.length; i++) {
                 if (allNestedPlaylists[i]._id.toString() == playlistId.toString()) {
                     return resolve(true)
@@ -376,8 +375,6 @@ function getPlaylistElementsFromPlaylistId(playlistId) {
 }
 
 function getElementsOfPlaylists(playlistArray) {
-    console.log('getElementsOfPlaylists with: ')
-    console.log(playlistArray)
     return new Promise(function (resolve, reject) {
         var elements = []
         var elementIdStrings = []
