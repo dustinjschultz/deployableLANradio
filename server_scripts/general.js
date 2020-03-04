@@ -292,7 +292,6 @@ function collectNestedPlaylists(playlistIdString) {
 
             getElementsOfPlaylists(playlistArray).then(function (elements) {
                 var plElements = filterPlaylistElements('Playlist', elements)
-                //TODO: these are playlistElements of type Playlist, but NOT Playlists
 
                 var playlistIdStrings = []
                 for (var i = 0; i < plElements.length; i++) {
@@ -337,39 +336,7 @@ function getNextLayers(playlistArray) {
                         return resolve(returnArray)
                     })
                 })
-
-                
             }
-        })
-    })
-}
-
-//TODO: still needed?
-function getPlaylistElementIds(playlistId) {
-    return new Promise(function (resolve, reject) {
-        Playlist.findOne({ _id: ObjectID(playlistId) }, (err, playlist) => {
-            return resolve(playlist.elementIds)
-        })
-    })
-}
-
-//TODO: still needed?
-function getPlaylistElements(playlistElementIdStrings) {
-    return new Promise(function (resolve, reject) {
-        playlistElementIds = convertStringsToObjectIDs(playlistElementIdStrings)
-        PlaylistElement.find({ _id: playlistElementIds }, (err, playlistElements) => {
-            return resolve(playlistElements)
-        })
-    })
-}
-
-//TODO: still needed?
-function getPlaylistElementsFromPlaylistId(playlistId) {
-    return new Promise(function (resolve, reject) {
-        getPlaylistElementIds(playlistId).then(function (playlistElementIds) {
-            getPlaylistElements(playlistElementIds).then(function (playlistElements) {
-                return resolve(playlistElements)
-            })
         })
     })
 }
