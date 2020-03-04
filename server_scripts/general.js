@@ -317,7 +317,7 @@ function getNextLayers(playlistArray) {
         var returnArray = []
         getElementsOfPlaylists(playlistArray).then(function (elements) {
             if (elements.length == 0) {
-                return resolve ([])
+                return resolve([])
             }
             else {
                 var plElements = filterPlaylistElements('Playlist', elements)
