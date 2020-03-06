@@ -5,21 +5,13 @@ $(document).ready(function () {
 
 
 function initRoom() {
-    initSubmitSongButton()
-    //TODO: same but for submit-playlist
-
     var room_id = $('input[name=room_id]').val()
     loadQueueIntoData(room_id).then(function () {
         playMediaFromData()
     })
 }
 
-function initSubmitSongButton() {
-    $("form#submit-song").on('submit', submitSongHandler)
-}
-
-function submitSongHandler(e) {
-    e.preventDefault();
+function submitSongHandler() {
     var songId = $('select[name=song_id]').val();
     var roomId = $('input[name=room_id]').val();
     $.ajax({

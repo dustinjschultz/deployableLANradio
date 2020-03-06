@@ -100,11 +100,13 @@ app.post('/createroom', (req, res) => {
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     generalScripts.getLibraryContents(library).then(function (contents) {
                         var songs = contents.songs
+                        var playlists = contents.playlists
                         req.session.room_id = req.query.room_id
                         req.session.save() //need to manually save if nothing is sent back
                         goTo(req, res, '/public/views/room.html', {
                             room_id: room._id,
                             songs: songs,
+                            playlists: playlists,
                             library: library._id,
                             name: room.name,
                             description: room.description
@@ -145,12 +147,14 @@ app.get('/join_room', (req, res) => {
     generalScripts.getLibrary(req.session.uid).then(function (library) {
         generalScripts.getLibraryContents(library).then(function (contents) {
             var songs = contents.songs
+            var playlists = contents.playlists
             generalScripts.getRoom(room_id).then(function (room) {
                 req.session.room_id = room_id
                 req.session.save() //need to manually save if nothing is sent back
                 goTo(req, res, '/public/views/room.html', {
                     room_id: room_id,
                     songs: songs,
+                    playlists: playlists,
                     library: library ? library._id : null,
                     name: room.name,
                     description: room.description
