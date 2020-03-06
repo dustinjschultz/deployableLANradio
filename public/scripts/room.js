@@ -21,6 +21,7 @@ function submitSongHandler() {
         dataType: 'json',
         success: function (data) {
             if (data.appended) {
+                console.log('appended!')
                 loadQueueIntoData(roomId).then(function () {
                     playMediaFromData()
                 })
