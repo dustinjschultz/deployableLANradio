@@ -1,10 +1,19 @@
 
-<form action="/submit-song" method="POST" id="submit-song">
-    <select name="song_id">
-        <% for(var i = 0; i < options.songs.length; i++) { %>
-                    <option value="<%- options.songs[i]._id -%>"><%- options.songs[i].name -%></option>
-        <% } %>
-    </select>
-    <!--To use ajax, this button is being overriden, see room.js-->
-    <button type="submit">New Song</button>
-</form>
+<div class="room-submission-container">
+    <div class="add-song-container">
+        <select name="song_id">
+            <% for(var i = 0; i < options.songs.length; i++) { %>
+                <option value="<%- options.songs[i]._id -%>"><%- options.songs[i].name -%></option>
+            <% } %>
+        </select>
+        <button onclick="submitSongHandler()">Add Song</button>
+    </div>
+    <div class="add-playlist-container">
+        <select name="playlist_id">
+            <% for(var i = 0; i < options.playlists.length; i++) { %>
+                <option value="<%- options.playlists[i]._id -%>"><%- options.playlists[i].name -%></option>
+            <% } %>
+        </select>
+        <button onclick="submitPlaylistHandler(this)">Add Playlist</button>
+    </div>
+</div>

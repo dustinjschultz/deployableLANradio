@@ -100,11 +100,13 @@ app.post('/createroom', (req, res) => {
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     generalScripts.getLibraryContents(library).then(function (contents) {
                         var songs = contents.songs
+                        var playlists = contents.playlists
                         req.session.room_id = req.query.room_id
                         req.session.save() //need to manually save if nothing is sent back
                         goTo(req, res, '/public/views/room.html', {
                             room_id: room._id,
                             songs: songs,
+                            playlists: playlists,
                             library: library._id,
                             name: room.name,
                             description: room.description
@@ -145,12 +147,14 @@ app.get('/join_room', (req, res) => {
     generalScripts.getLibrary(req.session.uid).then(function (library) {
         generalScripts.getLibraryContents(library).then(function (contents) {
             var songs = contents.songs
+            var playlists = contents.playlists
             generalScripts.getRoom(room_id).then(function (room) {
                 req.session.room_id = room_id
                 req.session.save() //need to manually save if nothing is sent back
                 goTo(req, res, '/public/views/room.html', {
                     room_id: room_id,
                     songs: songs,
+                    playlists: playlists,
                     library: library ? library._id : null,
                     name: room.name,
                     description: room.description
@@ -243,6 +247,33 @@ app.post('/submit-song', (req, res) => {
     })
 })
 
+app.post('/submit-playlist', (req, res) => {
+    generalScripts.getPlaylist(req.body.playlistId).then(function (playlist) {
+        generalScripts.collectNestedPlaylists(req.body.playlistId).then(function (allPlaylists) {
+
+            var allPlaylistElementIdStrings = []
+            for (var i = 0; i < allPlaylists.length; i++) {
+                Array.prototype.push.apply(allPlaylistElementIdStrings, allPlaylists[i].elementIds)
+            }
+
+            var allPlaylistElementIds = generalScripts.convertStringsToObjectIDs(allPlaylistElementIdStrings)
+            PlaylistElement.find({ _id: allPlaylistElementIds }, (err, elements) => {
+                var filtered = generalScripts.filterPlaylistElements('Song', elements)
+
+                generalScripts.getContentsOfPlaylistElements(filtered).then(function (contents) {
+                    generalScripts.makePlays(contents.songs, req.session.uid).then(function (plays) {
+                        generalScripts.getRoom(req.body.roomId).then(function (room) {
+                            appendPlaysToRoom(plays, room).then(function () {
+                                res.status(200).send({ appended: true })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    })
+})
+
 app.post('/get-room-update', (req, res) => {
     generalScripts.getRoom(req.body.roomid).then(function (room) {
         generalScripts.getPlay(room.currentPlayId).then(function (curPlay) {
@@ -264,9 +295,13 @@ app.post('/propose-room-update', (req, res) => {
     generalScripts.getRoom(req.body.roomid).then(function (room) {
         checkRoomQueueShift(room).then(function (result) {
             if (result) {
-                shiftRoomQueue(room)
+                shiftRoomQueue(room).then(function () {
+                    res.status(200).send({ proposalValid: result })
+                })
             }
-            res.status(200).send({ proposalValid: result })
+            else {
+                res.status(200).send({ proposalValid: result })
+            }
         })
     })
 })
@@ -375,17 +410,39 @@ function appendPlayToRoom(play, room) {
             oldDeepestPlay.nextPlayId = play._id
             play.prevPlayId = oldDeepestPlay._id
             room.deepestPlayId = play._id
-            room.save()
-            play.save()
-            oldDeepestPlay.save().then(function () {
-                checkRoomQueueShift(room).then(function (result) {
-                    if (result) {
-                        shiftRoomQueue(room)
-                    }
-                    return resolve()
+            //.save.then() so a call from appendPlaysToRoom doesn't "save document multiple times in parallel" (mongo restriction)
+            room.save().then(function () {
+                play.save().then(function () {
+                    oldDeepestPlay.save().then(function () {
+                        checkRoomQueueShift(room).then(function (result) {
+                            if (result) {
+                                shiftRoomQueue(room).then(function () {
+                                    return resolve()
+                                })
+                            }
+                            else {
+                                return resolve()
+                            }
+                        })
+                    })
                 })
             })
         })
+    })
+}
+
+function appendPlaysToRoom(plays, room) {
+    return new Promise(function (resolve, reject) {
+        if (plays.length == 0) {
+            return resolve()
+        }
+        else {
+            appendPlayToRoom(plays[0], room).then(function () {
+                appendPlaysToRoom(plays.slice(1), room).then(function () {
+                    return resolve()
+                })
+            })
+        }
     })
 }
 
@@ -422,12 +479,16 @@ function getInitPlay() {
 }
 
 function shiftRoomQueue(room) {
-    Play.findOne({ _id: ObjectID(room.currentPlayId) }, (err, curPlay) => {
-        Play.findOne({ _id: ObjectID(curPlay.nextPlayId) }, (err, nextPlay) => {
-            nextPlay.startTime = new Date(Date.now()).toISOString()
-            room.currentPlayId = nextPlay._id
-            nextPlay.save()
-            room.save()
+    return new Promise(function (resolve, reject) {
+        Play.findOne({ _id: ObjectID(room.currentPlayId) }, (err, curPlay) => {
+            Play.findOne({ _id: ObjectID(curPlay.nextPlayId) }, (err, nextPlay) => {
+                nextPlay.startTime = new Date(Date.now()).toISOString()
+                room.currentPlayId = nextPlay._id
+                nextPlay.save()
+                room.save().then(function () {
+                    return resolve()
+                })
+            })
         })
     })
 }

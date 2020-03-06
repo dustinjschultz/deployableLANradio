@@ -281,6 +281,7 @@ function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
     })
 }
 
+//returns array of Playlists, including the input, without duplicate appearances (probably, the extent of this isn't tested)
 function collectNestedPlaylists(playlistIdString) {
     return new Promise(function (resolve, reject) {
         var nestedPlaylists = []
@@ -369,6 +370,66 @@ function arrayPushAll(array1, array2) {
     return array1
 }
 
+// takes [PlaylistElement] and returns object in format {songs, playlists}
+// where "songs" are the PlaylistElements that have an elementId that's a Song
+// where "playlists" are the PlaylistElements that have an elementId that's a Playlist
+// does not return duplicate entries (probably, the extent of this isn't tested)
+function getContentsOfPlaylistElements(elements) {
+    return new Promise(function (resolve, reject) {
+        var songIdStrings = []
+        var playlistIdStrings = []
+
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].elementType == 'Song') {
+                songIdStrings.push(elements[i].elementId)
+            }
+            else if (elements[i].elementType == 'Playlist') {
+                playlistIdStrings.push(elements[i].elementId)
+            }
+        }
+
+        var songIds = convertStringsToObjectIDs(songIdStrings)
+        var playlistIds = convertStringsToObjectIDs(playlistIdStrings)
+
+        Song.find({ _id: songIds }, (err, songs) => {
+            Playlist.find({ _id: playlistIds }, (err2, playlists) => {
+                return resolve({songs: songs, playlists: playlists})
+            })
+        })
+    })
+}
+
+function makePlays(songs, userId) {
+    return new Promise(function (resolve, reject) {
+        var returnPlays = []
+        if (songs.length == 0) {
+            return resolve([])
+        }
+        else {
+            makePlay(songs[0], userId).then(function (play) {
+                returnPlays.push(play)
+                makePlays(songs.slice(1), userId).then(function (plays) {
+                    Array.prototype.push.apply(returnPlays, plays)
+                    return resolve(returnPlays)
+                })
+            })
+        }
+    })
+}
+
+function makePlay(song, userId) {
+    return new Promise(function (resolve, reject) {
+        const play = new Play({
+            songId: song._id,
+            submitterId: userId,
+            startTime: null
+        })
+        play.save((err, response) => {
+            return resolve(play)
+        })
+    })
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -392,5 +453,10 @@ module.exports = {
     addSongToPlaylist,
     addPlaylistToPlaylist,
     isDangerousRecursiveAdd,
+    collectNestedPlaylists,
+    convertStringsToObjectIDs,
+    filterPlaylistElements,
+    getContentsOfPlaylistElements,
+    makePlays,
     linkedJS
 }

@@ -1,1 +1,1 @@
-{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"landr.tags"}],"uuid":"a872da1efec04416abe37e0239d13bcc"}
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"landr.tags"}],"uuid":"2179551315424953aedefb998ad386a2"}
