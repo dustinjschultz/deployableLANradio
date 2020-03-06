@@ -370,6 +370,10 @@ function arrayPushAll(array1, array2) {
     return array1
 }
 
+// takes [PlaylistElement] and returns object in format {songs, playlists}
+// where "songs" are the PlaylistElements that have an elementId that's a Song
+// where "playlists" are the PlaylistElements that have an elementId that's a Playlist
+// does not return duplicate entries (probably, the extent of this isn't tested)
 function getContentsOfPlaylistElements(elements) {
     return new Promise(function (resolve, reject) {
         var songIdStrings = []
