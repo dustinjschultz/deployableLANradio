@@ -228,7 +228,6 @@ app.post('/new-playlist', (req, res) => {
 })
 
 app.post('/submit-song', (req, res) => {
-    console.log('/submit-song')
     const play = new Play({
         songId: req.body.songId,
         submitterId: req.session.uid,
@@ -249,7 +248,24 @@ app.post('/submit-song', (req, res) => {
 })
 
 app.post('/submit-playlist', (req, res) => {
-    console.log('/submit-playlist')
+    generalScripts.getPlaylist(req.body.playlistId).then(function (playlist) {
+        generalScripts.collectNestedPlaylists(req.body.playlistId).then(function (allPlaylists) {
+
+            var allPlaylistElementIdStrings = []
+            for (var i = 0; i < allPlaylists.length; i++) {
+                Array.prototype.push.apply(allPlaylistElementIdStrings, allPlaylists[i].elementIds)
+            }
+
+            var allPlaylistElementIds = generalScripts.convertStringsToObjectIDs(allPlaylistElementIdStrings)
+            PlaylistElement.find({ _id: allPlaylistElementIds }, (err, elements) => {
+                var filtered = generalScripts.filterPlaylistElements('Song', elements)
+
+                generalScripts.getContentsOfPlaylistElements(filtered).then(function (contents) {
+                    console.log(contents)
+                })
+            })
+        })
+    })
 })
 
 app.post('/get-room-update', (req, res) => {

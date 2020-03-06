@@ -281,6 +281,7 @@ function isDangerousRecursiveAdd(playlistToAddId, playlistId) {
     })
 }
 
+//returns array of Playlists, including the input, without duplicate appearances (probably, the extent of this isn't tested)
 function collectNestedPlaylists(playlistIdString) {
     return new Promise(function (resolve, reject) {
         var nestedPlaylists = []
@@ -369,6 +370,31 @@ function arrayPushAll(array1, array2) {
     return array1
 }
 
+function getContentsOfPlaylistElements(elements) {
+    return new Promise(function (resolve, reject) {
+        var songIdStrings = []
+        var playlistIdStrings = []
+
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].elementType == 'Song') {
+                songIdStrings.push(elements[i].elementId)
+            }
+            else if (elements[i].elementType == 'Playlist') {
+                playlistIdStrings.push(elements[i].elementId)
+            }
+        }
+
+        var songIds = convertStringsToObjectIDs(songIdStrings)
+        var playlistIds = convertStringsToObjectIDs(playlistIdStrings)
+
+        Song.find({ _id: songIds }, (err, songs) => {
+            Playlist.find({ _id: playlistIds }, (err2, playlists) => {
+                return resolve({songs: songs, playlists: playlists})
+            })
+        })
+    })
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -392,5 +418,9 @@ module.exports = {
     addSongToPlaylist,
     addPlaylistToPlaylist,
     isDangerousRecursiveAdd,
+    collectNestedPlaylists,
+    convertStringsToObjectIDs,
+    filterPlaylistElements,
+    getContentsOfPlaylistElements,
     linkedJS
 }
