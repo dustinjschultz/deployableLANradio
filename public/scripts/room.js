@@ -37,13 +37,13 @@ function submitPlaylistHandler() {
         url: '/submit-playlist',
         data: { 'playlistId': playlistId, 'roomId': roomId },
         dataType: 'json',
-        success: function (data) {
-            if (data.appended) {
-                loadQueueIntoData(roomId).then(function () {
-                    playMediaFromData()
-                })
-            }
-        }
+        //success: function (data) {
+        //    if (data.appended) {
+        //        loadQueueIntoData(roomId).then(function () {
+        //            playMediaFromData()
+        //        })
+        //    }
+        //}
     })
 }
 

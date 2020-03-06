@@ -1,5 +1,5 @@
 
-<form action="/submit-song" method="POST" id="submit-song">
+<div class="room-submission-container">
     <div class="add-song-container">
         <select name="song_id">
             <% for(var i = 0; i < options.songs.length; i++) { %>
@@ -16,4 +16,4 @@
         </select>
         <button onclick="submitPlaylistHandler(this)">Add Playlist</button>
     </div>
-</form>
+</div>
