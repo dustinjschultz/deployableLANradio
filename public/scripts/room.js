@@ -29,6 +29,24 @@ function submitSongHandler() {
     })
 }
 
+function submitPlaylistHandler() {
+    var playlistId = $('select[name=playlist_id]').val();
+    var roomId = $('input[name=room_id]').val();
+    $.ajax({
+        type: 'post',
+        url: '/submit-playlist',
+        data: { 'playlistId': playlistId, 'roomId': roomId },
+        dataType: 'json',
+        success: function (data) {
+            if (data.appended) {
+                loadQueueIntoData(roomId).then(function () {
+                    playMediaFromData()
+                })
+            }
+        }
+    })
+}
+
 function loadQueueIntoData(roomIdString) {
     return new Promise(function (resolve, reject) {
         $.ajax({

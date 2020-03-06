@@ -6,8 +6,6 @@
                 <option value="<%- options.songs[i]._id -%>"><%- options.songs[i].name -%></option>
             <% } %>
         </select>
-        <!--To use ajax, this button is being overriden, see room.js-->
-        <!--<button type="submit">Add Song</button>-->
         <button onclick="submitSongHandler()">Add Song</button>
     </div>
     <div class="add-playlist-container">
@@ -16,6 +14,6 @@
                 <option value="<%- options.playlists[i]._id -%>"><%- options.playlists[i].name -%></option>
             <% } %>
         </select>
-        <button onclick="addPlaylist(this)">Add Playlist</button>
+        <button onclick="submitPlaylistHandler(this)">Add Playlist</button>
     </div>
 </form>

@@ -228,6 +228,7 @@ app.post('/new-playlist', (req, res) => {
 })
 
 app.post('/submit-song', (req, res) => {
+    console.log('/submit-song')
     const play = new Play({
         songId: req.body.songId,
         submitterId: req.session.uid,
@@ -245,6 +246,10 @@ app.post('/submit-song', (req, res) => {
             })
         }
     })
+})
+
+app.post('/submit-playlist', (req, res) => {
+    console.log('/submit-playlist')
 })
 
 app.post('/get-room-update', (req, res) => {
