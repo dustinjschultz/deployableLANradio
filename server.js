@@ -261,7 +261,10 @@ app.post('/submit-playlist', (req, res) => {
                 var filtered = generalScripts.filterPlaylistElements('Song', elements)
 
                 generalScripts.getContentsOfPlaylistElements(filtered).then(function (contents) {
-                    var plays = generalScripts.makePlays(contents.songs) //TODO:
+                    generalScripts.makePlays(contents.songs, req.session.uid).then(function (plays) {
+                        console.log(plays)
+                    })
+                    //TODO:
                     //generalScritps.getRoom(req.body.roomId).then(function (room) {
                         //TODO: push all plays
                     //})

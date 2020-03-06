@@ -399,6 +399,37 @@ function getContentsOfPlaylistElements(elements) {
     })
 }
 
+function makePlays(songs, userId) {
+    return new Promise(function (resolve, reject) {
+        var returnPlays = []
+        if (songs.length == 0) {
+            return resolve([])
+        }
+        else {
+            makePlay(songs[0], userId).then(function (play) {
+                returnPlays.push(play)
+                makePlays(songs.slice(1), userId).then(function (plays) {
+                    Array.prototype.push.apply(returnPlays, plays)
+                    return resolve(returnPlays)
+                })
+            })
+        }
+    })
+}
+
+function makePlay(song, userId) {
+    return new Promise(function (resolve, reject) {
+        const play = new Play({
+            songId: song._id,
+            submitterId: userId,
+            startTime: null
+        })
+        play.save((err, response) => {
+            return resolve(play)
+        })
+    })
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -426,5 +457,6 @@ module.exports = {
     convertStringsToObjectIDs,
     filterPlaylistElements,
     getContentsOfPlaylistElements,
+    makePlays,
     linkedJS
 }
