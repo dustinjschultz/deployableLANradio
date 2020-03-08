@@ -430,6 +430,10 @@ function makePlay(song, userId) {
     })
 }
 
+function isRoomAdmin(userIdString, room) {
+    return room.owner.toString() == userIdString
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -458,5 +462,6 @@ module.exports = {
     filterPlaylistElements,
     getContentsOfPlaylistElements,
     makePlays,
+    isRoomAdmin,
     linkedJS
 }

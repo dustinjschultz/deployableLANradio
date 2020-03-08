@@ -99,6 +99,7 @@ app.post('/createroom', (req, res) => {
                 //functionally slightly different from /join_room since this is not a GET request, URL will be different
                 generalScripts.getLibrary(req.session.uid).then(function (library) {
                     generalScripts.getLibraryContents(library).then(function (contents) {
+                        var isRoomAdmin = generalScripts.isRoomAdmin(req.session.uid, room)
                         var songs = contents.songs
                         var playlists = contents.playlists
                         req.session.room_id = req.query.room_id
@@ -109,7 +110,8 @@ app.post('/createroom', (req, res) => {
                             playlists: playlists,
                             library: library._id,
                             name: room.name,
-                            description: room.description
+                            description: room.description,
+                            isRoomAdmin: isRoomAdmin
                         })
                     })
                 })
@@ -151,13 +153,15 @@ app.get('/join_room', (req, res) => {
             generalScripts.getRoom(room_id).then(function (room) {
                 req.session.room_id = room_id
                 req.session.save() //need to manually save if nothing is sent back
+                var isRoomAdmin = generalScripts.isRoomAdmin(req.session.uid, room)
                 goTo(req, res, '/public/views/room.html', {
                     room_id: room_id,
                     songs: songs,
                     playlists: playlists,
                     library: library ? library._id : null,
                     name: room.name,
-                    description: room.description
+                    description: room.description,
+                    isRoomAdmin: isRoomAdmin
                 })
             })
             

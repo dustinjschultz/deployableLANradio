@@ -13,6 +13,11 @@
             <button><i class="fa fa-thumbs-up fa-lg" style="width: 20px; height: 20px;"></i></button>
             <button><i class="fa fa-thumbs-down fa-lg" style="width: 20px; height: 20px;"></i></button>
         </div>
+        <div class="room-admin-button-container">
+            <% if (options.isRoomAdmin) {%>
+                <button><i class="fa fa-gear fa-lg" style="width: 20px; height: 20px;"></i></button>
+            <% } %>
+        </div>
         <div class="submission-container">
             <% if(options.library) { %>
 
