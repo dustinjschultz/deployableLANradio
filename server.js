@@ -341,6 +341,14 @@ app.get('/add-playlist-to-playlist', (req, res) => {
     })
 })
 
+app.get('/submit-thumb', (req, res) => {
+    console.log('submit-thumb from ' + req.session.uid)
+    console.log(' for play ' + req.query.playId)
+    console.log(" going " + ((req.query.isThumbUp == 'true') ? "up" : "down"))
+    //TODO: 
+    res.status(200).send({})
+})
+
 function goToIndex(req, res) {
     generalScripts.getRooms().then(function (gotRooms) {
         res.render(__dirname + '/public/views/generallayout.ejs', {
