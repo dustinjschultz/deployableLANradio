@@ -178,3 +178,19 @@ function calcStartToNowGap(startTime) {
     diff = Math.floor(diff)
     return diff
 }
+
+function submitThumb(isThumbUp) {
+    //var directionString = isThumbsUp ? "up" : "down"
+    var playId = $('.media-container').attr('data-playId')
+
+    $.ajax({
+        type: 'get',
+        url: '/submit-thumb',
+        data: { 'isThumbUp': isThumbUp, 'playId': playId},
+        dataType: 'json',
+        success: function (data) {
+            
+        }
+    })
+}
+
