@@ -435,6 +435,35 @@ function isRoomAdmin(userIdString, room) {
     return room.owner.toString() == userIdString
 }
 
+function submitThumb(userIdString, playIdString, isThumbUp) {
+    return new Promise(function (resolve, reject) {
+        getPlay(playIdString).then(function (play) {
+            if (!play.raters.includes(userIdString)) {
+                play.raters.push(userIdString)
+                console.log('user has not rated')
+            }
+
+            if (isThumbUp) {
+                var index = play.positiveRaters.indexOf(userIdString)
+                if (index == -1) {
+                    play.positiveRaters.push(userIdString)
+                } 
+            }
+            else {
+                var index = play.positiveRaters.indexOf(userIdString)
+                if (index != -1) {
+                    play.positiveRaters.splice(index, 1)
+                } 
+            }
+            play.save()
+            return resolve()
+        })
+    })
+    //console.log('submit-thumb from ' + userIdString)
+    //console.log(' for play ' + playIdString)
+    //console.log(" going " + (isThumbUp ? "up" : "down"))
+}
+
 function generalTestFunc() {
     return 'general - testFunc()'
 }
@@ -464,5 +493,6 @@ module.exports = {
     getContentsOfPlaylistElements,
     makePlays,
     isRoomAdmin,
+    submitThumb,
     linkedJS
 }

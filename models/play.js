@@ -25,12 +25,14 @@ const playSchema = mongoose.Schema({
     startTime: {
         type: Date
     },
-    //ratingsSubmitted: {
-    //    type: Number
-    //},
-    //positiveRatings: {
-    //    type: Number
-    //}
+    raters: [{
+        type: ObjectID,
+        ref: 'User'
+    }],
+    positiveRaters: [{
+        type: ObjectID,
+        ref: 'User'
+    }],
 })
 
 const Play = mongoose.model('Play', playSchema)

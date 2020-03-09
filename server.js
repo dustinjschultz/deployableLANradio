@@ -342,11 +342,10 @@ app.get('/add-playlist-to-playlist', (req, res) => {
 })
 
 app.get('/submit-thumb', (req, res) => {
-    console.log('submit-thumb from ' + req.session.uid)
-    console.log(' for play ' + req.query.playId)
-    console.log(" going " + ((req.query.isThumbUp == 'true') ? "up" : "down"))
     //TODO: 
-    res.status(200).send({})
+    generalScripts.submitThumb(req.session.uid, req.query.playId, (req.query.isThumbUp == 'true')).then(function () {
+        res.status(200).send({})
+    })
 })
 
 function goToIndex(req, res) {
