@@ -450,9 +450,14 @@ function submitThumb(userIdString, playIdString, isThumbUp) {
                 } 
             }
             else {
+                //TODO: https://stackoverflow.com/questions/3954438/how-to-remove-item-from-array-by-value
+                //see filter strategy
                 var index = play.positiveRaters.indexOf(userIdString)
                 if (index != -1) {
-                    play.positiveRaters.splice(index, 1)
+                    //play.positiveRaters.splice(index, 1)
+                    console.log(play.positiveRaters)
+                    play.positiveRaters = play.positiveRaters.filter(function (e) { return e != userIdString })
+                    console.log(play.positiveRaters)
                 } 
             }
             play.save()
