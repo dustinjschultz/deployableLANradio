@@ -440,7 +440,6 @@ function submitThumb(userIdString, playIdString, isThumbUp) {
         getPlay(playIdString).then(function (play) {
             if (!play.raters.includes(userIdString)) {
                 play.raters.push(userIdString)
-                console.log('user has not rated')
             }
 
             if (isThumbUp) {
@@ -450,23 +449,16 @@ function submitThumb(userIdString, playIdString, isThumbUp) {
                 } 
             }
             else {
-                //TODO: https://stackoverflow.com/questions/3954438/how-to-remove-item-from-array-by-value
-                //see filter strategy
                 var index = play.positiveRaters.indexOf(userIdString)
                 if (index != -1) {
-                    //play.positiveRaters.splice(index, 1)
-                    console.log(play.positiveRaters)
-                    play.positiveRaters = play.positiveRaters.filter(function (e) { return e != userIdString })
-                    console.log(play.positiveRaters)
+                    //remove this userIdString from positiveRaters
+                    play.positiveRaters = play.positiveRaters.filter(function (e) { return e != userIdString }) 
                 } 
             }
             play.save()
             return resolve()
         })
     })
-    //console.log('submit-thumb from ' + userIdString)
-    //console.log(' for play ' + playIdString)
-    //console.log(" going " + (isThumbUp ? "up" : "down"))
 }
 
 function generalTestFunc() {
