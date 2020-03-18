@@ -1,1 +1,1 @@
-{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"landr.rooms"}],"uuid":"a36f821e19644acaae30f24efbb2b3c4"}
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"landr.rooms"}],"uuid":"d344bbca4a70437e853f6ae3b5c0b64c"}
