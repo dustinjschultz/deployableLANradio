@@ -3,6 +3,8 @@
 package-lock.json
 /dist
 /coverage
+/bin
+/obj
 
 # local env files
 .env
@@ -15,6 +17,7 @@ npm-debug.log*
 # Editor directories and files
 .idea
 .vscode
+.vs
 *.suo
 *.ntvs*
 *.njsproj
