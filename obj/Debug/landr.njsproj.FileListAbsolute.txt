@@ -1,3 +1,0 @@
-C:\Users\djsch\Desktop\hon490\deployableLANradio\obj\Debug\landr.njsprojAssemblyReference.cache
-C:\Users\djsch\Desktop\hon490\deployableLANradio\obj\Debug\landr.njsproj.CoreCompileInputs.cache
-C:\Users\djsch\Desktop\hon490\deployableLANradio\bin\Microsoft.NodejsTools.WebRole.dll
