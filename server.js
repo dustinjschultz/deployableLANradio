@@ -299,12 +299,30 @@ app.post('/propose-room-update', (req, res) => {
     generalScripts.getRoom(req.body.roomid).then(function (room) {
         checkRoomQueueShift(room).then(function (result) {
             if (result) {
+                //this branch means the room has a nextPlay, and it's ready to play it
                 shiftRoomQueue(room).then(function () {
-                    res.status(200).send({ proposalValid: result })
+                    res.status(200).send({ proposalValid: true })
                 })
             }
             else {
-                res.status(200).send({ proposalValid: result })
+                roomHasNextPlay(room).then(function (hasNext) {
+                    if (!hasNext) {
+                        //this branch means the room has no nextPlay set
+
+                        if (room.enableAutoplay) {
+                        //TODO: predict, check shift, then shift as needed
+
+                        }
+                        else {
+                            res.status(200).send({ proposalValid: false })
+                        }
+                    }
+                    else {
+                        //this branch means the room has a nextPlay, it's just not time to play it yet
+                        res.status(200).send({ proposalValid: false })
+                    }
+                })
+                
             }
         })
     })
@@ -521,6 +539,19 @@ function checkRoomQueueShift(room) {
                     return resolve(false)
                 }
             })
+        })
+    })
+}
+
+function roomHasNextPlay(room) {
+    return new Promise(function (resolve, reject) {
+        Play.findOne({ _id: ObjectID(room.currentPlayId) }, (err, curPlay) => {
+            if (!curPlay.nextPlayId) {
+                return resolve(false)
+            }
+            else {
+                return resolve(true)
+            }
         })
     })
 }
