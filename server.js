@@ -310,8 +310,15 @@ app.post('/propose-room-update', (req, res) => {
                         //this branch means the room has no nextPlay set
 
                         if (room.enableAutoplay) {
-                        //TODO: predict, check shift, then shift as needed
-
+                            predictNextPlay(room).then(function () {
+                                checkRoomQueueShift(room).then(function (result) {
+                                    if (result) {
+                                        shiftRoomQueue(room).then(function () {
+                                            res.status(200).send({ proposalValid: true })
+                                        })
+                                    }
+                                })
+                            })
                         }
                         else {
                             res.status(200).send({ proposalValid: false })
@@ -553,6 +560,49 @@ function roomHasNextPlay(room) {
                 return resolve(true)
             }
         })
+    })
+}
+
+function predictNextPlay(room) {
+    return new Promise(function (resolve, reject) {
+        //TODO: gather room history, make prediction based on history
+        gatherRoomHistory(room).then(function (history) {
+            console.log(history)
+        })
+    })
+}
+
+function gatherRoomHistory(room) {
+    return new Promise(function (resolve, reject) {
+        var history = []
+
+        Play.findOne({ _id: ObjectID(room.firstPlayId) }, (err, firstPlay) => {
+            var play = firstPlay
+            history.push(play)
+
+            getNextPlays(play).then(function (nextPlays) {
+                Array.prototype.push.apply(history, nextPlays)
+                return resolve(history)
+            })
+        })
+    })
+}
+
+function getNextPlays(play) {
+    return new Promise(function (resolve, reject) {
+        var returnPlays = []
+        if (!play.nextPlayId) {
+            return resolve([])
+        }
+        else {
+            Play.findOne({ _id: ObjectID(play.nextPlayId) }, (err, nextPlay) => {
+                returnPlays.push(nextPlay)
+                getNextPlays(nextPlay).then(function (nextPlays) {
+                    Array.prototype.push.apply(returnPlays, nextPlays)
+                    return resolve(returnPlays)
+                })
+            })
+        }
     })
 }
 
