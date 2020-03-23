@@ -567,7 +567,11 @@ function predictNextPlay(room) {
     return new Promise(function (resolve, reject) {
         //TODO: gather room history, make prediction based on history
         gatherRoomHistory(room).then(function (history) {
-            console.log(history)
+            //console.log(history)
+            //TODO: get relevant tags for each play
+            queueRandomFromHistory(history, room).then(function () {
+                return resolve()
+            })
         })
     })
 }
@@ -603,6 +607,26 @@ function getNextPlays(play) {
                 })
             })
         }
+    })
+}
+
+function queueRandomFromHistory(history, room) {
+    return new Promise(function (resolve, reject) {
+        var random = Math.ceil(Math.random() * (history.length - 1)) //Math.ceil so 0 is never picked (0 == INIT SONG)
+        var randomPlay = history[random]
+
+        const play = new Play({
+            songId: randomPlay.songId,
+            submitterId: room.owner,
+            startTime: null
+        })
+        play.save((err, response) => {
+            appendPlayToRoom(play, room).then(function () {
+                console.log('predicted and appended ')
+                console.log(play)
+                return resolve()
+            })
+        })
     })
 }
 
