@@ -311,13 +311,16 @@ app.post('/propose-room-update', (req, res) => {
 
                         if (room.enableAutoplay) {
                             predictNextPlay(room).then(function () {
-                                checkRoomQueueShift(room).then(function (result) {
-                                    if (result) {
-                                        shiftRoomQueue(room).then(function () {
-                                            res.status(200).send({ proposalValid: true })
-                                        })
-                                    }
-                                })
+                                res.status(200).send({ proposalValid: true })
+
+                                //This part is done within appendPlayToRoom() which predictNextPlay() calls
+                                //checkRoomQueueShift(room).then(function (result) {
+                                //    if (result) {
+                                //        shiftRoomQueue(room).then(function () {
+                                //            res.status(200).send({ proposalValid: true })
+                                //        })
+                                //    }
+                                //})
                             })
                         }
                         else {
@@ -565,9 +568,7 @@ function roomHasNextPlay(room) {
 
 function predictNextPlay(room) {
     return new Promise(function (resolve, reject) {
-        //TODO: gather room history, make prediction based on history
         gatherRoomHistory(room).then(function (history) {
-            //console.log(history)
             //TODO: get relevant tags for each play
             queueRandomFromHistory(history, room).then(function () {
                 return resolve()
