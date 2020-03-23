@@ -41,6 +41,10 @@ const roomSchema = mongoose.Schema({
     //autoskipThreshold: {
     //    type: number
     //},
+    enableAutoplay: {
+        type: Boolean,
+        default: false
+    },
     //userIdsForAutoplay: {
     //    type: ObjectID,
     //    ref: 'User'

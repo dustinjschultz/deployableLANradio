@@ -299,12 +299,30 @@ app.post('/propose-room-update', (req, res) => {
     generalScripts.getRoom(req.body.roomid).then(function (room) {
         checkRoomQueueShift(room).then(function (result) {
             if (result) {
+                //this branch means the room has a nextPlay, and it's ready to play it
                 shiftRoomQueue(room).then(function () {
-                    res.status(200).send({ proposalValid: result })
+                    res.status(200).send({ proposalValid: true })
                 })
             }
             else {
-                res.status(200).send({ proposalValid: result })
+                roomHasNextPlay(room).then(function (hasNext) {
+                    if (!hasNext) {
+                        //this branch means the room has no nextPlay set
+
+                        if (room.enableAutoplay) {
+                            predictNextPlay(room).then(function () {
+                                res.status(200).send({ proposalValid: true })
+                            })
+                        }
+                        else {
+                            res.status(200).send({ proposalValid: false })
+                        }
+                    }
+                    else {
+                        //this branch means the room has a nextPlay, it's just not time to play it yet
+                        res.status(200).send({ proposalValid: false })
+                    }
+                })
             }
         })
     })
@@ -520,6 +538,85 @@ function checkRoomQueueShift(room) {
                 else {
                     return resolve(false)
                 }
+            })
+        })
+    })
+}
+
+function roomHasNextPlay(room) {
+    return new Promise(function (resolve, reject) {
+        Play.findOne({ _id: ObjectID(room.currentPlayId) }, (err, curPlay) => {
+            if (!curPlay.nextPlayId) {
+                return resolve(false)
+            }
+            else {
+                return resolve(true)
+            }
+        })
+    })
+}
+
+function predictNextPlay(room) {
+    return new Promise(function (resolve, reject) {
+        gatherRoomHistory(room).then(function (history) {
+            //TODO: get relevant tags for each play
+            //TODO: unhardcode the prediction "algorithm" (lol) here
+            queueRandomFromHistory(history, room).then(function () {
+                return resolve()
+            })
+        })
+    })
+}
+
+function gatherRoomHistory(room) {
+    return new Promise(function (resolve, reject) {
+        var history = []
+
+        Play.findOne({ _id: ObjectID(room.firstPlayId) }, (err, firstPlay) => {
+            var play = firstPlay
+            history.push(play)
+
+            getNextPlays(play).then(function (nextPlays) {
+                Array.prototype.push.apply(history, nextPlays)
+                return resolve(history)
+            })
+        })
+    })
+}
+
+function getNextPlays(play) {
+    return new Promise(function (resolve, reject) {
+        var returnPlays = []
+        if (!play.nextPlayId) {
+            return resolve([])
+        }
+        else {
+            Play.findOne({ _id: ObjectID(play.nextPlayId) }, (err, nextPlay) => {
+                returnPlays.push(nextPlay)
+                getNextPlays(nextPlay).then(function (nextPlays) {
+                    Array.prototype.push.apply(returnPlays, nextPlays)
+                    return resolve(returnPlays)
+                })
+            })
+        }
+    })
+}
+
+function queueRandomFromHistory(history, room) {
+    return new Promise(function (resolve, reject) {
+        var random = Math.ceil(Math.random() * (history.length - 1)) //Math.ceil so 0 is never picked (0 == INIT SONG)
+        var randomPlay = history[random]
+
+        const play = new Play({
+            songId: randomPlay.songId,
+            submitterId: room.owner,
+            startTime: null
+        })
+        play.save((err, response) => {
+            appendPlayToRoom(play, room).then(function () {
+                console.log('predicted and appended ')
+                console.log(play)
+                return resolve()
             })
         })
     })
