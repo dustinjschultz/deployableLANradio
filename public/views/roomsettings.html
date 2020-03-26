@@ -14,8 +14,17 @@
                 <input type="checkbox" name="enableAutoplay" <%= options.room.enableAutoplay ? "checked" : ""%> />
                 <label for="enableAutoplay">Enable Autoplay</label>
             </div>
-            
 
+            <div class="settings-predictionStrat-container">
+                <select name="predictionStrat">
+                    <% for(const strat in server_utils.predictionJS.predictionStrats) { %>
+                    <option value="<%- strat -%>"><%- strat -%></option>
+                    <% } %>
+                </select>
+                <label for="predictionStrat">Prediction Strategy</label>
+
+            </div>
+            
             <button type="submit"><i class="fa fa-floppy-o fa-lg" style="width: 20px; height: 20px;"></i></button>
         </form>
     </div>

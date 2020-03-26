@@ -384,6 +384,7 @@ app.post('/update-room-settings', (req, res) => {
     var enableAutoplay = req.body.enableAutoplay ? true : false
     generalScripts.getRoom(req.body.room_id).then(function (room) {
         room.enableAutoplay = enableAutoplay
+        room.predictionStrategy = req.body.predictionStrat
         room.save()
         goToIndex(req, res) //TODO: back to the room
     })
@@ -581,7 +582,6 @@ function roomHasNextPlay(room) {
 }
 
 function predictNextPlay(room) {
-    console.log(generalScripts.predictionJS.predictionFunc())
     return new Promise(function (resolve, reject) {
         gatherRoomHistory(room).then(function (history) {
             //TODO: get relevant tags for each play
@@ -639,8 +639,6 @@ function queueRandomFromHistory(history, room) {
         })
         play.save((err, response) => {
             appendPlayToRoom(play, room).then(function () {
-                console.log('predicted and appended ')
-                console.log(play)
                 return resolve()
             })
         })
