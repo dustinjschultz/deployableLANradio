@@ -53,3 +53,9 @@
     width: 50%;
     text-align: center;
 }
+
+.room-settings-form-container {
+    margin: auto;
+    text-align: center;
+    padding: 20px;
+}

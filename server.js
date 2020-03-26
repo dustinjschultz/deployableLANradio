@@ -186,10 +186,11 @@ app.get('/room_settings', (req, res) => {
 
     generalScripts.getRoom(room_id).then(function (room) {
         var isRoomAdmin = generalScripts.isRoomAdmin(req.session.uid, room)
+        delete room._id
 
         goTo(req, res, '/public/views/roomsettings.html', {
             room_id: room_id,
-            name: room.name,
+            room: room,
             isRoomAdmin: isRoomAdmin
         })
     })
@@ -376,6 +377,15 @@ app.get('/add-playlist-to-playlist', (req, res) => {
 app.get('/submit-thumb', (req, res) => {
     generalScripts.submitThumb(req.session.uid, req.query.playId, (req.query.isThumbUp == 'true')).then(function () {
         res.status(200).send({})
+    })
+})
+
+app.post('/update-room-settings', (req, res) => {
+    var enableAutoplay = req.body.enableAutoplay ? true : false
+    generalScripts.getRoom(req.body.room_id).then(function (room) {
+        room.enableAutoplay = enableAutoplay
+        room.save()
+        goToIndex(req, res) //TODO: back to the room
     })
 })
 
