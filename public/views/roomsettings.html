@@ -1,7 +1,14 @@
-﻿
-<div class="spacer" style="height: 100px;"></div>
-
+﻿<% if (options.isRoomAdmin) {%>
 <div class="roomsettings-container">
-    rm stgs
+    <input type="hidden" class="room_id hidden" value="<%- options.room_id %>" name="room_id" />
+    <div class="spacer" style="height: 100px;"></div>
+
+    <div class="room-settings-header">Room Settings for <%= options.name %></div>
 
 </div>
+
+
+
+<% } else { %>
+<div>You are not an admin of this room</div>
+<% } %>
