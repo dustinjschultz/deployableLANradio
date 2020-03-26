@@ -18,7 +18,7 @@
             <div class="settings-predictionStrat-container">
                 <select name="predictionStrat">
                     <% for(const strat in server_utils.predictionJS.predictionStrats) { %>
-                    <option value="<%- strat -%>"><%- strat -%></option>
+                    <option value="<%- strat -%>" <%= options.room.predictionStrategy == strat ? "selected" : ""%> ><%- strat -%></option>
                     <% } %>
                 </select>
                 <label for="predictionStrat">Prediction Strategy</label>
