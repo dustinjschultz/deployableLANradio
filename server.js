@@ -382,7 +382,11 @@ app.get('/submit-thumb', (req, res) => {
 
 app.post('/update-room-settings', (req, res) => {
     var enableAutoplay = req.body.enableAutoplay ? true : false
-    console.log(enableAutoplay)
+    generalScripts.getRoom(req.body.room_id).then(function (room) {
+        room.enableAutoplay = enableAutoplay
+        room.save()
+        goToIndex(req, res) //TODO: back to the room
+    })
 })
 
 function goToIndex(req, res) {
