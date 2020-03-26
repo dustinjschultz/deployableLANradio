@@ -581,6 +581,7 @@ function roomHasNextPlay(room) {
 }
 
 function predictNextPlay(room) {
+    console.log(generalScripts.predictionJS.predictionFunc())
     return new Promise(function (resolve, reject) {
         gatherRoomHistory(room).then(function (history) {
             //TODO: get relevant tags for each play

@@ -13,6 +13,7 @@ const { PlaylistElement } = require('../models/playlistelement')
 const { Tag } = require('../models/tag')
 
 const linkedJS = require('./linkedJS')
+const predictionJS = require('./predictionJS')
 
 
 function getRooms() {
@@ -491,5 +492,6 @@ module.exports = {
     makePlays,
     isRoomAdmin,
     submitThumb,
-    linkedJS
+    linkedJS,
+    predictionJS
 }
