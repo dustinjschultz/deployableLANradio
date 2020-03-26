@@ -181,6 +181,20 @@ app.get('/newitem', (req, res) => {
     goTo(req, res, '/public/views/newitem.html')
 })
 
+app.get('/room_settings', (req, res) => {
+    var room_id = req.query.room_id
+
+    generalScripts.getRoom(room_id).then(function (room) {
+        var isRoomAdmin = generalScripts.isRoomAdmin(req.session.uid, room)
+
+        goTo(req, res, '/public/views/roomsettings.html', {
+            room_id: room_id,
+            name: room.name,
+            isRoomAdmin: isRoomAdmin
+        })
+    })
+})
+
 app.post('/new-song', (req, res) => {
     var link = req.body.link
     var type = generalScripts.identifySongType(link)

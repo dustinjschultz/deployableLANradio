@@ -47,3 +47,9 @@
     display: inline-block;
     margin-left: 20px;
 }
+
+.room-settings-header {
+    margin: auto;
+    width: 50%;
+    text-align: center;
+}
