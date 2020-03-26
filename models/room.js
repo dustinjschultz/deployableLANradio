@@ -45,6 +45,9 @@ const roomSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    predictionStrategy: {
+        type: String
+    }
     //userIdsForAutoplay: {
     //    type: ObjectID,
     //    ref: 'User'
