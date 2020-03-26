@@ -181,6 +181,10 @@ app.get('/newitem', (req, res) => {
     goTo(req, res, '/public/views/newitem.html')
 })
 
+app.get('/room_settings', (req, res) => {
+    goTo(req, res, '/public/views/roomsettings.html')
+})
+
 app.post('/new-song', (req, res) => {
     var link = req.body.link
     var type = generalScripts.identifySongType(link)

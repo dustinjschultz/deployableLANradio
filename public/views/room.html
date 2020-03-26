@@ -15,7 +15,9 @@
         </div>
         <div class="room-admin-button-container">
             <% if (options.isRoomAdmin) {%>
-                <button><i class="fa fa-gear fa-lg" style="width: 20px; height: 20px;"></i></button>
+            <form action="/room_settings" method="GET">
+                <button type="submit"><i class="fa fa-gear fa-lg" style="width: 20px; height: 20px;"></i></button>
+            </form>
             <% } %>
         </div>
         <div class="submission-container">
