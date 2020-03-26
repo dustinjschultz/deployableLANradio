@@ -3,7 +3,20 @@
     <input type="hidden" class="room_id hidden" value="<%- options.room_id %>" name="room_id" />
     <div class="spacer" style="height: 100px;"></div>
 
-    <div class="room-settings-header">Room Settings for <%= options.name %></div>
+    <div class="room-settings-header">Room Settings for <%= options.room.name %></div>
+
+    <div class="room-settings-form-container">
+        <form action="/update-room-settings" method="post">
+
+            <div class="settings-enableAutoplay-container">
+                <input type="checkbox" name="enableAutoplay" <%= options.room.enableAutoplay ? "checked" : ""%> />
+                <label for="enableAutoplay">Enable Autoplay</label>
+            </div>
+            
+
+            <button type="submit"><i class="fa fa-floppy-o fa-lg" style="width: 20px; height: 20px;"></i></button>
+        </form>
+    </div>
 
 </div>
 
