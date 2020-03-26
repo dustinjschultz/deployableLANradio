@@ -584,11 +584,31 @@ function roomHasNextPlay(room) {
 function predictNextPlay(room) {
     return new Promise(function (resolve, reject) {
         gatherRoomHistory(room).then(function (history) {
-            //TODO: get relevant tags for each play
-            //TODO: unhardcode the prediction "algorithm" (lol) here
-            queueRandomFromHistory(history, room).then(function () {
-                return resolve()
-            })
+            //TODO: get relevant tags for each play when needed
+
+            switch (room.predictionStrategy) {
+
+                case generalScripts.predictionJS.predictionStrats.RANDOM:
+                    queueRandomFromHistory(history, room).then(function () {
+                        return resolve()
+                    })
+                    break;
+
+                case generalScripts.predictionJS.predictionStrats.RANDOM_RECENT:
+                    //TODO: shorten the history
+                    history.slice(Math.max(history.length-10), 1) //use only "recent" history
+                    queueRandomFromHistory(history, room).then(function () {
+                        return resolve()
+                    })
+                    break;
+
+                default:
+                    //Treat default just like RANDOM
+                    queueRandomFromHistory(history, room).then(function () {
+                        return resolve()
+                    })
+                    break;
+            }
         })
     })
 }
