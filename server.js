@@ -589,23 +589,28 @@ function predictNextPlay(room) {
             switch (room.predictionStrategy) {
 
                 case generalScripts.predictionJS.predictionStrats.RANDOM:
-                    queueRandomFromHistory(history, room).then(function () {
-                        return resolve()
+                    generalScripts.predictionJS.createRandomFromHistory(history, room).then(function (play) {
+                        appendPlayToRoom(play, room).then(function () {
+                            return resolve()
+                        })
                     })
                     break;
 
                 case generalScripts.predictionJS.predictionStrats.RANDOM_RECENT:
-                    //TODO: shorten the history
-                    history.slice(Math.max(history.length-10), 1) //use only "recent" history
-                    queueRandomFromHistory(history, room).then(function () {
-                        return resolve()
+                    history.slice(Math.max(history.length-10), 1) //use only "recent" (10) history
+                    generalScripts.predictionJS.createRandomFromHistory(history, room).then(function (play) {
+                        appendPlayToRoom(play, room).then(function () {
+                            return resolve()
+                        })
                     })
                     break;
 
                 default:
                     //Treat default just like RANDOM
-                    queueRandomFromHistory(history, room).then(function () {
-                        return resolve()
+                    generalScripts.predictionJS.createRandomFromHistory(history, room).then(function (play) {
+                        appendPlayToRoom(play, room).then(function () {
+                            return resolve()
+                        })
                     })
                     break;
             }
@@ -647,23 +652,7 @@ function getNextPlays(play) {
     })
 }
 
-function queueRandomFromHistory(history, room) {
-    return new Promise(function (resolve, reject) {
-        var random = Math.ceil(Math.random() * (history.length - 1)) //Math.ceil so 0 is never picked (0 == INIT SONG)
-        var randomPlay = history[random]
 
-        const play = new Play({
-            songId: randomPlay.songId,
-            submitterId: room.owner,
-            startTime: null
-        })
-        play.save((err, response) => {
-            appendPlayToRoom(play, room).then(function () {
-                return resolve()
-            })
-        })
-    })
-}
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
   console.log('addr: '+ add + ':' + port);
