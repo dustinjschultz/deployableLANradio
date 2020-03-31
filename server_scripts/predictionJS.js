@@ -30,6 +30,13 @@ function createRandomFromHistory(history, room) {
     })
 }
 
+function createUsingLstmWRandomfill(history, room, songs, tags) {
+    return new Promise(function (resolve, reject) {
+        var frequencies = calcSortedTagFrequenciesArray(tags)
+        console.log(frequencies)
+    })
+}
+
 //returns array of {tagName: frequencyCount}'s, sorted with most frequent first
 function calcSortedTagFrequenciesArray(tags) {
     var frequenciesMap = new Map()
@@ -64,6 +71,6 @@ function predictionFunc() {
 module.exports = {
     predictionStrats,
     createRandomFromHistory,
-    calcSortedTagFrequenciesArray,
+    createUsingLstmWRandomfill,
     predictionFunc
 }

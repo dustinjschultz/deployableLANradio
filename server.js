@@ -607,8 +607,10 @@ function predictNextPlay(room) {
                 case generalScripts.predictionJS.predictionStrats.LSTM_W_RANDOM_FILL:
                     gatherHistorySongs(history).then(function (songs) {
                         gatherSongsTags(songs).then(function (tags) {
-                            var frequencies = generalScripts.predictionJS.calcSortedTagFrequenciesArray(tags)
-                            console.log(frequencies)
+                            generalScripts.predictionJS.createUsingLstmWRandomfill(history, room, songs, tags).then(function (play) {
+                                console.log(play)
+                                //TODO:
+                            })
                         })
                     })
                     break;
