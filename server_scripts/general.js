@@ -122,6 +122,14 @@ function getSong(idString) {
     })
 }
 
+function getSongs(ids) {
+    return new Promise(function (resolve, reject) {
+        Song.find({ _id: ids }, (err, songs) => {
+            return resolve(songs)
+        })
+    })
+}
+
 function getPlaylist(idString) {
     return new Promise(function (resolve, reject) {
         Playlist.findOne({ _id: ObjectID(idString) }, (err, playlist) => {
@@ -134,6 +142,22 @@ function getPlaylists(ids) {
     return new Promise(function (resolve, reject) {
         Playlist.find({ _id: ids }, (err, playlists) => {
             return resolve(playlists)
+        })
+    })
+}
+
+function getTag(idString) {
+    return new Promise(function (resolve, reject) {
+        Tag.findOne({ _id: ObjectID(idString) }, (err, tag) => {
+            return resolve(tag)
+        })
+    })
+}
+
+function getTags(ids) {
+    return new Promise(function (resolve, reject) {
+        Tag.find({ _id: ids }, (err, tags) => {
+            return resolve(tags)
         })
     })
 }
@@ -168,6 +192,24 @@ function convertStringsToObjectIDs(strings) {
         objectIDs.push(ObjectID(strings[i]))
     }
     return objectIDs
+}
+
+//gathers all the .propName from each entry in objArray into a single return array
+function extractPropFromObjArray(objArray, propName) {
+    propArray = []
+    for (var i = 0; i < objArray.length; i++) {
+        propArray.push(objArray[i][propName])
+    }
+    return propArray
+}
+
+//gather the entries in the .arrayPropName from each entry in objArray into a single return array
+function extractPropArrayFromObjArray(objArray, arrayPropName) {
+    propArray = []
+    for (var i = 0; i < objArray.length; i++) {
+        Array.prototype.push.apply(propArray, objArray[i][arrayPropName])
+    }
+    return propArray
 }
 
 //expecting array of objects in format {tag_id, tag_name, tag_value}
@@ -477,9 +519,14 @@ module.exports = {
     getPlay,
     getRoom,
     getSong,
+    getSongs,
     getPlaylist,
+    getTag,
+    getTags,
     extractTagIds,
     matchDbObjectWithId,
+    extractPropFromObjArray,
+    extractPropArrayFromObjArray,
     saveTagEdits,
     saveTagCreations,
     addSongToPlaylist,

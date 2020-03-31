@@ -584,7 +584,6 @@ function roomHasNextPlay(room) {
 function predictNextPlay(room) {
     return new Promise(function (resolve, reject) {
         gatherRoomHistory(room).then(function (history) {
-            //TODO: get relevant tags for each play when needed
 
             switch (room.predictionStrategy) {
 
@@ -597,11 +596,17 @@ function predictNextPlay(room) {
                     break;
 
                 case generalScripts.predictionJS.predictionStrats.RANDOM_RECENT:
-                    history.slice(Math.max(history.length-10), 1) //use only "recent" (10) history
+                    history.slice(Math.max(history.length - 10), 1) //use only "recent" (10) history
                     generalScripts.predictionJS.createRandomFromHistory(history, room).then(function (play) {
                         appendPlayToRoom(play, room).then(function () {
                             return resolve()
                         })
+                    })
+                    break;
+
+                case generalScripts.predictionJS.predictionStrats.LSTM_W_RANDOM_FILL:
+                    gatherHistoryTags(history).then(function (tags) {
+                        console.log(tags)
                     })
                     break;
 
@@ -649,6 +654,28 @@ function getNextPlays(play) {
                 })
             })
         }
+    })
+}
+
+function gatherHistorySongs(history) {
+    return new Promise(function (resolve, reject) {
+        var songIdStrings = generalScripts.extractPropFromObjArray(history, "songId")
+        var songIds = generalScripts.convertStringsToObjectIDs(songIdStrings)
+        generalScripts.getSongs(songIds).then(function (songs) {
+            return resolve(songs)
+        })
+    })
+}
+
+function gatherHistoryTags(history) {
+    return new Promise(function (resolve, reject) {
+        gatherHistorySongs(history).then(function (songs) {
+            var tagIdStrings = generalScripts.extractPropArrayFromObjArray(songs, 'tagIds') 
+            var tagIds = generalScripts.convertStringsToObjectIDs(tagIdStrings)
+            generalScripts.getTags(tagIds).then(function (tags) {
+                return resolve(tags)
+            })
+        })
     })
 }
 
