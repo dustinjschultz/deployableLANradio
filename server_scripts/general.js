@@ -194,10 +194,20 @@ function convertStringsToObjectIDs(strings) {
     return objectIDs
 }
 
+//gathers all the .propName from each entry in objArray into a single return array
 function extractPropFromObjArray(objArray, propName) {
     propArray = []
     for (var i = 0; i < objArray.length; i++) {
         propArray.push(objArray[i][propName])
+    }
+    return propArray
+}
+
+//gather the entries in the .arrayPropName from each entry in objArray into a single return array
+function extractPropArrayFromObjArray(objArray, arrayPropName) {
+    propArray = []
+    for (var i = 0; i < objArray.length; i++) {
+        Array.prototype.push.apply(propArray, objArray[i][arrayPropName])
     }
     return propArray
 }
@@ -516,6 +526,7 @@ module.exports = {
     extractTagIds,
     matchDbObjectWithId,
     extractPropFromObjArray,
+    extractPropArrayFromObjArray,
     saveTagEdits,
     saveTagCreations,
     addSongToPlaylist,

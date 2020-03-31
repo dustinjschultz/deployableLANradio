@@ -670,7 +670,7 @@ function gatherHistorySongs(history) {
 function gatherHistoryTags(history) {
     return new Promise(function (resolve, reject) {
         gatherHistorySongs(history).then(function (songs) {
-            var tagIdStrings = generalScripts.extractTagIds(songs, []) //this func isn't working as intended
+            var tagIdStrings = generalScripts.extractPropArrayFromObjArray(songs, 'tagIds') 
             var tagIds = generalScripts.convertStringsToObjectIDs(tagIdStrings)
             generalScripts.getTags(tagIds).then(function (tags) {
                 return resolve(tags)
