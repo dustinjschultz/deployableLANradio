@@ -30,6 +30,31 @@ function createRandomFromHistory(history, room) {
     })
 }
 
+function calcSortedTagFrequencesArray(tags) {
+    var frequenciesMap = new Map()
+    for (var i = 0; i < tags.length; i++) {
+        var curTag = tags[i]
+        if (frequenciesMap.has(curTag.name)) {
+            //increment count if present
+            var curFrequency = frequenciesMap.get(curTag.name)
+            frequenciesMap.set(curTag.name, curFrequency+1)
+        }
+        else {
+            //start count if NOT present
+            frequenciesMap.set(curTag.name, 1)
+        }
+    }
+
+    //magic sorter and array converter from SO: https://stackoverflow.com/questions/31158902/is-it-possible-to-sort-a-es6-map-object
+    var sortedFrequencies = Array
+        .from(frequenciesMap)
+        .sort((a, b) => {
+            return b[1] - a[1];
+        })
+    
+    return sortedFrequencies
+}
+
 function predictionFunc() {
     return 'predictionFunc()'
 }
@@ -38,5 +63,6 @@ function predictionFunc() {
 module.exports = {
     predictionStrats,
     createRandomFromHistory,
+    calcSortedTagFrequencesArray,
     predictionFunc
 }
