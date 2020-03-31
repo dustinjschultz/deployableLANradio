@@ -605,9 +605,11 @@ function predictNextPlay(room) {
                     break;
 
                 case generalScripts.predictionJS.predictionStrats.LSTM_W_RANDOM_FILL:
-                    gatherHistoryTags(history).then(function (tags) {
-                        var frequencies = generalScripts.predictionJS.calcSortedTagFrequenciesArray(tags)
-                        console.log(frequencies)
+                    gatherHistorySongs(history).then(function (songs) {
+                        gatherSongsTags(songs).then(function (tags) {
+                            var frequencies = generalScripts.predictionJS.calcSortedTagFrequenciesArray(tags)
+                            console.log(frequencies)
+                        })
                     })
                     break;
 
@@ -668,14 +670,12 @@ function gatherHistorySongs(history) {
     })
 }
 
-function gatherHistoryTags(history) {
+function gatherSongsTags(songs) {
     return new Promise(function (resolve, reject) {
-        gatherHistorySongs(history).then(function (songs) {
-            var tagIdStrings = generalScripts.extractPropArrayFromObjArray(songs, 'tagIds') 
-            var tagIds = generalScripts.convertStringsToObjectIDs(tagIdStrings)
-            generalScripts.getTags(tagIds).then(function (tags) {
-                return resolve(tags)
-            })
+        var tagIdStrings = generalScripts.extractPropArrayFromObjArray(songs, 'tagIds') 
+        var tagIds = generalScripts.convertStringsToObjectIDs(tagIdStrings)
+        generalScripts.getTags(tagIds).then(function (tags) {
+            return resolve(tags)
         })
     })
 }
