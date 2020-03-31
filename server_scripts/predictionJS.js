@@ -30,7 +30,8 @@ function createRandomFromHistory(history, room) {
     })
 }
 
-function calcSortedTagFrequencesArray(tags) {
+//returns array of {tagName: frequencyCount}'s, sorted with most frequent first
+function calcSortedTagFrequenciesArray(tags) {
     var frequenciesMap = new Map()
     for (var i = 0; i < tags.length; i++) {
         var curTag = tags[i]
@@ -63,6 +64,6 @@ function predictionFunc() {
 module.exports = {
     predictionStrats,
     createRandomFromHistory,
-    calcSortedTagFrequencesArray,
+    calcSortedTagFrequenciesArray,
     predictionFunc
 }
