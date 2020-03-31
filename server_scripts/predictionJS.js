@@ -10,7 +10,8 @@ const { Tag } = require('../models/tag')
 
 const predictionStrats = {
     RANDOM: "random",
-    RANDOM_RECENT: "random_recent"
+    RANDOM_RECENT: "random_recent",
+    LSTM_W_RANDOM_FILL: "lstm_w_random_fill"
 }
 
 function createRandomFromHistory(history, room) {
