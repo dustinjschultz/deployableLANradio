@@ -30,6 +30,15 @@ function createRandomFromHistory(history, room) {
     })
 }
 
+function createUsingLstmWRandomfill(history, room, songs, tags) {
+    return new Promise(function (resolve, reject) {
+        var frequencies = calcSortedTagFrequenciesArray(tags)
+        var tensorInput = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
+        console.log(tensorInput)
+        //TODO: next steps
+    })
+}
+
 //returns array of {tagName: frequencyCount}'s, sorted with most frequent first
 function calcSortedTagFrequenciesArray(tags) {
     var frequenciesMap = new Map()
@@ -56,6 +65,61 @@ function calcSortedTagFrequenciesArray(tags) {
     return sortedFrequencies
 }
 
+function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
+    //TODO: test when a play history doesn't have 3 unique tags
+    //TODO: support different fill strategies
+    //Goal Shape: [ [[70], [50], [50]],  [[80], [70], [50]], ]
+
+    var retArray = []
+    var dimension = 3
+    var desiredTags = []
+
+    for (var i = 0; i < dimension; i++) {
+        //only push to tagName if that many tags are available in the frequencies
+        if (frequencies.length > i) {
+            desiredTags.push(frequencies[i][0])
+        }
+    }
+
+    for (var i = 0; i < songs.length; i++) {
+        var songTags = getSongTags(songs[i], tags)
+        songTags = songTags.filter(function (tag) {
+            return desiredTags.includes(tag.name)
+        })
+
+        var songRetEntry = []
+        for (var j = 0; j < desiredTags.length; j++) {
+
+            var relevantTag = songTags.filter(function (tag) {
+                return tag.name == desiredTags[j]
+            })
+            var toAdd
+
+            if (relevantTag[0]) {
+                toAdd = relevantTag[0].value
+            }
+            else {
+                //TODO: support different ways to fill missing values
+                toAdd = Math.floor(Math.random() * 101)
+            }
+
+            var toAddAsArray = []
+            toAddAsArray.push(toAdd)
+            songRetEntry.push(toAddAsArray)
+        }
+        retArray.push(songRetEntry)
+    }
+
+    return retArray
+}
+
+function getSongTags(song, tags) {
+    var retArray = tags.filter(function (tag) {
+        return tag.elementId.toString() == song._id.toString() 
+    })
+    return retArray
+}
+
 function predictionFunc() {
     return 'predictionFunc()'
 }
@@ -64,6 +128,6 @@ function predictionFunc() {
 module.exports = {
     predictionStrats,
     createRandomFromHistory,
-    calcSortedTagFrequenciesArray,
+    createUsingLstmWRandomfill,
     predictionFunc
 }

@@ -605,9 +605,13 @@ function predictNextPlay(room) {
                     break;
 
                 case generalScripts.predictionJS.predictionStrats.LSTM_W_RANDOM_FILL:
-                    gatherHistoryTags(history).then(function (tags) {
-                        var frequencies = generalScripts.predictionJS.calcSortedTagFrequenciesArray(tags)
-                        console.log(frequencies)
+                    gatherHistorySongs(history).then(function (songs) {
+                        gatherSongsTags(songs).then(function (tags) {
+                            generalScripts.predictionJS.createUsingLstmWRandomfill(history, room, songs, tags).then(function (play) {
+                                console.log(play)
+                                //TODO:
+                            })
+                        })
                     })
                     break;
 
@@ -630,7 +634,7 @@ function gatherRoomHistory(room) {
 
         Play.findOne({ _id: ObjectID(room.firstPlayId) }, (err, firstPlay) => {
             var play = firstPlay
-            history.push(play)
+            history.push(play) //TODO: Don't add the initPlay (just delete this line), but figure out the implications first
 
             getNextPlays(play).then(function (nextPlays) {
                 Array.prototype.push.apply(history, nextPlays)
@@ -668,14 +672,12 @@ function gatherHistorySongs(history) {
     })
 }
 
-function gatherHistoryTags(history) {
+function gatherSongsTags(songs) {
     return new Promise(function (resolve, reject) {
-        gatherHistorySongs(history).then(function (songs) {
-            var tagIdStrings = generalScripts.extractPropArrayFromObjArray(songs, 'tagIds') 
-            var tagIds = generalScripts.convertStringsToObjectIDs(tagIdStrings)
-            generalScripts.getTags(tagIds).then(function (tags) {
-                return resolve(tags)
-            })
+        var tagIdStrings = generalScripts.extractPropArrayFromObjArray(songs, 'tagIds') 
+        var tagIds = generalScripts.convertStringsToObjectIDs(tagIdStrings)
+        generalScripts.getTags(tagIds).then(function (tags) {
+            return resolve(tags)
         })
     })
 }
