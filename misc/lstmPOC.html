@@ -97,6 +97,8 @@
     
 
     async function doLstm3() {
+        //attempting to follow this example: https://towardsdatascience.com/lstm-by-example-using-tensorflow-feb0c1968537
+        //full code: https://github.com/roatienza/Deep-Learning-Experiments/blob/master/Experiments/Tensorflow/RNN/rnn_words.py
 
         var n_input = 3
         var n_hidden = 512
@@ -119,7 +121,7 @@
 
         rnn_cell = tf.basicLSTMCell
 
-        //so apparently static_rnn isn't a thing anymore...
+        //so apparently static_rnn isn't a thing in the js version...
         console.log(tf.RNN.static_rnn(rnn_cell, x))
     }
 
