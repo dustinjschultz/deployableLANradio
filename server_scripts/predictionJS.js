@@ -35,6 +35,7 @@ function createUsingLstmWRandomfill(history, room, songs, tags) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
         var tensorInput = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
         console.log(tensorInput)
+        //TODO: next steps
     })
 }
 
