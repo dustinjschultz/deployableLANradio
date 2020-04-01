@@ -634,7 +634,7 @@ function gatherRoomHistory(room) {
 
         Play.findOne({ _id: ObjectID(room.firstPlayId) }, (err, firstPlay) => {
             var play = firstPlay
-            history.push(play)
+            history.push(play) //TODO: Don't add the initPlay (just delete this line), but figure out the implications first
 
             getNextPlays(play).then(function (nextPlays) {
                 Array.prototype.push.apply(history, nextPlays)
