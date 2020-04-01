@@ -33,7 +33,8 @@ function createRandomFromHistory(history, room) {
 function createUsingLstmWRandomfill(history, room, songs, tags) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
-        console.log(frequencies)
+        var tensorInput = convertSongsAndTagsToTensor(songs, tags, frequencies, 3)
+        console.log(tensorInput)
     })
 }
 
@@ -61,6 +62,10 @@ function calcSortedTagFrequenciesArray(tags) {
         })
     
     return sortedFrequencies
+}
+
+function convertSongsAndTagsToTensorInput(songs, tags, frequencies, dimension) {
+    //TODO: support different fill strategies
 }
 
 function predictionFunc() {
