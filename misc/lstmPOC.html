@@ -8,22 +8,18 @@
 </head>
 <body>
     <div>LSTM Test</div>
-    <button onclick="doLstm()">Do LSTM</button>
+    <button onclick="doLstm1()">Do LSTM1</button>
+    <button onclick="doLstm2()">Do LSTM2</button>
 </body>
 </html>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
 
 <script>
-    // help from https://stackoverflow.com/questions/50728673/tensorflow-js-lstm-time-series-prediction
-    // Imagine data is in attribute form: {Hard, Fast, Hype}
 
 
-    function doLstm() {
-        predictFuture()
-    }
-
-    async function predictFuture() {
+    async function doLstm1() {
+        // help from https://stackoverflow.com/questions/50728673/tensorflow-js-lstm-time-series-prediction
         var train_x = tf.tensor3d([
             [[1], [1], [0]],
             [[0], [1], [1]]
@@ -54,7 +50,77 @@
         })
     }
 
+    async function doLstm2() {
+        //this is a dupe of doLstm1 but with train_x and train_y being the same thing
+
+        // Imagine data is in attribute form: {Hard, Intense, Hype}
+        var train_x = tf.tensor3d([
+            [[70], [50], [50]], //One Last Dance:   {Hard: 70, Intense: XX, Hype: XX}
+            [[80], [70], [50]], //Spring:           {Hard: 80, Intense: 70, Hype: XX}
+            [[85], [80], [75]], //Toxicator:        {Hard: 75, Intense: 80, Hype: 75}
+            [[95], [85], [95]], //Wasteland:        {Hard: 95, Intense: 85, Hype: 95}
+            [[85], [80], [90]], //Calling:          {Hard: 85, Intense: 80, Hype: 90}
+            [[85], [75], [80]], //Crackin (Sefa):   {Hard: 85, Intense: 75, Hype: 80}
+            [[80], [50], [65]]  //In De Hemel:      {Hard: 80, Intense: XX, Hype: 65}
+        ]);
+
+        // Imagine data is in attribute form: {Hard, Intense, Hype}
+        var train_y = tf.tensor3d([
+            [[70], [50], [50]], //One Last Dance:   {Hard: 70, Intense: XX, Hype: XX}
+            [[80], [70], [50]], //Spring:           {Hard: 80, Intense: 70, Hype: XX}
+            [[85], [80], [75]], //Toxicator:        {Hard: 75, Intense: 80, Hype: 75}
+            [[95], [85], [95]], //Wasteland:        {Hard: 95, Intense: 85, Hype: 95}
+            [[85], [80], [90]], //Calling:          {Hard: 85, Intense: 80, Hype: 90}
+            [[85], [75], [80]], //Crackin (Sefa):   {Hard: 85, Intense: 75, Hype: 80}
+            [[80], [50], [65]]  //In De Hemel:      {Hard: 80, Intense: XX, Hype: 65}
+        ]);
+
+        var model = tf.sequential();
+        const hidden = tf.layers.lstm({ units: 3, activation: 'sigmoid', inputShape: [3, 1], returnSequences: true })
+        model.add(hidden)
+
+        var output = tf.layers.lstm({ units: 1, activation: 'sigmoid', inputShape: [3], returnSequences: true })
+        model.add(output)
+
+        var sgdOptimizer = tf.train.sgd(0.1)
+        model.compile({ optimizer: sgdOptimizer, loss: tf.losses.meanSquaredError })
 
 
+        await model.fit(train_x, train_y, { epochs: 50 }).then(function () {
+            //console.log('trained')
+
+            var test_input = tf.tensor3d([[[1], [1], [0]]])
+            var test_output = model.predict(test_input)
+            test_output.print()
+        })
+    }
+    
+
+    async function doLstm3() {
+
+        var n_input = 3
+        var n_hidden = 512
+
+        // Imagine data is in attribute form: {Hard, Intense, Hype}
+        var train_x = tf.tensor3d([
+            [[70], [50], [50]], //One Last Dance:   {Hard: 70, Intense: XX, Hype: XX}
+            [[80], [70], [50]], //Spring:           {Hard: 80, Intense: 70, Hype: XX}
+            [[85], [80], [75]], //Toxicator:        {Hard: 75, Intense: 80, Hype: 75}
+            [[95], [85], [95]], //Wasteland:        {Hard: 95, Intense: 85, Hype: 95}
+            [[85], [80], [90]], //Calling:          {Hard: 85, Intense: 80, Hype: 90}
+            [[85], [75], [80]], //Crackin (Sefa):   {Hard: 85, Intense: 75, Hype: 80}
+            [[80], [50], [65]]  //In De Hemel:      {Hard: 80, Intense: XX, Hype: 65}
+        ]);
+
+        console.log(tf)
+
+        var x = tf.reshape(train_x, [-1, n_input])
+        x = tf.split(x, n_input, 1)
+
+        rnn_cell = tf.basicLSTMCell
+
+        //so apparently static_rnn isn't a thing anymore...
+        console.log(tf.RNN.static_rnn(rnn_cell, x))
+    }
 
 </script>
