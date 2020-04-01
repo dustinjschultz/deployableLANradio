@@ -1,0 +1,60 @@
+﻿<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>LSTM test</title>
+    <meta name="description" content="LSTM test">
+</head>
+<body>
+    <div>LSTM Test</div>
+    <button onclick="doLstm()">Do LSTM</button>
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+
+<script>
+    // help from https://stackoverflow.com/questions/50728673/tensorflow-js-lstm-time-series-prediction
+    // Imagine data is in attribute form: {Hard, Fast, Hype}
+
+
+    function doLstm() {
+        predictFuture()
+    }
+
+    async function predictFuture() {
+        var train_x = tf.tensor3d([
+            [[1], [1], [0]],
+            [[0], [1], [1]]
+        ]);
+
+        var train_y = tf.tensor3d([
+            [[1], [1], [0]],
+            [[0], [1], [1]]
+        ]);
+
+        var model = tf.sequential();
+        const hidden = tf.layers.lstm({ units: 3, activation: 'sigmoid', inputShape: [3, 1], returnSequences: true })
+        model.add(hidden)
+
+        var output = tf.layers.lstm({ units: 1, activation: 'sigmoid', inputShape: [3], returnSequences: true })
+        model.add(output)
+
+        var sgdOptimizer = tf.train.sgd(0.1)
+        model.compile({optimizer: sgdOptimizer, loss: tf.losses.meanSquaredError})
+
+
+        await model.fit(train_x, train_y, { epochs: 50 }).then(function () {
+            //console.log('trained')
+
+            var test_input = tf.tensor3d([[[1], [1], [0]]])
+            var test_output = model.predict(test_input)
+            test_output.print()
+        })
+    }
+
+
+
+
+</script>
