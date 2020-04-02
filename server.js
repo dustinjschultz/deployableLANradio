@@ -607,9 +607,15 @@ function predictNextPlay(room) {
                 case generalScripts.predictionJS.predictionStrats.LSTM_W_RANDOM_FILL:
                     gatherHistorySongs(history).then(function (songs) {
                         gatherSongsTags(songs).then(function (tags) {
-                            generalScripts.predictionJS.createUsingLstmWRandomfill(history, room, songs, tags).then(function (play) {
-                                console.log(play)
-                                //TODO:
+                            generalScripts.getLibrary(room.owner).then(function (library) {
+                                generalScripts.getLibraryContents(library).then(function (contents) {
+                                    var predictableSongs = contents.songs
+                                    var predictableTags = contents.tags
+                                    generalScripts.predictionJS.createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs, predictableTags).then(function (play) {
+                                        console.log(play)
+                                        //TODO:
+                                    })
+                                })
                             })
                         })
                     })
