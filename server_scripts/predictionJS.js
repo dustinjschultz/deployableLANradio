@@ -40,7 +40,8 @@ function createUsingLstmWRandomfill(history, room, songs, tags) {
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
-            console.log(predictionTagValues)
+            var labeledPredictionTags = labelPredictionValues(predictionTagValues, frequencies)
+            console.log(labeledPredictionTags)
             //TODO:
         })
 
@@ -168,6 +169,15 @@ function cleanPredictionString(predStr) {
         predArray[i] = predArray[i][0]
     }
     return predArray
+}
+
+// takes array of tag values, array of sorted frequencies, and attaches labels from frequencies array to values
+function labelPredictionValues(predictionValues, frequencies) {
+    var retArray = []
+    for (var i = 0; i < predictionValues.length; i++) {
+        retArray.push({ name: frequencies[i][0], value: predictionValues[i] })
+    }
+    return retArray
 }
 
 function predictionFunc() {
