@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/dustinjschultz/deployableLANradio#readme",
   "dependencies": {
+    "@tensorflow/tfjs": "^1.7.1",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",

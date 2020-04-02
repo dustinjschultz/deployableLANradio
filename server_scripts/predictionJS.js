@@ -8,6 +8,9 @@ const { Playlist } = require('../models/playlist')
 const { PlaylistElement } = require('../models/playlistelement')
 const { Tag } = require('../models/tag')
 
+const tf = require('@tensorflow/tfjs')
+
+
 const predictionStrats = {
     RANDOM: "random",
     RANDOM_RECENT: "random_recent",
