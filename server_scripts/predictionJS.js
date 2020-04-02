@@ -8,6 +8,9 @@ const { Playlist } = require('../models/playlist')
 const { PlaylistElement } = require('../models/playlistelement')
 const { Tag } = require('../models/tag')
 
+const tf = require('@tensorflow/tfjs')
+
+
 const predictionStrats = {
     RANDOM: "random",
     RANDOM_RECENT: "random_recent",
@@ -33,9 +36,14 @@ function createRandomFromHistory(history, room) {
 function createUsingLstmWRandomfill(history, room, songs, tags) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
-        var tensorInput = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
-        console.log(tensorInput)
-        //TODO: next steps
+        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
+        var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
+
+        generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
+            console.log(predictionTagValues)
+            //TODO:
+        })
+
     })
 }
 
@@ -118,6 +126,48 @@ function getSongTags(song, tags) {
         return tag.elementId.toString() == song._id.toString() 
     })
     return retArray
+}
+
+function generateLstmModelAndPredict(tensorInput1, tensorInput2) {
+    return new Promise(function (resolve, reject) {
+
+        // condition input to be the relevant elements
+        var predictOnElement = tensorInput1.pop() // chop last element and save it
+        tensorInput2.shift() // chop first element
+
+        // create tensors
+        var train_x = tf.tensor3d(tensorInput1)
+        var train_y = tf.tensor3d(tensorInput2)
+        var predict_x = tf.tensor3d([predictOnElement])
+
+        // create model
+        var model = tf.sequential();
+        var hidden = tf.layers.lstm({ units: 3, activation: 'sigmoid', inputShape: [3, 1], returnSequences: true })
+        model.add(hidden)
+
+        var output = tf.layers.lstm({ units: 1, activation: 'sigmoid', inputShape: [3], returnSequences: true })
+        model.add(output)
+
+        var sgdOptimizer = tf.train.sgd(0.1)
+        model.compile({ optimizer: sgdOptimizer, loss: tf.losses.meanSquaredError })
+
+        // fit model then predict
+        model.fit(train_x, train_y, { epochs: 50 }).then(function () {
+            var prediction = model.predict(predict_x)
+            var predictionArray = cleanPredictionString(prediction.toString())
+            return resolve(predictionArray)
+        })
+    })
+}
+
+function cleanPredictionString(predStr) {
+    predStr = predStr.replace("Tensor", "").replace(/\s/g, "")
+    predArray = JSON.parse("[" + predStr + "]")
+    predArray = predArray[0][0]
+    for (var i = 0; i < predArray.length; i++) {
+        predArray[i] = predArray[i][0]
+    }
+    return predArray
 }
 
 function predictionFunc() {
