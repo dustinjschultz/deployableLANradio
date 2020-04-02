@@ -131,9 +131,16 @@ function getSongTags(song, tags) {
 function generateLstmModelAndPredict(tensorInput1, tensorInput2) {
     return new Promise(function (resolve, reject) {
 
+        // condition input to be the relevant elements
         var predictOnElement = tensorInput1.pop() // chop last element and save it
         tensorInput2.shift() // chop first element
 
+        // create tensors
+        var train_x = tf.tensor3d(tensorInput1)
+        var train_y = tf.tensor3d(tensorInput2)
+        var predict_x = tf.tensor3d([predictOnElement])
+
+        // create model
         var model = tf.sequential();
         var hidden = tf.layers.lstm({ units: 3, activation: 'sigmoid', inputShape: [3, 1], returnSequences: true })
         model.add(hidden)
@@ -144,11 +151,7 @@ function generateLstmModelAndPredict(tensorInput1, tensorInput2) {
         var sgdOptimizer = tf.train.sgd(0.1)
         model.compile({ optimizer: sgdOptimizer, loss: tf.losses.meanSquaredError })
 
-        var train_x = tf.tensor3d(tensorInput1)
-        var train_y = tf.tensor3d(tensorInput2)
-
-        var predict_x = tf.tensor3d([predictOnElement])
-
+        // fit model then predict
         model.fit(train_x, train_y, { epochs: 50 }).then(function () {
             var prediction = model.predict(predict_x)
             var predictionArray = cleanPredictionString(prediction.toString())
