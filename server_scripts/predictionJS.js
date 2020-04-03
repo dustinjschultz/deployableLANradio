@@ -33,15 +33,16 @@ function createRandomFromHistory(history, room) {
     })
 }
 
-function createUsingLstmWRandomfill(history, room, songs, tags) {
+function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs, predictableTags) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
-        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
+        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) //TODO: change fill strategy
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
-            var labeledPredictionTags = labelPredictionValues(predictionTagValues, frequencies)
-            console.log(labeledPredictionTags)
+            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here
+            predictableTagValues = removeTensorConditioning(tensorForPredictables)
+            console.log(tensorForPredictables)
             //TODO:
         })
 
@@ -176,6 +177,18 @@ function labelPredictionValues(predictionValues, frequencies) {
     var retArray = []
     for (var i = 0; i < predictionValues.length; i++) {
         retArray.push({ name: frequencies[i][0], value: predictionValues[i] })
+    }
+    return retArray
+}
+
+function removeTensorConditioning(tensorLikeArray){
+    var retArray = []
+    for (var i = 0; i < tensorLikeArray.length; i++) {
+        var subArray = tensorLikeArray[i]
+        for (var j = 0; j < subArray.length; j++) {
+            subArray[j] = subArray[j][0]
+        }
+        retArray.push()
     }
     return retArray
 }
