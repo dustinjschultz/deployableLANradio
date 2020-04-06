@@ -47,7 +47,8 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
             var predictableSimilarities = calcSimularities(predictionTagValues, predictableTagValues)
             var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
             songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
-            selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5)
+            selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5).songId
+            console.log(selectedSongId)
         })
     })
 }
@@ -226,15 +227,15 @@ function sortBySimilarity(songTagSimilarityObjects) {
 
 function selectFromSongSimilarityObjects(songSimilarityObjects, numToConsider) {
     var sum = 0
-    console.log(songSimilarityObjects)
+    songSimilarityObjects = songSimilarityObjects.slice(0, numToConsider)
+
     for (var i = 0; i < songSimilarityObjects.length; i++) {
         sum += songSimilarityObjects[i].similarity
     }
 
-    console.log(sum)
     var songProbabilityObjects = createSongProbabilityObjects(sum, songSimilarityObjects)
-    console.log(songProbabilityObjects)
-
+    var prediction = getRandomFromWeighted(songProbabilityObjects)
+    return prediction
 }
 
 function createSongProbabilityObjects(sum, songSimilarityObjects){
@@ -243,6 +244,24 @@ function createSongProbabilityObjects(sum, songSimilarityObjects){
         retArray[i] = { songId: songSimilarityObjects[i].songId, probability: songSimilarityObjects[i].similarity / sum }
     }
     return retArray
+}
+
+function getRandomFromWeighted(objectsWithProbability) {
+    var random = Math.random()
+    console.log(random)
+    console.log(objectsWithProbability)
+    var sum = 0
+
+    for (var i = 0; i < objectsWithProbability.length; i++) {
+        console.log(sum + objectsWithProbability[i].probability)
+        if (sum + objectsWithProbability[i].probability > random) {
+            return objectsWithProbability[i]
+        }
+        else {
+            sum += objectsWithProbability[i].probability 
+        }
+    }
+    return objectsWithProbability[objectsWithProbability.length - 1]
 }
 
 function predictionFunc() {
