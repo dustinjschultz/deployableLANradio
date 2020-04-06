@@ -43,14 +43,12 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
-            //console.log(predictionTagValues)
-            //console.log(predictableTagValues)
 
             var predictableSimilarities = calcSimularities(predictionTagValues, predictableTagValues)
-            console.log(predictableSimilarities)
-            //var songTagSimilarityObjects = createSongTagSimilarityObjects(predictableSongs, predictableTagValues, predictableSimilarities)
+            var songSimilarityObjects = createSongIdSImilarityObjects(predictableSongs, predictableSimilarities)
+            songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
+            console.log(songSimilarityObjects)
         })
-
     })
 }
 
@@ -209,6 +207,21 @@ function calcSimularities(predictionTagValues, predictableTagValues) {
 
 function calcEuclidianDistance(point1, point2) {
     return distance(point1, point2)
+}
+
+function createSongIdSImilarityObjects(predictableSongs, predictableSimilarities) {
+    var retArray = []
+    for (var i = 0; i < predictableSongs.length; i++) {
+        retArray[i] = { songId: predictableSongs[i]._id, similarity: predictableSimilarities[i]}
+    }
+    return retArray
+}
+
+function sortBySimilarity(songTagSimilarityObjects) {
+    songTagSimilarityObjects.sort((a, b) => {
+        return a.similarity < b.similarity ? 1 : -1
+    })
+    return songTagSimilarityObjects
 }
 
 function predictionFunc() {
