@@ -45,9 +45,9 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
 
             var predictableSimilarities = calcSimularities(predictionTagValues, predictableTagValues)
-            var songSimilarityObjects = createSongIdSImilarityObjects(predictableSongs, predictableSimilarities)
+            var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
             songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
-            console.log(songSimilarityObjects)
+            selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5)
         })
     })
 }
@@ -209,7 +209,7 @@ function calcEuclidianDistance(point1, point2) {
     return distance(point1, point2)
 }
 
-function createSongIdSImilarityObjects(predictableSongs, predictableSimilarities) {
+function createSongIdSimilarityObjects(predictableSongs, predictableSimilarities) {
     var retArray = []
     for (var i = 0; i < predictableSongs.length; i++) {
         retArray[i] = { songId: predictableSongs[i]._id, similarity: predictableSimilarities[i]}
@@ -222,6 +222,27 @@ function sortBySimilarity(songTagSimilarityObjects) {
         return a.similarity < b.similarity ? 1 : -1
     })
     return songTagSimilarityObjects
+}
+
+function selectFromSongSimilarityObjects(songSimilarityObjects, numToConsider) {
+    var sum = 0
+    console.log(songSimilarityObjects)
+    for (var i = 0; i < songSimilarityObjects.length; i++) {
+        sum += songSimilarityObjects[i].similarity
+    }
+
+    console.log(sum)
+    var songProbabilityObjects = createSongProbabilityObjects(sum, songSimilarityObjects)
+    console.log(songProbabilityObjects)
+
+}
+
+function createSongProbabilityObjects(sum, songSimilarityObjects){
+    var retArray = []
+    for (var i = 0; i < songSimilarityObjects.length; i++) {
+        retArray[i] = { songId: songSimilarityObjects[i].songId, probability: songSimilarityObjects[i].similarity / sum }
+    }
+    return retArray
 }
 
 function predictionFunc() {
