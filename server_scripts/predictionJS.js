@@ -9,6 +9,7 @@ const { PlaylistElement } = require('../models/playlistelement')
 const { Tag } = require('../models/tag')
 
 const tf = require('@tensorflow/tfjs')
+const distance = require('euclidean-distance')
 
 
 const predictionStrats = {
@@ -42,10 +43,12 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
-            console.log(tensorForPredictables)
-            //TODO:
-        })
 
+            var predictableSimilarities = calcSimularities(predictionTagValues, predictableTagValues)
+            var songSimilarityObjects = createSongIdSImilarityObjects(predictableSongs, predictableSimilarities)
+            songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
+            console.log(songSimilarityObjects)
+        })
     })
 }
 
@@ -188,9 +191,37 @@ function removeTensorConditioning(tensorLikeArray){
         for (var j = 0; j < subArray.length; j++) {
             subArray[j] = subArray[j][0]
         }
-        retArray.push()
+        retArray.push(subArray)
     }
     return retArray
+}
+
+function calcSimularities(predictionTagValues, predictableTagValues) {
+    //TODO: support different similarity values
+    var retArray = []
+    for (var i = 0; i < predictableTagValues.length; i++) {
+        retArray[i] = calcEuclidianDistance(predictionTagValues, predictableTagValues[i])
+    }
+    return retArray
+}
+
+function calcEuclidianDistance(point1, point2) {
+    return distance(point1, point2)
+}
+
+function createSongIdSImilarityObjects(predictableSongs, predictableSimilarities) {
+    var retArray = []
+    for (var i = 0; i < predictableSongs.length; i++) {
+        retArray[i] = { songId: predictableSongs[i]._id, similarity: predictableSimilarities[i]}
+    }
+    return retArray
+}
+
+function sortBySimilarity(songTagSimilarityObjects) {
+    songTagSimilarityObjects.sort((a, b) => {
+        return a.similarity < b.similarity ? 1 : -1
+    })
+    return songTagSimilarityObjects
 }
 
 function predictionFunc() {
