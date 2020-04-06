@@ -41,6 +41,8 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
+            predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
+
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
 
@@ -49,7 +51,7 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
             songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
             selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5).songId
             console.log(selectedSongId)
-            //console.log(predictableTagValues[predictableSongs.indexOf(predictableSongs.find(song => song._id == selectedSongId))])
+            //TODO:
         })
     })
 }
@@ -200,10 +202,18 @@ function removeTensorConditioning(tensorLikeArray){
 
 function calcSimilarities(predictionTagValues, predictableTagValues) {
     //TODO: support different similarity values
-    //TODO: this is wrong lol, similarity should be HIGH on good matches, NOT LOW
     var retArray = []
+    var distances = []
+
     for (var i = 0; i < predictableTagValues.length; i++) {
-        retArray[i] = calcEuclidianDistance(predictionTagValues, predictableTagValues[i])
+        distances[i] = calcEuclidianDistance(predictionTagValues, predictableTagValues[i])
+    }
+
+    //var min = Math.min(...distances)
+
+    // force high distance to low similarity
+    for (var i = 0; i < predictableTagValues.length; i++) {
+        retArray[i] = 1 / distances[i]
     }
     return retArray
 }
