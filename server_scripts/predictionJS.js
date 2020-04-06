@@ -44,7 +44,7 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
 
-            var predictableSimilarities = calcSimularities(predictionTagValues, predictableTagValues)
+            var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
             var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
             songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
             selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5).songId
@@ -198,8 +198,9 @@ function removeTensorConditioning(tensorLikeArray){
     return retArray
 }
 
-function calcSimularities(predictionTagValues, predictableTagValues) {
+function calcSimilarities(predictionTagValues, predictableTagValues) {
     //TODO: support different similarity values
+    //TODO: this is wrong lol, similarity should be HIGH on good matches, NOT LOW
     var retArray = []
     for (var i = 0; i < predictableTagValues.length; i++) {
         retArray[i] = calcEuclidianDistance(predictionTagValues, predictableTagValues[i])
