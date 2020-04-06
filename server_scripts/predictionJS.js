@@ -9,6 +9,7 @@ const { PlaylistElement } = require('../models/playlistelement')
 const { Tag } = require('../models/tag')
 
 const tf = require('@tensorflow/tfjs')
+const distance = require('euclidean-distance')
 
 
 const predictionStrats = {
@@ -46,6 +47,7 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
             //console.log(predictableTagValues)
 
             var predictableSimilarities = calcSimularities(predictionTagValues, predictableTagValues)
+            console.log(predictableSimilarities)
             //var songTagSimilarityObjects = createSongTagSimilarityObjects(predictableSongs, predictableTagValues, predictableSimilarities)
         })
 
@@ -202,10 +204,11 @@ function calcSimularities(predictionTagValues, predictableTagValues) {
     for (var i = 0; i < predictableTagValues.length; i++) {
         retArray[i] = calcEuclidianDistance(predictionTagValues, predictableTagValues[i])
     }
+    return retArray
 }
 
 function calcEuclidianDistance(point1, point2) {
-
+    return distance(point1, point2)
 }
 
 function predictionFunc() {
