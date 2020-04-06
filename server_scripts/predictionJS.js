@@ -41,13 +41,17 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
+            predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
+
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
 
-            var predictableSimilarities = calcSimularities(predictionTagValues, predictableTagValues)
-            var songSimilarityObjects = createSongIdSImilarityObjects(predictableSongs, predictableSimilarities)
+            var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
+            var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
             songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
-            console.log(songSimilarityObjects)
+            selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5).songId
+            console.log(selectedSongId)
+            //TODO:
         })
     })
 }
@@ -196,11 +200,20 @@ function removeTensorConditioning(tensorLikeArray){
     return retArray
 }
 
-function calcSimularities(predictionTagValues, predictableTagValues) {
+function calcSimilarities(predictionTagValues, predictableTagValues) {
     //TODO: support different similarity values
     var retArray = []
+    var distances = []
+
     for (var i = 0; i < predictableTagValues.length; i++) {
-        retArray[i] = calcEuclidianDistance(predictionTagValues, predictableTagValues[i])
+        distances[i] = calcEuclidianDistance(predictionTagValues, predictableTagValues[i])
+    }
+
+    //var min = Math.min(...distances)
+
+    // force high distance to low similarity
+    for (var i = 0; i < predictableTagValues.length; i++) {
+        retArray[i] = 1 / distances[i]
     }
     return retArray
 }
@@ -209,7 +222,7 @@ function calcEuclidianDistance(point1, point2) {
     return distance(point1, point2)
 }
 
-function createSongIdSImilarityObjects(predictableSongs, predictableSimilarities) {
+function createSongIdSimilarityObjects(predictableSongs, predictableSimilarities) {
     var retArray = []
     for (var i = 0; i < predictableSongs.length; i++) {
         retArray[i] = { songId: predictableSongs[i]._id, similarity: predictableSimilarities[i]}
@@ -222,6 +235,42 @@ function sortBySimilarity(songTagSimilarityObjects) {
         return a.similarity < b.similarity ? 1 : -1
     })
     return songTagSimilarityObjects
+}
+
+function selectFromSongSimilarityObjects(songSimilarityObjects, numToConsider) {
+    var sum = 0
+    songSimilarityObjects = songSimilarityObjects.slice(0, numToConsider)
+
+    for (var i = 0; i < songSimilarityObjects.length; i++) {
+        sum += songSimilarityObjects[i].similarity
+    }
+
+    var songProbabilityObjects = createSongProbabilityObjects(sum, songSimilarityObjects)
+    var prediction = getRandomFromWeighted(songProbabilityObjects)
+    return prediction
+}
+
+function createSongProbabilityObjects(sum, songSimilarityObjects){
+    var retArray = []
+    for (var i = 0; i < songSimilarityObjects.length; i++) {
+        retArray[i] = { songId: songSimilarityObjects[i].songId, probability: songSimilarityObjects[i].similarity / sum }
+    }
+    return retArray
+}
+
+function getRandomFromWeighted(objectsWithProbability) {
+    var random = Math.random()
+    var sum = 0
+
+    for (var i = 0; i < objectsWithProbability.length; i++) {
+        if (sum + objectsWithProbability[i].probability > random) {
+            return objectsWithProbability[i]
+        }
+        else {
+            sum += objectsWithProbability[i].probability 
+        }
+    }
+    return objectsWithProbability[objectsWithProbability.length - 1]
 }
 
 function predictionFunc() {
