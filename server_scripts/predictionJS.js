@@ -49,6 +49,7 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
             songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
             selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5).songId
             console.log(selectedSongId)
+            //console.log(predictableTagValues[predictableSongs.indexOf(predictableSongs.find(song => song._id == selectedSongId))])
         })
     })
 }
@@ -248,12 +249,9 @@ function createSongProbabilityObjects(sum, songSimilarityObjects){
 
 function getRandomFromWeighted(objectsWithProbability) {
     var random = Math.random()
-    console.log(random)
-    console.log(objectsWithProbability)
     var sum = 0
 
     for (var i = 0; i < objectsWithProbability.length; i++) {
-        console.log(sum + objectsWithProbability[i].probability)
         if (sum + objectsWithProbability[i].probability > random) {
             return objectsWithProbability[i]
         }
