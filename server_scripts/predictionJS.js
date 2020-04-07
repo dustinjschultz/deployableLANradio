@@ -50,8 +50,15 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
             var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
             songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
             selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5).songId
-            console.log(selectedSongId)
-            //TODO:
+            
+            const play = new Play({
+                songId: selectedSongId,
+                submitterId: room.owner,
+                startTime: null
+            })
+            play.save((err, response) => {
+                return resolve(play)
+            })
         })
     })
 }
