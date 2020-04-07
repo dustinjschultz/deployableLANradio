@@ -95,7 +95,7 @@ function calcSortedTagFrequenciesArray(tags) {
     return sortedFrequencies
 }
 
-function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
+function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillStrat) {
     //TODO: test when a play history doesn't have 3 unique tags
     //TODO: support different fill strategies
     //Goal Shape: [ [[70], [50], [50]],  [[80], [70], [50]], ]
@@ -130,7 +130,27 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
             }
             else {
                 //TODO: support different ways to fill missing values
-                toAdd = Math.floor(Math.random() * 101)
+                var toAddValue
+                switch (fillStrat) {
+
+                    case missingValueFillStrats.RANDOM:
+                        toAddValue = Math.floor(Math.random() * 101)
+                        break;
+
+                    case missingValueFillStrats.FILL_NEGATIVE:
+                        toAddValue = -1
+                        break;
+
+                    case missingValueFillStrats.DISTRIBUTION:
+                        //TODO: dist
+                        break;
+
+                    default:
+                        //Treat default just like RANDOM
+                        toAddValue = Math.floor(Math.random() * 101)
+                }
+                //toAdd = Math.floor(Math.random() * 101)
+                toAdd = toAddValue
             }
 
             var toAddAsArray = []
