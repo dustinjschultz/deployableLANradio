@@ -18,6 +18,12 @@ const predictionStrats = {
     LSTM_W_RANDOM_FILL: "lstm_w_random_fill"
 }
 
+const missingValueFillStrats = {
+    RANDOM: "fill_random",
+    FILL_NEGATIVE: "fill_negative",
+    DISTRIBUTION: "fill_distribtion"
+}
+
 function createRandomFromHistory(history, room) {
     return new Promise(function (resolve, reject) {
         var random = Math.ceil(Math.random() * (history.length - 1)) //Math.ceil so 0 is never picked (0 == INIT SONG)
@@ -287,6 +293,7 @@ function predictionFunc() {
 
 module.exports = {
     predictionStrats,
+    missingValueFillStrats,
     createRandomFromHistory,
     createUsingLstmWRandomfill,
     predictionFunc
