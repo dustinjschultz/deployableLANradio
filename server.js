@@ -612,8 +612,9 @@ function predictNextPlay(room) {
                                     var predictableSongs = contents.songs
                                     var predictableTags = contents.tags
                                     generalScripts.predictionJS.createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs, predictableTags).then(function (play) {
-                                        console.log(play)
-                                        //TODO:
+                                        appendPlayToRoom(play, room).then(function () {
+                                            return resolve()
+                                        })
                                     })
                                 })
                             })
