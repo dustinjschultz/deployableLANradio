@@ -49,8 +49,9 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
-            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies, missingValueFillStrats.RANDOM) //TODO: change fill strategy here
+            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) 
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
+            predictableTagValues = fillMissingValues(predictableTagValues, missingValueFillStrats.RANDOM) //TODO: change fill strategy here
 
             var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
             var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
@@ -95,7 +96,7 @@ function calcSortedTagFrequenciesArray(tags) {
     return sortedFrequencies
 }
 
-function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillStrat) {
+function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
     //TODO: test when a play history doesn't have 3 unique tags
     //Goal Shape: [ [[70], [50], [50]],  [[80], [70], [50]], ]
 
@@ -108,11 +109,6 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillStrat)
         if (frequencies.length > i) {
             desiredTags.push(frequencies[i][0])
         }
-    }
-
-    var distribution
-    if (fillStrat == missingValueFillStrats.DISTRIBUTION) {
-        distribution = createDistribution() //TODO: update params
     }
 
     for (var i = 0; i < songs.length; i++) {
@@ -133,27 +129,7 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillStrat)
                 toAdd = relevantTag[0].value
             }
             else {
-                var toAddValue
-                switch (fillStrat) {
-
-                    case missingValueFillStrats.RANDOM:
-                        toAddValue = Math.floor(Math.random() * 101)
-                        break;
-
-                    case missingValueFillStrats.FILL_NEGATIVE:
-                        toAddValue = -1
-                        break;
-
-                    case missingValueFillStrats.DISTRIBUTION:
-                        toAddValue = randFromDist(distribution) //TODO: update params
-                        break;
-
-                    default:
-                        //Treat default just like RANDOM
-                        toAddValue = Math.floor(Math.random() * 101)
-                }
-                //toAdd = Math.floor(Math.random() * 101)
-                toAdd = toAddValue
+                toAdd = -1
             }
 
             var toAddAsArray = []
@@ -309,6 +285,45 @@ function getRandomFromWeighted(objectsWithProbability) {
     return objectsWithProbability[objectsWithProbability.length - 1]
 }
 
+function fillMissingValues(predictableTagValues, fillStrat) {
+    //predictableTagValues Shape: [ [70, 50, 50],  [80, 70, 50], ]
+
+    var distribution
+    if (fillStrat == missingValueFillStrats.DISTRIBUTION) {
+        distribution = createDistribution() //TODO: update params
+    }
+
+    for (var i = 0; i < predictableTagValues.length; i++) {
+        for (var j = 0; j < predictableTagValues[i].length; j++) {
+            if (predictableTagValues[i][j] == -1) {
+                var newValue
+
+                switch (fillStrat) {
+
+                    case missingValueFillStrats.RANDOM:
+                        newValue = Math.floor(Math.random() * 101)
+                        break;
+
+                    case missingValueFillStrats.FILL_NEGATIVE:
+                        newValue = -1
+                        break;
+
+                    case missingValueFillStrats.DISTRIBUTION:
+                        newValue = randFromDist(distribution) //TODO: update params
+                        break;
+
+                    default:
+                        //Treat default just like RANDOM
+                        toAddValue = Math.floor(Math.random() * 101)
+                }
+
+                predictableTagValues[i][j] = newValue
+            }
+        }
+    }
+    return predictableTagValues
+}
+
 function randFromDist() {
     //TODO: fill parameters and write func
 }
@@ -330,7 +345,3 @@ module.exports = {
     predictionFunc
 }
 
-
-//Changes to make:
-//Setup convertSongsAndTagsTo3dTensorInput() so it always fills blank values with -1
-//Then have the fillStrat be used to replace those values
