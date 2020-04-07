@@ -43,13 +43,13 @@ function createRandomFromHistory(history, room) {
 function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs, predictableTags) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
-        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) //TODO: change fill strategy .
+        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, missingValueFillStrats.RANDOM)
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
-            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here .
+            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies, missingValueFillStrats.RANDOM) //TODO: change fill strategy here
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
 
             var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
@@ -110,6 +110,11 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillStrat)
         }
     }
 
+    var distribution
+    if (fillStrat == missingValueFillStrats.DISTRIBUTION) {
+        distribution = createDistribution() //TODO: update params
+    }
+
     for (var i = 0; i < songs.length; i++) {
         var songTags = getSongTags(songs[i], tags)
         songTags = songTags.filter(function (tag) {
@@ -140,7 +145,7 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillStrat)
                         break;
 
                     case missingValueFillStrats.DISTRIBUTION:
-                        //TODO: dist
+                        toAddValue = randFromDist(distribution) //TODO: update params
                         break;
 
                     default:
@@ -302,6 +307,14 @@ function getRandomFromWeighted(objectsWithProbability) {
         }
     }
     return objectsWithProbability[objectsWithProbability.length - 1]
+}
+
+function randFromDist() {
+    //TODO: fill parameters and write func
+}
+
+function createDistribution() {
+    //TODO fill parameters and write func
 }
 
 function predictionFunc() {
