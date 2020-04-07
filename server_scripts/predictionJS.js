@@ -329,3 +329,8 @@ module.exports = {
     createUsingLstmWRandomfill,
     predictionFunc
 }
+
+
+//Changes to make:
+//Setup convertSongsAndTagsTo3dTensorInput() so it always fills blank values with -1
+//Then have the fillStrat be used to replace those values
