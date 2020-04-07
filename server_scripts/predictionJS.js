@@ -43,13 +43,13 @@ function createRandomFromHistory(history, room) {
 function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs, predictableTags) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
-        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) //TODO: change fill strategy
+        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) //TODO: change fill strategy .
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
-            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here
+            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) //TODO: change fill strategy here .
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
 
             var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
@@ -97,7 +97,6 @@ function calcSortedTagFrequenciesArray(tags) {
 
 function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillStrat) {
     //TODO: test when a play history doesn't have 3 unique tags
-    //TODO: support different fill strategies
     //Goal Shape: [ [[70], [50], [50]],  [[80], [70], [50]], ]
 
     var retArray = []
@@ -129,7 +128,6 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillStrat)
                 toAdd = relevantTag[0].value
             }
             else {
-                //TODO: support different ways to fill missing values
                 var toAddValue
                 switch (fillStrat) {
 
