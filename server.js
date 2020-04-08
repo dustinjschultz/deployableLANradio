@@ -605,18 +605,26 @@ function predictNextPlay(room) {
                     break;
 
                 case generalScripts.predictionJS.predictionStrats.LSTM_W_RANDOM_FILL:
-                    gatherHistorySongs(history).then(function (songs) {
-                        gatherSongsTags(songs).then(function (tags) {
-                            generalScripts.getLibrary(room.owner).then(function (library) {
-                                generalScripts.getLibraryContents(library).then(function (contents) {
-                                    var predictableSongs = contents.songs
-                                    var predictableTags = contents.tags
-                                    generalScripts.predictionJS.createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs, predictableTags).then(function (play) {
-                                        appendPlayToRoom(play, room).then(function () {
-                                            return resolve()
-                                        })
-                                    })
-                                })
+                    var fillTraining = generalScripts.predictionJS.missingValueFillStrats.RANDOM
+                    var fillPredictables = generalScripts.predictionJS.missingValueFillStrats.RANDOM
+
+                    gatherContentsForLstm(room, history).then(function(contents){
+                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.tags, contents.predictableSongs, contents.predictableTags, fillTraining, fillPredictables).then(function (play) {
+                            appendPlayToRoom(play, room).then(function () {
+                                return resolve()
+                            })
+                        })
+                    })
+                    break;
+
+                case generalScripts.predictionJS.predictionStrats.LSTM_W_DISTRIBUTION_FILL:
+                    var fillTraining = generalScripts.predictionJS.missingValueFillStrats.DISTRIBUTION
+                    var fillPredictables = generalScripts.predictionJS.missingValueFillStrats.DISTRIBUTION
+
+                    gatherContentsForLstm(room, history).then(function (contents) {
+                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.tags, contents.predictableSongs, contents.predictableTags, fillTraining, fillPredictables).then(function (play) {
+                            appendPlayToRoom(play, room).then(function () {
+                                return resolve()
                             })
                         })
                     })
@@ -685,6 +693,25 @@ function gatherSongsTags(songs) {
         var tagIds = generalScripts.convertStringsToObjectIDs(tagIdStrings)
         generalScripts.getTags(tagIds).then(function (tags) {
             return resolve(tags)
+        })
+    })
+}
+
+// Gathers history songs, history songs' tags, predictable songs, predictable songs' tags
+function gatherContentsForLstm(room, history) {
+    return new Promise(function (resolve, reject) {
+        gatherHistorySongs(history).then(function (songs) {
+            gatherSongsTags(songs).then(function (tags) {
+                generalScripts.getLibrary(room.owner).then(function (library) {
+                    generalScripts.getLibraryContents(library).then(function (contents) {
+                        var predictableSongs = contents.songs
+                        var predictableTags = contents.tags
+
+                        var retObj = { songs: songs, tags: tags, predictableSongs: predictableSongs, predictableTags: predictableTags }
+                        return resolve(retObj)
+                    })
+                })
+            })
         })
     })
 }

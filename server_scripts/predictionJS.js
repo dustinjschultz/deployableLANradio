@@ -17,7 +17,8 @@ const pd = require("probability-distributions")
 const predictionStrats = {
     RANDOM: "random",
     RANDOM_RECENT: "random_recent",
-    LSTM_W_RANDOM_FILL: "lstm_w_random_fill"
+    LSTM_W_RANDOM_FILL: "lstm_w_random_fill",
+    LSTM_W_DISTRIBUTION_FILL: "lstm_w_distribution_fill"
 }
 
 const missingValueFillStrats = {
@@ -42,10 +43,11 @@ function createRandomFromHistory(history, room) {
     })
 }
 
-function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs, predictableTags) {
+function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, fillTraining, fillPredictables) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
-        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, missingValueFillStrats.RANDOM)
+        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
+        //TODO: fill missing for tensor-like
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
@@ -53,7 +55,7 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
 
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) 
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
-            predictableTagValues = fillMissingValues(predictableTagValues, missingValueFillStrats.RANDOM) //TODO: change fill strategy here
+            predictableTagValues = fillMissingValues(predictableTagValues, fillPredictables) 
 
             var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
             var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
@@ -292,7 +294,7 @@ function fillMissingValues(predictableTagValues, fillStrat) {
 
     var distributions
     if (fillStrat == missingValueFillStrats.DISTRIBUTION) {
-        distributions = createDistribution(predictableTagValues)
+        distributions = createDistributions(predictableTagValues)
     }
 
     for (var i = 0; i < predictableTagValues.length; i++) {
@@ -334,7 +336,7 @@ function randFromDist(distribution) {
 // Input shape: [ [70, 50, 50],  [80, 70, 50], ]
 //  where a value of -1 is a missing value that shouldn't be counted
 // Output: array of {mean, stdDev} objects
-function createDistribution(tagValues) {
+function createDistributions(tagValues) {
 
     var sampleArrays = []
 
@@ -371,7 +373,7 @@ module.exports = {
     predictionStrats,
     missingValueFillStrats,
     createRandomFromHistory,
-    createUsingLstmWRandomfill,
+    createUsingLstm,
     predictionFunc
 }
 
