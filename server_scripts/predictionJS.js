@@ -42,7 +42,7 @@ function createRandomFromHistory(history, room) {
     })
 }
 
-function createUsingLstm(history, room, songs, tags, predictableSongs, predictableTags, fillTraining, fillPredictables) {
+function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, fillTraining, fillPredictables) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
         var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies, fillTraining)
