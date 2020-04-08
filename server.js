@@ -617,6 +617,19 @@ function predictNextPlay(room) {
                     })
                     break;
 
+                case generalScripts.predictionJS.predictionStrats.LSTM_W_DISTRIBUTION_FILL:
+                    var fillTraining = generalScripts.predictionJS.missingValueFillStrats.DISTRIBUTION
+                    var fillPredictables = generalScripts.predictionJS.missingValueFillStrats.DISTRIBUTION
+
+                    gatherContentsForLstm(room, history).then(function (contents) {
+                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.tags, contents.predictableSongs, contents.predictableTags, fillTraining, fillPredictables).then(function (play) {
+                            appendPlayToRoom(play, room).then(function () {
+                                return resolve()
+                            })
+                        })
+                    })
+                    break;
+
                 default:
                     //Treat default just like RANDOM
                     generalScripts.predictionJS.createRandomFromHistory(history, room).then(function (play) {
