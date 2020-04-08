@@ -611,7 +611,7 @@ function predictNextPlay(room) {
                                 generalScripts.getLibraryContents(library).then(function (contents) {
                                     var predictableSongs = contents.songs
                                     var predictableTags = contents.tags
-                                    generalScripts.predictionJS.createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs, predictableTags).then(function (play) {
+                                    generalScripts.predictionJS.createUsingLstm(history, room, songs, tags, predictableSongs, predictableTags, generalScripts.predictionJS.missingValueFillStrats.RANDOM, generalScripts.predictionJS.missingValueFillStrats.RANDOM).then(function (play) {
                                         appendPlayToRoom(play, room).then(function () {
                                             return resolve()
                                         })
