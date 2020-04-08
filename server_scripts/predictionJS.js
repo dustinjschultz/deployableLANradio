@@ -10,6 +10,8 @@ const { Tag } = require('../models/tag')
 
 const tf = require('@tensorflow/tfjs')
 const distance = require('euclidean-distance')
+const ss = require('simple-statistics')
+const pd = require("probability-distributions")
 
 
 const predictionStrats = {
@@ -288,9 +290,9 @@ function getRandomFromWeighted(objectsWithProbability) {
 function fillMissingValues(predictableTagValues, fillStrat) {
     //predictableTagValues Shape: [ [70, 50, 50],  [80, 70, 50], ]
 
-    var distribution
+    var distributions
     if (fillStrat == missingValueFillStrats.DISTRIBUTION) {
-        distribution = createDistribution() //TODO: update params
+        distributions = createDistribution(predictableTagValues)
     }
 
     for (var i = 0; i < predictableTagValues.length; i++) {
@@ -309,7 +311,7 @@ function fillMissingValues(predictableTagValues, fillStrat) {
                         break;
 
                     case missingValueFillStrats.DISTRIBUTION:
-                        newValue = randFromDist(distribution) //TODO: update params
+                        newValue = randFromDist(distributions[j]) //TODO: update params
                         break;
 
                     default:
@@ -324,12 +326,40 @@ function fillMissingValues(predictableTagValues, fillStrat) {
     return predictableTagValues
 }
 
-function randFromDist() {
-    //TODO: fill parameters and write func
+function randFromDist(distribution) {
+    var rand = pd.rnorm(1, distribution.mean, distribution.stdDev)
+    return rand[0]
 }
 
-function createDistribution() {
-    //TODO fill parameters and write func
+// Input shape: [ [70, 50, 50],  [80, 70, 50], ]
+//  where a value of -1 is a missing value that shouldn't be counted
+// Output: array of {mean, stdDev} objects
+function createDistribution(tagValues) {
+
+    var sampleArrays = []
+
+    //init sampleArrays with an array for each feature
+    for (var i = 0; i < tagValues[0].length; i++) {
+        sampleArrays.push([])
+    }
+
+    for (var i = 0; i < tagValues.length; i++) {
+        for (var j = 0; j < tagValues[i].length; j++) {
+            if (tagValues[i][j] != -1) {
+                sampleArrays[j].push(tagValues[i][j])
+            }
+        }
+    }
+
+    var retArray = []
+
+    for (var i = 0; i < sampleArrays.length; i++) {
+        var mean = ss.mean(sampleArrays[i])
+        var stdDev = ss.sampleStandardDeviation(sampleArrays[i])
+        retArray.push({mean: mean, stdDev: stdDev})
+    }
+
+    return retArray
 }
 
 function predictionFunc() {
