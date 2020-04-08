@@ -53,7 +53,7 @@ function createUsingLstmWRandomfill(history, room, songs, tags, predictableSongs
 
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) 
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
-            predictableTagValues = fillMissingValues(predictableTagValues, missingValueFillStrats.DISTRIBUTION) //TODO: change fill strategy here
+            predictableTagValues = fillMissingValues(predictableTagValues, missingValueFillStrats.RANDOM) //TODO: change fill strategy here
 
             var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
             var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
