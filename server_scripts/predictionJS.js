@@ -370,10 +370,10 @@ function fillMissingValuesOnTensorlike(tensorlike, fillStrat){
 }
 
 function randFromDist(distribution) {
-    var rand = pd.rnorm(1, distribution.mean, distribution.stdDev)
+    var rand = pd.rnorm(1, distribution.mean, distribution.stdDev)[0]
     rand = Math.max(0, rand)
     rand = Math.min(100, rand)
-    return rand[0]
+    return rand
 }
 
 // Input shape: [ [70, 50, 50],  [80, 70, 50], ]
