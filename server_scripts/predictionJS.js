@@ -27,6 +27,13 @@ const missingValueFillStrats = {
     DISTRIBUTION: "fill_distribtion"
 }
 
+/**
+ * 
+ * @param {[Play Model]}    history
+ * @param {Room Model}      room
+ * 
+ * @return {resolve(Play Model)}
+ */
 function createRandomFromHistory(history, room) {
     return new Promise(function (resolve, reject) {
         var random = Math.ceil(Math.random() * (history.length - 1)) //Math.ceil so 0 is never picked (0 == INIT SONG)
@@ -43,6 +50,18 @@ function createRandomFromHistory(history, room) {
     })
 }
 
+/**
+ * 
+ * @param {Room Model}              room
+ * @param {[Song Model]}            songs
+ * @param {[Tag Model]}             tags
+ * @param {[Song Model]}            predictableSongs
+ * @param {[Tag Model]}             predictableTags
+ * @param {missingValueFillStrats}  fillTraining
+ * @param {missingValueFillStrats}  fillPredictables
+ * 
+ * @return {resolve(Play Model)}
+ */
 function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, fillTraining, fillPredictables) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
@@ -74,7 +93,12 @@ function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, f
     })
 }
 
-//returns array of {tagName: frequencyCount}'s, sorted with most frequent first
+/**
+ * 
+ * @param {[Tag Model]} tags
+ * 
+ * @return {[ [string, number] ]}
+ */
 function calcSortedTagFrequenciesArray(tags) {
     var frequenciesMap = new Map()
     for (var i = 0; i < tags.length; i++) {
@@ -96,10 +120,18 @@ function calcSortedTagFrequenciesArray(tags) {
         .sort((a, b) => {
             return b[1] - a[1];
         })
-    
+
     return sortedFrequencies
 }
 
+/**
+ * 
+ * @param {[Song Model]}            songs
+ * @param {[Tag Model]}             tags
+ * @param {[ [string, number] ]}    frequencies
+ * 
+ * @return {[ [ [number], [number], [number] ] ]}
+ */
 function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
     //TODO: test when a play history doesn't have 3 unique tags
     //Goal Shape: [ [[70], [50], [50]],  [[80], [70], [50]], ]
@@ -146,6 +178,13 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
     return retArray
 }
 
+/**
+ * 
+ * @param {Song Model}  song
+ * @param {[Tag Model]} tags
+ * 
+ * @return {[Tag Model]}
+ */
 function getSongTags(song, tags) {
     var retArray = tags.filter(function (tag) {
         return tag.elementId.toString() == song._id.toString() 
@@ -153,6 +192,13 @@ function getSongTags(song, tags) {
     return retArray
 }
 
+/**
+ * 
+ * @param {[ [ [number], [number], [number] ] ]} tensorInput1 
+ * @param {[ [ [number], [number], [number] ] ]} tensorInput2
+ * 
+ * @return {[number, number, number]}
+ */
 function generateLstmModelAndPredict(tensorInput1, tensorInput2) {
     return new Promise(function (resolve, reject) {
 
@@ -185,6 +231,12 @@ function generateLstmModelAndPredict(tensorInput1, tensorInput2) {
     })
 }
 
+/**
+ * 
+ * @param {string} predStr
+ * 
+ * @return {[number, number, number]}
+ */
 function cleanPredictionString(predStr) {
     predStr = predStr.replace("Tensor", "").replace(/\s/g, "")
     predArray = JSON.parse("[" + predStr + "]")
@@ -195,7 +247,14 @@ function cleanPredictionString(predStr) {
     return predArray
 }
 
-// takes array of tag values, array of sorted frequencies, and attaches labels from frequencies array to values
+/**
+ * Takes array of tag values, array of sorted frequencies, and attaches labels from frequencies array to values
+ *
+ * @param {[number, number, number]}    predictionValues
+ * @param {[ [string, number] ]}        frequencies
+ * 
+ * @return {[ {name: string, value: number} ]}
+ */
 function labelPredictionValues(predictionValues, frequencies) {
     var retArray = []
     for (var i = 0; i < predictionValues.length; i++) {
@@ -204,6 +263,13 @@ function labelPredictionValues(predictionValues, frequencies) {
     return retArray
 }
 
+/**
+ * MUTATES ORIGINAL ARRAY, PASS IN A CLONE
+ * 
+ * @param {[ [ [number], [number], [number] ] ]} tensorLikeArray
+ * 
+ * @return {[ [number, number, number] ]}
+ */
 function removeTensorConditioning(tensorLikeArray){
     var retArray = []
     for (var i = 0; i < tensorLikeArray.length; i++) {
@@ -216,6 +282,13 @@ function removeTensorConditioning(tensorLikeArray){
     return retArray
 }
 
+/**
+ * 
+ * @param {[number, number, number]}        predictionTagValues
+ * @param {[ [number, number, number] ]}    predictableTagValues
+ * 
+ * @return {[number]}
+ */
 function calcSimilarities(predictionTagValues, predictableTagValues) {
     //TODO: support different similarity values
     var retArray = []
@@ -234,10 +307,25 @@ function calcSimilarities(predictionTagValues, predictableTagValues) {
     return retArray
 }
 
+/**
+ * 
+ * @param {[number, number, number]} point1
+ * @param {[number, number, number]} point2
+ * 
+ * @return {number}
+ */
 function calcEuclidianDistance(point1, point2) {
     return distance(point1, point2)
 }
 
+/**
+ * Assumes similarity and song arrays are indexed the same
+ * 
+ * @param {[Song Model]}    predictableSongs
+ * @param {[number]}        predictableSimilarities
+ * 
+ * @return {[ {songId: string, similarity: number} ]}
+ */
 function createSongIdSimilarityObjects(predictableSongs, predictableSimilarities) {
     var retArray = []
     for (var i = 0; i < predictableSongs.length; i++) {
@@ -246,6 +334,12 @@ function createSongIdSimilarityObjects(predictableSongs, predictableSimilarities
     return retArray
 }
 
+/**
+ * 
+ * @param {[ {songId: string, similarity: number} ]} songTagSimilarityObjects
+ * 
+ * @return {[ {songId: string, similarity: number} ]}
+ */
 function sortBySimilarity(songTagSimilarityObjects) {
     songTagSimilarityObjects.sort((a, b) => {
         return a.similarity < b.similarity ? 1 : -1
@@ -253,6 +347,13 @@ function sortBySimilarity(songTagSimilarityObjects) {
     return songTagSimilarityObjects
 }
 
+/**
+ * 
+ * @param {[ {songId: string, similarity: number} ]}    songSimilarityObjects
+ * @param {number}                                      numToConsider
+ * 
+ * @return {{songId: string, probability: number}}
+ */
 function selectFromSongSimilarityObjects(songSimilarityObjects, numToConsider) {
     var sum = 0
     songSimilarityObjects = songSimilarityObjects.slice(0, numToConsider)
@@ -266,6 +367,13 @@ function selectFromSongSimilarityObjects(songSimilarityObjects, numToConsider) {
     return prediction
 }
 
+/**
+ * 
+ * @param {number}                                      sum
+ * @param {[ {songId: string, similarity: number} ]}    songSimilarityObjects
+ * 
+ * @return {[ {songId: string, probability: number} ]}
+ */
 function createSongProbabilityObjects(sum, songSimilarityObjects){
     var retArray = []
     for (var i = 0; i < songSimilarityObjects.length; i++) {
@@ -274,6 +382,12 @@ function createSongProbabilityObjects(sum, songSimilarityObjects){
     return retArray
 }
 
+/**
+ * 
+ * @param {[ {songId: string, probability: number} ]} objectsWithProbability
+ * 
+ * @return {{songId: string, probability: number}}
+ */
 function getRandomFromWeighted(objectsWithProbability) {
     var random = Math.random()
     var sum = 0
@@ -289,6 +403,13 @@ function getRandomFromWeighted(objectsWithProbability) {
     return objectsWithProbability[objectsWithProbability.length - 1]
 }
 
+/**
+ * 
+ * @param {[ [number, number, number] ]}    predictableTagValues
+ * @param {missingValueFillStrats}          fillStrat
+ * 
+ * @return {[ [number, number, number] ]}
+ */
 function fillMissingValuesOnArray(predictableTagValues, fillStrat) {
     //predictableTagValues Shape: [ [70, 50, 50],  [80, 70, 50], ]
 
@@ -328,6 +449,13 @@ function fillMissingValuesOnArray(predictableTagValues, fillStrat) {
     return predictableTagValues
 }
 
+/**
+ * 
+ * @param {[ [ [number], [number], [number] ] ]} tensorlike
+ * @param {missingValueFillStrats} fillStrat
+ * 
+ * @return {[ [ [number], [number], [number] ] ]}
+ */
 function fillMissingValuesOnTensorlike(tensorlike, fillStrat){
     //tensorlike Shape: [ [ [70], [50], [50] ],  [ [80], [70], [50] ], ]
 
@@ -369,6 +497,12 @@ function fillMissingValuesOnTensorlike(tensorlike, fillStrat){
     return tensorlike
 }
 
+/**
+ * 
+ * @param {{mean: number, stdDev: number}} distribution
+ * 
+ * @return {number}
+ */
 function randFromDist(distribution) {
     var rand = pd.rnorm(1, distribution.mean, distribution.stdDev)[0]
     rand = Math.max(0, rand)
@@ -376,9 +510,12 @@ function randFromDist(distribution) {
     return rand
 }
 
-// Input shape: [ [70, 50, 50],  [80, 70, 50], ]
-//  where a value of -1 is a missing value that shouldn't be counted
-// Output: array of {mean, stdDev} objects
+/**
+ * A value of -1 is a missing value that shouldn't be counted
+ * @param {[ [number, number, number] ]} tagValues
+ * 
+ * @return {[ {mean: number, stdDev: number} ]}
+ */
 function createDistributions(tagValues) {
 
     var sampleArrays = []
