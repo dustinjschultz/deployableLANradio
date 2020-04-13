@@ -47,7 +47,7 @@ function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, f
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(tags)
         var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
-        //TODO: fill missing for tensor-like
+        tensorFull = fillMissingValuesOnTensorlike(tensorFull, fillTraining)
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
@@ -55,7 +55,7 @@ function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, f
 
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) 
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
-            predictableTagValues = fillMissingValues(predictableTagValues, fillPredictables) 
+            predictableTagValues = fillMissingValuesOnArray(predictableTagValues, fillPredictables) 
 
             var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
             var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
@@ -289,7 +289,7 @@ function getRandomFromWeighted(objectsWithProbability) {
     return objectsWithProbability[objectsWithProbability.length - 1]
 }
 
-function fillMissingValues(predictableTagValues, fillStrat) {
+function fillMissingValuesOnArray(predictableTagValues, fillStrat) {
     //predictableTagValues Shape: [ [70, 50, 50],  [80, 70, 50], ]
 
     var distributions
@@ -326,6 +326,47 @@ function fillMissingValues(predictableTagValues, fillStrat) {
         }
     }
     return predictableTagValues
+}
+
+function fillMissingValuesOnTensorlike(tensorlike, fillStrat){
+    //tensorlike Shape: [ [ [70], [50], [50] ],  [ [80], [70], [50] ], ]
+
+    var distributions
+    if (fillStrat == missingValueFillStrats.DISTRIBUTION) {
+        var tensorlikeClone = JSON.parse(JSON.stringify(tensorlike)) //deep copy the array
+        distributions = createDistributions(removeTensorConditioning(tensorlikeClone))
+    }
+
+    for (var i = 0; i < tensorlike.length; i++) {
+        for (var j = 0; j < tensorlike[i].length; j++) {
+            if (tensorlike[i][j][0] == -1) {
+                var newValue
+
+                switch (fillStrat) {
+
+                    case missingValueFillStrats.RANDOM:
+                        newValue = Math.floor(Math.random() * 101)
+                        break;
+
+                    case missingValueFillStrats.FILL_NEGATIVE:
+                        newValue = -1
+                        break;
+
+                    case missingValueFillStrats.DISTRIBUTION:
+                        newValue = randFromDist(distributions[j]) //TODO: update params
+                        break;
+
+                    default:
+                        //Treat default just like RANDOM
+                        toAddValue = Math.floor(Math.random() * 101)
+                }
+
+                tensorlike[i][j][0] = newValue
+            }
+        }
+    }
+
+    return tensorlike
 }
 
 function randFromDist(distribution) {
