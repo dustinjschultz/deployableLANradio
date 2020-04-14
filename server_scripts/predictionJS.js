@@ -67,9 +67,9 @@ function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, f
         var frequencies = calcSortedTagFrequenciesArray(songs)
         var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, frequencies)
         tensorFull = fillMissingValuesOnTensorlike(tensorFull, fillTraining)
-        var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
+        //var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
-        generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
+        generateLstmModelAndPredict(tensorFull).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies) 
@@ -130,7 +130,7 @@ function calcSortedTagFrequenciesArray(songs) {
 /**
  * 
  * @param {[Song Model]}            songs
- * @param {[Tag Model]}             tags
+ * @param {[Tag Model]}             songs[i].tags
  * @param {[ [string, number] ]}    frequencies
  * 
  * @return {[ [ [number], [number], [number] ] ]}
@@ -199,16 +199,18 @@ function getSongTags(song, tags) {
  * 
  * @return {[number, number, number]}
  */
-function generateLstmModelAndPredict(tensorInput1, tensorInput2) {
+function generateLstmModelAndPredict(tensorlikeInput) {
     return new Promise(function (resolve, reject) {
 
+        var tensorlikeClone = JSON.parse(JSON.stringify(tensorlikeInput)) //deep copy the array 
+
         // condition input to be the relevant elements
-        var predictOnElement = tensorInput1.pop() // chop last element and save it
-        tensorInput2.shift() // chop first element
+        var predictOnElement = tensorlikeInput.pop() // chop last element and save it
+        tensorlikeClone.shift() // chop first element
 
         // create tensors
-        var train_x = tf.tensor3d(tensorInput1)
-        var train_y = tf.tensor3d(tensorInput2)
+        var train_x = tf.tensor3d(tensorlikeInput)
+        var train_y = tf.tensor3d(tensorlikeClone)
         var predict_x = tf.tensor3d([predictOnElement])
 
         // create model
