@@ -24,7 +24,7 @@ const predictionStrats = {
 const missingValueFillStrats = {
     RANDOM: "fill_random",
     FILL_NEGATIVE: "fill_negative",
-    DISTRIBUTION: "fill_distribtion"
+    DISTRIBUTION: "fill_distribution"
 }
 
 /**
@@ -75,8 +75,10 @@ function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredic
             tensorForPredictables = fillMissingValuesOnTensorlike(tensorForPredictables, fillPredictables)
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
 
-            var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
-            var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
+            predictableSongs = calcSimilarities(predictionTagValues, predictableTagValues, predictableSongs)
+            console.log(predictableSongs[i])
+            console.log(predictableSongs[i].similarity)
+            //var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
             songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
             selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5).songId
             
@@ -290,9 +292,8 @@ function removeTensorConditioning(tensorLikeArray){
  * 
  * @return {[number]}
  */
-function calcSimilarities(predictionTagValues, predictableTagValues) {
+function calcSimilarities(predictionTagValues, predictableTagValues, songs) {
     //TODO: support different similarity values
-    var retArray = []
     var distances = []
 
     for (var i = 0; i < predictableTagValues.length; i++) {
@@ -303,9 +304,9 @@ function calcSimilarities(predictionTagValues, predictableTagValues) {
 
     // force high distance to low similarity
     for (var i = 0; i < predictableTagValues.length; i++) {
-        retArray[i] = 1 / distances[i]
+        songs[i].similarity = 1 / distances[i]
     }
-    return retArray
+    return songs
 }
 
 /**
