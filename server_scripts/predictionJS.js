@@ -65,14 +65,14 @@ function createRandomFromHistory(history, room) {
 function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, fillTraining, fillPredictables) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(songs)
-        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
+        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, frequencies)
         tensorFull = fillMissingValuesOnTensorlike(tensorFull, fillTraining)
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
-            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) 
+            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies) 
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
             predictableTagValues = fillMissingValuesOnArray(predictableTagValues, fillPredictables) 
 
@@ -135,7 +135,7 @@ function calcSortedTagFrequenciesArray(songs) {
  * 
  * @return {[ [ [number], [number], [number] ] ]}
  */
-function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
+function convertSongsAndTagsTo3dTensorInput(songs, frequencies) {
     //TODO: test when a play history doesn't have 3 unique tags
     //Goal Shape: [ [[70], [50], [50]],  [[80], [70], [50]], ]
 
@@ -151,10 +151,7 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
     }
 
     for (var i = 0; i < songs.length; i++) {
-        var songTags = getSongTags(songs[i], tags)
-        songTags = songTags.filter(function (tag) {
-            return desiredTags.includes(tag.name)
-        })
+        var songTags = songs[i].tags
 
         var songRetEntry = []
         for (var j = 0; j < desiredTags.length; j++) {
