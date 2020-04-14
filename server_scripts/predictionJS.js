@@ -64,7 +64,7 @@ function createRandomFromHistory(history, room) {
  */
 function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, fillTraining, fillPredictables) {
     return new Promise(function (resolve, reject) {
-        var frequencies = calcSortedTagFrequenciesArray(tags)
+        var frequencies = calcSortedTagFrequenciesArray(songs)
         var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
         tensorFull = fillMissingValuesOnTensorlike(tensorFull, fillTraining)
         var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
@@ -95,22 +95,25 @@ function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, f
 
 /**
  * 
- * @param {[Tag Model]} tags
+ * @param {[Song Model]}    songs
+ * @param {[Tag Model]}     songs[i].tags
  * 
  * @return {[ [string, number] ]}
  */
-function calcSortedTagFrequenciesArray(tags) {
+function calcSortedTagFrequenciesArray(songs) {
     var frequenciesMap = new Map()
-    for (var i = 0; i < tags.length; i++) {
-        var curTag = tags[i]
-        if (frequenciesMap.has(curTag.name)) {
-            //increment count if present
-            var curFrequency = frequenciesMap.get(curTag.name)
-            frequenciesMap.set(curTag.name, curFrequency+1)
-        }
-        else {
-            //start count if NOT present
-            frequenciesMap.set(curTag.name, 1)
+    for (var i = 0; i < songs.length; i++) {
+        for (var j = 0; j < songs[i].tags.length; j++) {
+            var curTag = songs[i].tags[j]
+            if (frequenciesMap.has(curTag.name)) {
+                //increment count if present
+                var curFrequency = frequenciesMap.get(curTag.name)
+                frequenciesMap.set(curTag.name, curFrequency + 1)
+            }
+            else {
+                //start count if NOT present
+                frequenciesMap.set(curTag.name, 1)
+            }
         }
     }
 

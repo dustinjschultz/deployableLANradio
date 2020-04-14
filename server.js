@@ -622,8 +622,6 @@ function predictNextPlay(room) {
                     var fillPredictables = generalScripts.predictionJS.missingValueFillStrats.DISTRIBUTION
 
                     gatherContentsForLstm(room, history).then(function (contents) {
-                        console.log(contents.predictableSongs[0])
-                        console.log(contents.predictableSongs[0].tags)
                         generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.tags, contents.predictableSongs, contents.predictableTags, fillTraining, fillPredictables).then(function (play) {
                             appendPlayToRoom(play, room).then(function () {
                                 return resolve()
