@@ -62,19 +62,18 @@ function createRandomFromHistory(history, room) {
  * 
  * @return {resolve(Play Model)}
  */
-function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, fillTraining, fillPredictables) {
+function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredictables) {
     return new Promise(function (resolve, reject) {
         var frequencies = calcSortedTagFrequenciesArray(songs)
         var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, frequencies)
         tensorFull = fillMissingValuesOnTensorlike(tensorFull, fillTraining)
-        //var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
         generateLstmModelAndPredict(tensorFull).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
-            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies) 
+            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies)
+            tensorForPredictables = fillMissingValuesOnTensorlike(tensorForPredictables, fillPredictables)
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
-            predictableTagValues = fillMissingValuesOnArray(predictableTagValues, fillPredictables) 
 
             var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
             var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)

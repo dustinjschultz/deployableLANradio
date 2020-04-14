@@ -609,7 +609,7 @@ function predictNextPlay(room) {
                     var fillPredictables = generalScripts.predictionJS.missingValueFillStrats.RANDOM
 
                     gatherContentsForLstm(room, history).then(function (contents) {
-                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.tags, contents.predictableSongs, contents.predictableTags, fillTraining, fillPredictables).then(function (play) {
+                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.predictableSongs, fillTraining, fillPredictables).then(function (play) {
                             appendPlayToRoom(play, room).then(function () {
                                 return resolve()
                             })
@@ -622,7 +622,7 @@ function predictNextPlay(room) {
                     var fillPredictables = generalScripts.predictionJS.missingValueFillStrats.DISTRIBUTION
 
                     gatherContentsForLstm(room, history).then(function (contents) {
-                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.tags, contents.predictableSongs, contents.predictableTags, fillTraining, fillPredictables).then(function (play) {
+                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.predictableSongs, fillTraining, fillPredictables).then(function (play) {
                             appendPlayToRoom(play, room).then(function () {
                                 return resolve()
                             })
@@ -706,11 +706,8 @@ function gatherContentsForLstm(room, history) {
                     generalScripts.getLibraryContents(library).then(function (contents) {
                         var predictableSongs = contents.songs
                         var predictableTags = contents.tags
-
                         songs = addSongsTags(songs, tags)
                         predictableSongs = addSongsTags(predictableSongs, predictableTags)
-                        //console.log(predictableSongs[0])
-                        //console.log(predictableSongs[0].tags)
 
                         var retObj = { songs: songs, tags: tags, predictableSongs: predictableSongs, predictableTags: predictableTags }
                         return resolve(retObj)
