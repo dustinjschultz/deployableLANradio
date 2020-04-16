@@ -385,8 +385,8 @@ function appendProbabilityToSongs(sum, songs){
 
 /**
  * 
- * @param {[object]}    objectsWithProbability
- * @param {number}        objectsWithProbability[i].probability
+ * @param {[object]}        objectsWithProbability
+ * @param {number}          objectsWithProbability[i].probability
  * 
  * @return {object}
  */
