@@ -77,8 +77,7 @@ function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredic
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
             predictableSongs = setRelevantTagValuesArray(predictableSongs, frequencies)
-            console.log(predictableSongs[1])
-            console.log(predictableSongs[1].relevantTagValues)
+            predictableSongs = purgeIrrelevantSongs(predictableSongs, purgeStrats.NEED_ONE) //TODO: support purgeStrat as a parameter
 
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies)
             tensorForPredictables = fillMissingValuesOnTensorlike(tensorForPredictables, fillPredictables)
@@ -599,6 +598,49 @@ function setRelevantTagValuesArray(songs, frequencies) {
     }
 
     return songs
+}
+
+/**
+ * 
+ * @param {[Song Model]}        songs
+ * @param {[number, ...]}          songs[i].relevantTagValues
+ * @param {purseStrats}         purgeStrat
+ * 
+ * @return {[Song Model]}
+ */
+function purgeIrrelevantSongs(songs, purgeStrat) {
+    switch (purgeStrat) {
+        case purgeStrats.NEED_ONE:
+            return purgeSongsWithoutXTags(songs, 1)
+        case purgeStrats.NEED_TWO:
+            return purgeSongsWithoutXTags(songs, 2)
+        default:
+            return songs;
+    }
+}
+
+/**
+ * 
+ * @param {[Song Model]}    songs
+ * @param {[number, ...]}          songs[i].relevantTagValues
+ * @param {number}          requiredTagCount
+ * 
+ * @return {[Song Model]}
+ */
+function purgeSongsWithoutXTags(songs, requiredTagCount) {
+    var retArray = []
+    for (var i = 0; i < songs.length; i++) {
+        var tagCount = 0;
+        for (var j = 0; j < songs[i].relevantTagValues.length; j++) {
+            if (songs[i].relevantTagValues[j] != -1) {
+                tagCount++
+            }
+        }
+        if (tagCount >= requiredTagCount) {
+            retArray.push(songs[i])
+        }
+    }
+    return retArray
 }
 
 function predictionFunc() {
