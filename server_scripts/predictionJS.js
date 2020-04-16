@@ -76,6 +76,10 @@ function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredic
         generateLstmModelAndPredict(tensorFull).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
+            predictableSongs = setRelevantTagValuesArray(predictableSongs, frequencies)
+            console.log(predictableSongs[1])
+            console.log(predictableSongs[1].relevantTagValues)
+
             var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies)
             tensorForPredictables = fillMissingValuesOnTensorlike(tensorForPredictables, fillPredictables)
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
@@ -549,6 +553,52 @@ function createDistributions(tagValues) {
     }
 
     return retArray
+}
+
+/**
+ * 
+ * @param {[Song Model]} songs
+ * @param {[ [string, number] ]}        frequencies
+ * 
+ * @return {[Song Model]} with new [num, ...] property: relevantTagValues
+ */
+function setRelevantTagValuesArray(songs, frequencies) {
+
+    var dimension = 3
+    var desiredTags = []
+
+    for (var i = 0; i < dimension; i++) {
+        //only push to tagName if that many tags are available in the frequencies
+        if (frequencies.length > i) {
+            desiredTags.push(frequencies[i][0])
+        }
+    }
+
+    for (var i = 0; i < songs.length; i++) {
+        songs[i].relevantTagValues = []
+        var songTags = songs[i].tags
+
+        var curRelevantTagValues = []
+        for (var j = 0; j < desiredTags.length; j++) {
+
+            var relevantTag = songTags.filter(function (tag) {
+                return tag.name == desiredTags[j]
+            })
+            var toAdd
+
+            if (relevantTag[0]) {
+                toAdd = relevantTag[0].value
+            }
+            else {
+                toAdd = -1
+            }
+
+            curRelevantTagValues.push(toAdd)
+        }
+        songs[i].relevantTagValues = curRelevantTagValues
+    }
+
+    return songs
 }
 
 function predictionFunc() {
