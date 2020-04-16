@@ -349,7 +349,7 @@ function sortBySimilarity(songs) {
 
 /**
  * 
- * @param {[ {songId: string, similarity: number} ]}    songs
+ * @param {[Song Model]}    songs
  * @param {number}                                      songs[i].similarity                                
  * @param {number}                                      numToConsider
  * 
