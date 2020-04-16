@@ -76,9 +76,11 @@ function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredic
         generateLstmModelAndPredict(tensorFull).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
-            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies)
-            tensorForPredictables = fillMissingValuesOnTensorlike(tensorForPredictables, fillPredictables)
-            predictableTagValues = removeTensorConditioning(tensorForPredictables)
+            predictableSongs = setRelevantTagValuesArray(predictableSongs, frequencies)
+            predictableSongs = purgeIrrelevantSongs(predictableSongs, purgeStrats.NEED_ONE) //TODO: support purgeStrat as a parameter
+
+            predictableTagValues = gatherPredictableTagValues(predictableSongs)
+            predictableTagValues = fillMissingValuesOnArray(predictableSongs, fillPredictables)
 
             predictableSongs = calcSimilarities(predictionTagValues, predictableTagValues, predictableSongs)
             predictableSongs = sortBySimilarity(predictableSongs)
@@ -548,6 +550,110 @@ function createDistributions(tagValues) {
         retArray.push({mean: mean, stdDev: stdDev})
     }
 
+    return retArray
+}
+
+/**
+ * 
+ * @param {[Song Model]}                songs
+ * @param {[ [string, number] ]}        frequencies
+ * 
+ * @return {[Song Model]} with new [num, ...] property: relevantTagValues
+ */
+function setRelevantTagValuesArray(songs, frequencies) {
+
+    var dimension = 3
+    var desiredTags = []
+
+    for (var i = 0; i < dimension; i++) {
+        //only push to tagName if that many tags are available in the frequencies
+        if (frequencies.length > i) {
+            desiredTags.push(frequencies[i][0])
+        }
+    }
+
+    for (var i = 0; i < songs.length; i++) {
+        songs[i].relevantTagValues = []
+        var songTags = songs[i].tags
+
+        var curRelevantTagValues = []
+        for (var j = 0; j < desiredTags.length; j++) {
+
+            var relevantTag = songTags.filter(function (tag) {
+                return tag.name == desiredTags[j]
+            })
+            var toAdd
+
+            if (relevantTag[0]) {
+                toAdd = relevantTag[0].value
+            }
+            else {
+                toAdd = -1
+            }
+
+            curRelevantTagValues.push(toAdd)
+        }
+        songs[i].relevantTagValues = curRelevantTagValues
+    }
+
+    return songs
+}
+
+/**
+ * 
+ * @param {[Song Model]}        songs
+ * @param {[number, ...]}          songs[i].relevantTagValues
+ * @param {purseStrats}         purgeStrat
+ * 
+ * @return {[Song Model]}
+ */
+function purgeIrrelevantSongs(songs, purgeStrat) {
+    switch (purgeStrat) {
+        case purgeStrats.NEED_ONE:
+            return purgeSongsWithoutXTags(songs, 1)
+        case purgeStrats.NEED_TWO:
+            return purgeSongsWithoutXTags(songs, 2)
+        default:
+            return songs;
+    }
+}
+
+/**
+ * 
+ * @param {[Song Model]}    songs
+ * @param {[number, ...]}   songs[i].relevantTagValues
+ * @param {number}          requiredTagCount
+ * 
+ * @return {[Song Model]}
+ */
+function purgeSongsWithoutXTags(songs, requiredTagCount) {
+    var retArray = []
+    for (var i = 0; i < songs.length; i++) {
+        var tagCount = 0;
+        for (var j = 0; j < songs[i].relevantTagValues.length; j++) {
+            if (songs[i].relevantTagValues[j] != -1) {
+                tagCount++
+            }
+        }
+        if (tagCount >= requiredTagCount) {
+            retArray.push(songs[i])
+        }
+    }
+    return retArray
+}
+
+/**
+ * 
+ * @param {[Song Model]}            songs
+ * @param {[number, ...]}           songs[i].relevantTagValues
+ *
+ * @return {[ [number, ...] ]}
+ */
+function gatherPredictableTagValues(songs) {
+    var retArray = []
+    for (var i = 0; i < songs.length; i++) {
+        retArray.push(songs[i].relevantTagValues)
+    }
     return retArray
 }
 
