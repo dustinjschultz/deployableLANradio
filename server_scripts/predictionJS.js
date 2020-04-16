@@ -24,7 +24,7 @@ const predictionStrats = {
 const missingValueFillStrats = {
     RANDOM: "fill_random",
     FILL_NEGATIVE: "fill_negative",
-    DISTRIBUTION: "fill_distribtion"
+    DISTRIBUTION: "fill_distribution"
 }
 
 const purgeStrats = {
@@ -59,32 +59,30 @@ function createRandomFromHistory(history, room) {
  * 
  * @param {Room Model}              room
  * @param {[Song Model]}            songs
- * @param {[Tag Model]}             tags
+ * @param {[Tag Model]}             songs[i].tags
  * @param {[Song Model]}            predictableSongs
- * @param {[Tag Model]}             predictableTags
+ * @param {[Tag Model]}             predictableSongs[i].tags
  * @param {missingValueFillStrats}  fillTraining
  * @param {missingValueFillStrats}  fillPredictables
  * 
  * @return {resolve(Play Model)}
  */
-function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, fillTraining, fillPredictables) {
+function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredictables) {
     return new Promise(function (resolve, reject) {
-        var frequencies = calcSortedTagFrequenciesArray(tags)
-        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies)
+        var frequencies = calcSortedTagFrequenciesArray(songs)
+        var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, frequencies)
         tensorFull = fillMissingValuesOnTensorlike(tensorFull, fillTraining)
-        var tensorClone = JSON.parse(JSON.stringify(tensorFull)) //deep copy the array
 
-        generateLstmModelAndPredict(tensorFull, tensorClone).then(function (predictionTagValues) {
+        generateLstmModelAndPredict(tensorFull).then(function (predictionTagValues) {
             predictionTagValues = predictionTagValues.map(x => x * 100) //change from 0-1 to 0-100
 
-            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, predictableTags, frequencies) 
+            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies)
+            tensorForPredictables = fillMissingValuesOnTensorlike(tensorForPredictables, fillPredictables)
             predictableTagValues = removeTensorConditioning(tensorForPredictables)
-            predictableTagValues = fillMissingValuesOnArray(predictableTagValues, fillPredictables) 
 
-            var predictableSimilarities = calcSimilarities(predictionTagValues, predictableTagValues)
-            var songSimilarityObjects = createSongIdSimilarityObjects(predictableSongs, predictableSimilarities)
-            songSimilarityObjects = sortBySimilarity(songSimilarityObjects)
-            selectedSongId = selectFromSongSimilarityObjects(songSimilarityObjects, 5).songId
+            predictableSongs = calcSimilarities(predictionTagValues, predictableTagValues, predictableSongs)
+            predictableSongs = sortBySimilarity(predictableSongs)
+            selectedSongId = selectFromSongsWithSimilarity(predictableSongs, 5)._id
             
             const play = new Play({
                 songId: selectedSongId,
@@ -100,22 +98,25 @@ function createUsingLstm(room, songs, tags, predictableSongs, predictableTags, f
 
 /**
  * 
- * @param {[Tag Model]} tags
+ * @param {[Song Model]}    songs
+ * @param {[Tag Model]}     songs[i].tags
  * 
  * @return {[ [string, number] ]}
  */
-function calcSortedTagFrequenciesArray(tags) {
+function calcSortedTagFrequenciesArray(songs) {
     var frequenciesMap = new Map()
-    for (var i = 0; i < tags.length; i++) {
-        var curTag = tags[i]
-        if (frequenciesMap.has(curTag.name)) {
-            //increment count if present
-            var curFrequency = frequenciesMap.get(curTag.name)
-            frequenciesMap.set(curTag.name, curFrequency+1)
-        }
-        else {
-            //start count if NOT present
-            frequenciesMap.set(curTag.name, 1)
+    for (var i = 0; i < songs.length; i++) {
+        for (var j = 0; j < songs[i].tags.length; j++) {
+            var curTag = songs[i].tags[j]
+            if (frequenciesMap.has(curTag.name)) {
+                //increment count if present
+                var curFrequency = frequenciesMap.get(curTag.name)
+                frequenciesMap.set(curTag.name, curFrequency + 1)
+            }
+            else {
+                //start count if NOT present
+                frequenciesMap.set(curTag.name, 1)
+            }
         }
     }
 
@@ -132,12 +133,12 @@ function calcSortedTagFrequenciesArray(tags) {
 /**
  * 
  * @param {[Song Model]}            songs
- * @param {[Tag Model]}             tags
+ * @param {[Tag Model]}             songs[i].tags
  * @param {[ [string, number] ]}    frequencies
  * 
  * @return {[ [ [number], [number], [number] ] ]}
  */
-function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
+function convertSongsAndTagsTo3dTensorInput(songs, frequencies) {
     //TODO: test when a play history doesn't have 3 unique tags
     //Goal Shape: [ [[70], [50], [50]],  [[80], [70], [50]], ]
 
@@ -153,10 +154,7 @@ function convertSongsAndTagsTo3dTensorInput(songs, tags, frequencies) {
     }
 
     for (var i = 0; i < songs.length; i++) {
-        var songTags = getSongTags(songs[i], tags)
-        songTags = songTags.filter(function (tag) {
-            return desiredTags.includes(tag.name)
-        })
+        var songTags = songs[i].tags
 
         var songRetEntry = []
         for (var j = 0; j < desiredTags.length; j++) {
@@ -199,21 +197,22 @@ function getSongTags(song, tags) {
 
 /**
  * 
- * @param {[ [ [number], [number], [number] ] ]} tensorInput1 
- * @param {[ [ [number], [number], [number] ] ]} tensorInput2
+ * @param {[ [ [number], [number], [number] ] ]} tensorlikeInput 
  * 
  * @return {[number, number, number]}
  */
-function generateLstmModelAndPredict(tensorInput1, tensorInput2) {
+function generateLstmModelAndPredict(tensorlikeInput) {
     return new Promise(function (resolve, reject) {
 
+        var tensorlikeClone = JSON.parse(JSON.stringify(tensorlikeInput)) //deep copy the array 
+
         // condition input to be the relevant elements
-        var predictOnElement = tensorInput1.pop() // chop last element and save it
-        tensorInput2.shift() // chop first element
+        var predictOnElement = tensorlikeInput.pop() // chop last element and save it
+        tensorlikeClone.shift() // chop first element
 
         // create tensors
-        var train_x = tf.tensor3d(tensorInput1)
-        var train_y = tf.tensor3d(tensorInput2)
+        var train_x = tf.tensor3d(tensorlikeInput)
+        var train_y = tf.tensor3d(tensorlikeClone)
         var predict_x = tf.tensor3d([predictOnElement])
 
         // create model
@@ -291,12 +290,12 @@ function removeTensorConditioning(tensorLikeArray){
  * 
  * @param {[number, number, number]}        predictionTagValues
  * @param {[ [number, number, number] ]}    predictableTagValues
+ * @param {[Song Model]}                    songs
  * 
- * @return {[number]}
+ * @return {[Song Model]} with new number property: similarity
  */
-function calcSimilarities(predictionTagValues, predictableTagValues) {
+function calcSimilarities(predictionTagValues, predictableTagValues, songs) {
     //TODO: support different similarity values
-    var retArray = []
     var distances = []
 
     for (var i = 0; i < predictableTagValues.length; i++) {
@@ -307,9 +306,9 @@ function calcSimilarities(predictionTagValues, predictableTagValues) {
 
     // force high distance to low similarity
     for (var i = 0; i < predictableTagValues.length; i++) {
-        retArray[i] = 1 / distances[i]
+        songs[i].similarity = 1 / distances[i]
     }
-    return retArray
+    return songs
 }
 
 /**
@@ -341,57 +340,60 @@ function createSongIdSimilarityObjects(predictableSongs, predictableSimilarities
 
 /**
  * 
- * @param {[ {songId: string, similarity: number} ]} songTagSimilarityObjects
+ * @param {[Song Model]}    songs
+ * @param {number}          songs[i].similarity
  * 
  * @return {[ {songId: string, similarity: number} ]}
  */
-function sortBySimilarity(songTagSimilarityObjects) {
-    songTagSimilarityObjects.sort((a, b) => {
+function sortBySimilarity(songs) {
+    songs.sort((a, b) => {
         return a.similarity < b.similarity ? 1 : -1
     })
-    return songTagSimilarityObjects
+    return songs
 }
 
 /**
  * 
- * @param {[ {songId: string, similarity: number} ]}    songSimilarityObjects
+ * @param {[Song Model]}    songs
+ * @param {number}                                      songs[i].similarity                                
  * @param {number}                                      numToConsider
  * 
- * @return {{songId: string, probability: number}}
+ * @return {Song Model}
  */
-function selectFromSongSimilarityObjects(songSimilarityObjects, numToConsider) {
+function selectFromSongsWithSimilarity(songs, numToConsider) {
     var sum = 0
-    songSimilarityObjects = songSimilarityObjects.slice(0, numToConsider)
+    songs = songs.slice(0, numToConsider)
 
-    for (var i = 0; i < songSimilarityObjects.length; i++) {
-        sum += songSimilarityObjects[i].similarity
+    for (var i = 0; i < songs.length; i++) {
+        sum += songs[i].similarity
     }
 
-    var songProbabilityObjects = createSongProbabilityObjects(sum, songSimilarityObjects)
-    var prediction = getRandomFromWeighted(songProbabilityObjects)
+    songs = appendProbabilityToSongs(sum, songs)
+    var prediction = getRandomFromWeighted(songs)
     return prediction
 }
 
 /**
  * 
  * @param {number}                                      sum
- * @param {[ {songId: string, similarity: number} ]}    songSimilarityObjects
+ * @param {[Song Model]}                                songs
+ * @param {number}                                      songs[i].similarity
  * 
- * @return {[ {songId: string, probability: number} ]}
+ * @return {[Song Model]} with new number property: probability
  */
-function createSongProbabilityObjects(sum, songSimilarityObjects){
-    var retArray = []
-    for (var i = 0; i < songSimilarityObjects.length; i++) {
-        retArray[i] = { songId: songSimilarityObjects[i].songId, probability: songSimilarityObjects[i].similarity / sum }
+function appendProbabilityToSongs(sum, songs){
+    for (var i = 0; i < songs.length; i++) {
+        songs[i].probability = songs[i].similarity / sum
     }
-    return retArray
+    return songs
 }
 
 /**
  * 
- * @param {[ {songId: string, probability: number} ]} objectsWithProbability
+ * @param {[object]}        objectsWithProbability
+ * @param {number}          objectsWithProbability[i].probability
  * 
- * @return {{songId: string, probability: number}}
+ * @return {object}
  */
 function getRandomFromWeighted(objectsWithProbability) {
     var random = Math.random()
