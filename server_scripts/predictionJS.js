@@ -27,6 +27,11 @@ const missingValueFillStrats = {
     DISTRIBUTION: "fill_distribtion"
 }
 
+const purgeStrats = {
+    NEED_ONE: "need_one",
+    NEED_TWO: "need_two"
+}
+
 /**
  * 
  * @param {[Play Model]}    history
@@ -552,6 +557,7 @@ function predictionFunc() {
 module.exports = {
     predictionStrats,
     missingValueFillStrats,
+    purgeStrats,
     createRandomFromHistory,
     createUsingLstm,
     predictionFunc
