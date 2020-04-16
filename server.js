@@ -608,8 +608,8 @@ function predictNextPlay(room) {
                     var fillTraining = generalScripts.predictionJS.missingValueFillStrats.RANDOM
                     var fillPredictables = generalScripts.predictionJS.missingValueFillStrats.RANDOM
 
-                    gatherContentsForLstm(room, history).then(function(contents){
-                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.tags, contents.predictableSongs, contents.predictableTags, fillTraining, fillPredictables).then(function (play) {
+                    gatherContentsForLstm(room, history).then(function (contents) {
+                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.predictableSongs, fillTraining, fillPredictables).then(function (play) {
                             appendPlayToRoom(play, room).then(function () {
                                 return resolve()
                             })
@@ -622,7 +622,7 @@ function predictNextPlay(room) {
                     var fillPredictables = generalScripts.predictionJS.missingValueFillStrats.DISTRIBUTION
 
                     gatherContentsForLstm(room, history).then(function (contents) {
-                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.tags, contents.predictableSongs, contents.predictableTags, fillTraining, fillPredictables).then(function (play) {
+                        generalScripts.predictionJS.createUsingLstm(room, contents.songs, contents.predictableSongs, fillTraining, fillPredictables).then(function (play) {
                             appendPlayToRoom(play, room).then(function () {
                                 return resolve()
                             })
@@ -706,6 +706,8 @@ function gatherContentsForLstm(room, history) {
                     generalScripts.getLibraryContents(library).then(function (contents) {
                         var predictableSongs = contents.songs
                         var predictableTags = contents.tags
+                        songs = addSongsTags(songs, tags)
+                        predictableSongs = addSongsTags(predictableSongs, predictableTags)
 
                         var retObj = { songs: songs, tags: tags, predictableSongs: predictableSongs, predictableTags: predictableTags }
                         return resolve(retObj)
@@ -716,6 +718,23 @@ function gatherContentsForLstm(room, history) {
     })
 }
 
+function addSongTags(song, tags) {
+    if (song.tags == undefined) {
+        song.tags = []
+    }
+    var songTags = tags.filter(function (tag) {
+        return tag.elementId.toString() == song._id.toString()
+    })
+    Array.prototype.push.apply(song.tags, songTags)
+    return song
+}
+
+function addSongsTags(songs, tags) {
+    for (var i = 0; i < songs.length; i++) {
+        songs[i] = addSongTags(songs[i], tags)
+    } 
+    return songs
+}
 
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
