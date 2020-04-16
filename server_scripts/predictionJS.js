@@ -555,7 +555,7 @@ function createDistributions(tagValues) {
 
 /**
  * 
- * @param {[Song Model]} songs
+ * @param {[Song Model]}                songs
  * @param {[ [string, number] ]}        frequencies
  * 
  * @return {[Song Model]} with new [num, ...] property: relevantTagValues
@@ -621,7 +621,7 @@ function purgeIrrelevantSongs(songs, purgeStrat) {
 /**
  * 
  * @param {[Song Model]}    songs
- * @param {[number, ...]}          songs[i].relevantTagValues
+ * @param {[number, ...]}   songs[i].relevantTagValues
  * @param {number}          requiredTagCount
  * 
  * @return {[Song Model]}
@@ -644,8 +644,8 @@ function purgeSongsWithoutXTags(songs, requiredTagCount) {
 
 /**
  * 
- * @param {[Song Model]} songs
- * @param {[number, ...]}          songs[i].relevantTagValues
+ * @param {[Song Model]}            songs
+ * @param {[number, ...]}           songs[i].relevantTagValues
  *
  * @return {[ [number, ...] ]}
  */
