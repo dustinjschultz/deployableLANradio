@@ -79,9 +79,8 @@ function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredic
             predictableSongs = setRelevantTagValuesArray(predictableSongs, frequencies)
             predictableSongs = purgeIrrelevantSongs(predictableSongs, purgeStrats.NEED_ONE) //TODO: support purgeStrat as a parameter
 
-            var tensorForPredictables = convertSongsAndTagsTo3dTensorInput(predictableSongs, frequencies)
-            tensorForPredictables = fillMissingValuesOnTensorlike(tensorForPredictables, fillPredictables)
-            predictableTagValues = removeTensorConditioning(tensorForPredictables)
+            predictableTagValues = gatherPredictableTagValues(predictableSongs)
+            predictableTagValues = fillMissingValuesOnArray(predictableSongs, fillPredictables)
 
             predictableSongs = calcSimilarities(predictionTagValues, predictableTagValues, predictableSongs)
             predictableSongs = sortBySimilarity(predictableSongs)
@@ -639,6 +638,21 @@ function purgeSongsWithoutXTags(songs, requiredTagCount) {
         if (tagCount >= requiredTagCount) {
             retArray.push(songs[i])
         }
+    }
+    return retArray
+}
+
+/**
+ * 
+ * @param {[Song Model]} songs
+ * @param {[number, ...]}          songs[i].relevantTagValues
+ *
+ * @return {[ [number, ...] ]}
+ */
+function gatherPredictableTagValues(songs) {
+    var retArray = []
+    for (var i = 0; i < songs.length; i++) {
+        retArray.push(songs[i].relevantTagValues)
     }
     return retArray
 }
