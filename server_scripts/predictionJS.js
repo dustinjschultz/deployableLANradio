@@ -64,7 +64,6 @@ function createRandomFromHistory(history, room) {
  */
 function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredictables) {
     return new Promise(function (resolve, reject) {
-        console.log('createUsingLstm')
         var frequencies = calcSortedTagFrequenciesArray(songs)
         var tensorFull = convertSongsAndTagsTo3dTensorInput(songs, frequencies)
         tensorFull = fillMissingValuesOnTensorlike(tensorFull, fillTraining)
