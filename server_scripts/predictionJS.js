@@ -18,13 +18,15 @@ const predictionStrats = {
     RANDOM: "random",
     RANDOM_RECENT: "random_recent",
     LSTM_W_RANDOM_FILL: "lstm_w_random_fill",
-    LSTM_W_DISTRIBUTION_FILL: "lstm_w_distribution_fill"
+    LSTM_W_DISTRIBUTION_FILL: "lstm_w_distribution_fill",
+    LSTM_W_COMBO_FILL: "lstm_w_combo_fill"
 }
 
 const missingValueFillStrats = {
     RANDOM: "fill_random",
     FILL_NEGATIVE: "fill_negative",
-    DISTRIBUTION: "fill_distribution"
+    DISTRIBUTION: "fill_distribution",
+    DIST1_FILL2: "dist1_fill2"
 }
 
 const purgeStrats = {
@@ -80,7 +82,7 @@ function createUsingLstm(room, songs, predictableSongs, fillTraining, fillPredic
             predictableSongs = purgeIrrelevantSongs(predictableSongs, purgeStrats.NEED_ONE) //TODO: support purgeStrat as a parameter
 
             predictableTagValues = gatherPredictableTagValues(predictableSongs)
-            predictableTagValues = fillMissingValuesOnArray(predictableSongs, fillPredictables)
+            predictableTagValues = fillMissingValuesOnArray(predictableTagValues, fillPredictables)
 
             predictableSongs = calcSimilarities(predictionTagValues, predictableTagValues, predictableSongs)
             predictableSongs = sortBySimilarity(predictableSongs)
@@ -423,11 +425,13 @@ function fillMissingValuesOnArray(predictableTagValues, fillStrat) {
     //predictableTagValues Shape: [ [70, 50, 50],  [80, 70, 50], ]
 
     var distributions
-    if (fillStrat == missingValueFillStrats.DISTRIBUTION) {
+    if (fillStrat == missingValueFillStrats.DISTRIBUTION || fillStrat == missingValueFillStrats.DIST1_FILL2) {
         distributions = createDistributions(predictableTagValues)
     }
 
     for (var i = 0; i < predictableTagValues.length; i++) {
+        var missingCount = getMissingCount(predictableTagValues[i])
+
         for (var j = 0; j < predictableTagValues[i].length; j++) {
             if (predictableTagValues[i][j] == -1) {
                 var newValue
@@ -444,6 +448,15 @@ function fillMissingValuesOnArray(predictableTagValues, fillStrat) {
 
                     case missingValueFillStrats.DISTRIBUTION:
                         newValue = randFromDist(distributions[j]) //TODO: update params
+                        break;
+
+                    case missingValueFillStrats.DIST1_FILL2:
+                        if (missingCount == 1) {
+                            newValue = randFromDist(distributions[j])
+                        }
+                        else {
+                            newValue = Math.floor(Math.random() * 101)
+                        }
                         break;
 
                     default:
@@ -469,12 +482,14 @@ function fillMissingValuesOnTensorlike(tensorlike, fillStrat){
     //tensorlike Shape: [ [ [70], [50], [50] ],  [ [80], [70], [50] ], ]
 
     var distributions
-    if (fillStrat == missingValueFillStrats.DISTRIBUTION) {
+    if (fillStrat == missingValueFillStrats.DISTRIBUTION || fillStrat == missingValueFillStrats.DIST1_FILL2) {
         var tensorlikeClone = JSON.parse(JSON.stringify(tensorlike)) //deep copy the array
         distributions = createDistributions(removeTensorConditioning(tensorlikeClone))
     }
 
     for (var i = 0; i < tensorlike.length; i++) {
+        var missingCount = getMissingCount(tensorlike[i])
+
         for (var j = 0; j < tensorlike[i].length; j++) {
             if (tensorlike[i][j][0] == -1) {
                 var newValue
@@ -493,6 +508,15 @@ function fillMissingValuesOnTensorlike(tensorlike, fillStrat){
                         newValue = randFromDist(distributions[j]) //TODO: update params
                         break;
 
+                    case missingValueFillStrats.DIST1_FILL2:
+                        if (missingCount == 1) {
+                            newValue = randFromDist(distributions[j])
+                        }
+                        else {
+                            newValue = Math.floor(Math.random() * 101)
+                        }
+                        break;
+
                     default:
                         //Treat default just like RANDOM
                         toAddValue = Math.floor(Math.random() * 101)
@@ -504,6 +528,18 @@ function fillMissingValuesOnTensorlike(tensorlike, fillStrat){
     }
 
     return tensorlike
+}
+
+/**
+ * 
+ * @param {any}     toCount - an array or arraylike to count occurences of -1 in
+ * 
+ * @return {number}
+ */
+function getMissingCount(toCount) {
+    var str = JSON.stringify(toCount)
+    var count = (str.match(/-1/g) || []).length
+    return count
 }
 
 /**
